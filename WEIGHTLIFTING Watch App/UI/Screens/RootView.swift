@@ -37,6 +37,13 @@ struct SessionView: View {
     @State private var currentIndex: Int
     @State private var weightCache: [String: Double] = [:]
     @State private var switchSheet: SwitchSheetState?
+    @State private var completedSetIDs: Set<UUID> = []
+    @State private var completionOrder: [UUID] = []
+    @State private var showUndoToast = false
+    @State private var undoCountdown = 0
+    @State private var undoTimer: Timer?
+
+    private let haptics = WatchHaptics()
 
     init(context: SessionContext) {
         self.context = context
@@ -74,6 +81,7 @@ struct SessionView: View {
                         ),
                         targetDisplay: targetDisplay(for: item),
                         prevCompletions: item.prevCompletions,
+                        isCompleted: completedSetIDs.contains(item.id),
                         onExerciseTap: { presentSwitch(for: item) },
                         onSave: { saveDraft(for: item) }
                     )
@@ -101,6 +109,28 @@ struct SessionView: View {
                 }
             )
         }
+        .overlay(alignment: .bottom) {
+            if showUndoToast {
+                ToastUndoChip(
+                    title: "Saved",
+                    actionTitle: "Undo",
+                    countdown: undoCountdown,
+                    action: {
+                        if undoLastSavedSet() {
+                            container.sessionManager.undoLast()
+                        }
+                        hideUndoToast()
+                    }
+                )
+                .padding(.horizontal, 8)
+                .padding(.bottom, 12)
+                .transition(.move(edge: .bottom).combined(with: .opacity))
+            }
+        }
+        .animation(.easeInOut(duration: 0.2), value: showUndoToast)
+        .onChange(of: context.sessionID) { _ in
+            resetForContext()
+        }
     }
 
     private func binding(for item: DeckItem) -> Binding<SetEditingState> {
@@ -123,8 +153,13 @@ struct SessionView: View {
 
     private func saveDraft(for item: DeckItem) {
         guard let state = editingStates[item.id] else { return }
+        let startingIndex = currentIndex
         container.sessionManager.save(set: item, weight: state.weight, reps: state.reps, effort: state.effort)
         propagateDefaults(from: item, state: state)
+        markCompleted(item)
+        haptics.playSuccess()
+        presentUndoToast()
+        advanceToNextIncomplete(after: startingIndex)
     }
 
     private static func defaultReps(for item: DeckItem) -> Int {
@@ -195,6 +230,57 @@ struct SessionView: View {
             state.effort = effort
         }
         editingStates[item.id] = state
+    }
+
+    private func presentUndoToast() {
+        undoTimer?.invalidate()
+        undoCountdown = 5
+        showUndoToast = true
+
+        let timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
+            if self.undoCountdown <= 1 {
+                timer.invalidate()
+                self.undoTimer = nil
+                self.showUndoToast = false
+            } else {
+                self.undoCountdown -= 1
+            }
+        }
+        undoTimer = timer
+        RunLoop.main.add(timer, forMode: .common)
+    }
+
+    private func hideUndoToast() {
+        undoTimer?.invalidate()
+        undoTimer = nil
+        showUndoToast = false
+    }
+
+    private func resetForContext() {
+        let newDeck = context.deck
+        deck = newDeck
+        let initialStates = Dictionary(uniqueKeysWithValues: newDeck.map { item in
+            let defaultWeight = item.prevCompletions.first?.weight ?? 0
+            let defaultEffort = item.prevCompletions.first?.effort ?? .expected
+            let defaultReps = SessionView.defaultReps(for: item)
+            return (
+                item.id,
+                SetEditingState(
+                    weight: defaultWeight,
+                    reps: defaultReps,
+                    effort: defaultEffort
+                )
+            )
+        })
+        editingStates = initialStates
+        weightCache = [:]
+        completedSetIDs.removeAll()
+        completionOrder.removeAll()
+        currentIndex = 0
+        showUndoToast = false
+        undoTimer?.invalidate()
+        undoTimer = nil
+        switchSheet = nil
     }
 
     private func presentSwitch(for item: DeckItem) {
@@ -291,6 +377,7 @@ struct SessionView: View {
             affectedSequences: affectedSequences
         )
         prefillActiveWeight()
+        haptics.playSuccess()
     }
 
     private func displayName(for code: String) -> String {
@@ -340,6 +427,39 @@ struct SessionView: View {
         return String(format: "%.1f %@", weight, symbol)
     }
 
+    private func markCompleted(_ item: DeckItem) {
+        completedSetIDs.insert(item.id)
+        completionOrder.append(item.id)
+    }
+
+    @discardableResult
+    private func undoLastSavedSet() -> Bool {
+        guard let last = completionOrder.popLast() else { return false }
+        completedSetIDs.remove(last)
+        if let index = deck.firstIndex(where: { $0.id == last }) {
+            currentIndex = index
+            prefillActiveWeight()
+        }
+        return true
+    }
+
+    private func advanceToNextIncomplete(after index: Int) {
+        guard !deck.isEmpty else { return }
+        var next = index + 1
+        while next < deck.count {
+            if !completedSetIDs.contains(deck[next].id) {
+                currentIndex = next
+                prefillActiveWeight()
+                return
+            }
+            next += 1
+        }
+        if let first = deck.firstIndex(where: { !completedSetIDs.contains($0.id) }) {
+            currentIndex = first
+            prefillActiveWeight()
+        }
+    }
+
     private struct SwitchSheetState: Identifiable {
         let itemID: UUID
         let currentCode: String
@@ -362,6 +482,7 @@ struct SessionView: View {
         let setPosition: (current: Int, total: Int)
         let targetDisplay: String
         let prevCompletions: [DeckItem.PrevCompletion]
+        let isCompleted: Bool
         let onExerciseTap: () -> Void
         let onSave: () -> Void
 
@@ -374,6 +495,7 @@ struct SessionView: View {
                 setPosition: setPosition,
                 targetDisplay: targetDisplay,
                 prevCompletions: prevCompletions,
+                isCompleted: isCompleted,
                 onExerciseTap: onExerciseTap,
                 onSave: onSave
             )

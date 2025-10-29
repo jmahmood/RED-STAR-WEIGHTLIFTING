@@ -23,9 +23,15 @@ struct SessionSet: Equatable {
 @MainActor
 final class SessionViewModel: ObservableObject {
     @Published private(set) var previousEntries: [LatestWeight] = []
-    @Published var currentSet: SessionSet
+    @Published var currentSet: SessionSet {
+        didSet {
+            guard !isPrefilling, oldValue.exCode != currentSet.exCode else { return }
+            prefillWeight()
+        }
+    }
 
     private let indexService: IndexService
+    private var isPrefilling = false
 
     init(currentSet: SessionSet, indexService: IndexService = .shared) {
         self.currentSet = currentSet
@@ -42,6 +48,8 @@ final class SessionViewModel: ObservableObject {
             return
         }
 
+        isPrefilling = true
+        defer { isPrefilling = false }
         currentSet.weight = latest.weight
         currentSet.unit = latest.unit
         currentSet.reps = latest.reps

@@ -15,6 +15,7 @@ struct SetCardView: View {
     let setPosition: (current: Int, total: Int)
     let targetDisplay: String
     let prevCompletions: [DeckItem.PrevCompletion]
+    let isCompleted: Bool
     let onExerciseTap: () -> Void
     let onSave: () -> Void
 
@@ -50,10 +51,13 @@ struct SetCardView: View {
 
             Button("Save", action: onSave)
                 .buttonStyle(.borderedProminent)
+                .tint(isCompleted ? .gray : .blue)
                 .frame(maxWidth: .infinity)
+                .disabled(isCompleted)
         }
         .padding()
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .opacity(isCompleted ? 0.4 : 1)
     }
 
     private var header: some View {
@@ -181,6 +185,7 @@ struct SetCardView: View {
             setPosition: (current: 1, total: 3),
             targetDisplay: "8-10",
             prevCompletions: [],
+            isCompleted: false,
             onExerciseTap: {},
             onSave: {}
         )
