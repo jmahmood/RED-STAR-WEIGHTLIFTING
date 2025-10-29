@@ -1,0 +1,32 @@
+{
+  "source": "/Users/jmahmood/WEIGHTLIFTING/WEIGHTLIFTING Watch App/UI/Screens/RepsPickerScreen.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Reps",
+        "location": {
+          "startingColumn": 16,
+          "startingLine": 15
+        }
+      },
+      {
+        "comment": "",
+        "key": "Reps",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 20
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 17
+        }
+      }
+    ]
+  },
+  "version": 1
+}

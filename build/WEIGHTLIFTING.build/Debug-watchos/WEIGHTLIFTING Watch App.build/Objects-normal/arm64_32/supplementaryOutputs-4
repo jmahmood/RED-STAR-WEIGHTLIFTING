@@ -1,0 +1,30 @@
+{
+  "/Users/jmahmood/WEIGHTLIFTING/WEIGHTLIFTING Watch App/Data/IndexRepository.swift" : {
+    "const-values" : "/Users/jmahmood/WEIGHTLIFTING/build/WEIGHTLIFTING.build/Debug-watchos/WEIGHTLIFTING Watch App.build/Objects-normal/arm64_32/IndexRepository.swiftconstvalues",
+    "dependencies" : "/Users/jmahmood/WEIGHTLIFTING/build/WEIGHTLIFTING.build/Debug-watchos/WEIGHTLIFTING Watch App.build/Objects-normal/arm64_32/IndexRepository.d",
+    "diagnostics" : "/Users/jmahmood/WEIGHTLIFTING/build/WEIGHTLIFTING.build/Debug-watchos/WEIGHTLIFTING Watch App.build/Objects-normal/arm64_32/IndexRepository.dia",
+    "object" : "/Users/jmahmood/WEIGHTLIFTING/build/WEIGHTLIFTING.build/Debug-watchos/WEIGHTLIFTING Watch App.build/Objects-normal/arm64_32/IndexRepository.o",
+    "swift-dependencies" : "/Users/jmahmood/WEIGHTLIFTING/build/WEIGHTLIFTING.build/Debug-watchos/WEIGHTLIFTING Watch App.build/Objects-normal/arm64_32/IndexRepository.swiftdeps"
+  },
+  "/Users/jmahmood/WEIGHTLIFTING/WEIGHTLIFTING Watch App/Data/PlanRepository.swift" : {
+    "const-values" : "/Users/jmahmood/WEIGHTLIFTING/build/WEIGHTLIFTING.build/Debug-watchos/WEIGHTLIFTING Watch App.build/Objects-normal/arm64_32/PlanRepository.swiftconstvalues",
+    "dependencies" : "/Users/jmahmood/WEIGHTLIFTING/build/WEIGHTLIFTING.build/Debug-watchos/WEIGHTLIFTING Watch App.build/Objects-normal/arm64_32/PlanRepository.d",
+    "diagnostics" : "/Users/jmahmood/WEIGHTLIFTING/build/WEIGHTLIFTING.build/Debug-watchos/WEIGHTLIFTING Watch App.build/Objects-normal/arm64_32/PlanRepository.dia",
+    "object" : "/Users/jmahmood/WEIGHTLIFTING/build/WEIGHTLIFTING.build/Debug-watchos/WEIGHTLIFTING Watch App.build/Objects-normal/arm64_32/PlanRepository.o",
+    "swift-dependencies" : "/Users/jmahmood/WEIGHTLIFTING/build/WEIGHTLIFTING.build/Debug-watchos/WEIGHTLIFTING Watch App.build/Objects-normal/arm64_32/PlanRepository.swiftdeps"
+  },
+  "/Users/jmahmood/WEIGHTLIFTING/WEIGHTLIFTING Watch App/Data/ResourceSeeder.swift" : {
+    "const-values" : "/Users/jmahmood/WEIGHTLIFTING/build/WEIGHTLIFTING.build/Debug-watchos/WEIGHTLIFTING Watch App.build/Objects-normal/arm64_32/ResourceSeeder.swiftconstvalues",
+    "dependencies" : "/Users/jmahmood/WEIGHTLIFTING/build/WEIGHTLIFTING.build/Debug-watchos/WEIGHTLIFTING Watch App.build/Objects-normal/arm64_32/ResourceSeeder.d",
+    "diagnostics" : "/Users/jmahmood/WEIGHTLIFTING/build/WEIGHTLIFTING.build/Debug-watchos/WEIGHTLIFTING Watch App.build/Objects-normal/arm64_32/ResourceSeeder.dia",
+    "object" : "/Users/jmahmood/WEIGHTLIFTING/build/WEIGHTLIFTING.build/Debug-watchos/WEIGHTLIFTING Watch App.build/Objects-normal/arm64_32/ResourceSeeder.o",
+    "swift-dependencies" : "/Users/jmahmood/WEIGHTLIFTING/build/WEIGHTLIFTING.build/Debug-watchos/WEIGHTLIFTING Watch App.build/Objects-normal/arm64_32/ResourceSeeder.swiftdeps"
+  },
+  "/Users/jmahmood/WEIGHTLIFTING/WEIGHTLIFTING Watch App/Data/WalReplay.swift" : {
+    "const-values" : "/Users/jmahmood/WEIGHTLIFTING/build/WEIGHTLIFTING.build/Debug-watchos/WEIGHTLIFTING Watch App.build/Objects-normal/arm64_32/WalReplay.swiftconstvalues",
+    "dependencies" : "/Users/jmahmood/WEIGHTLIFTING/build/WEIGHTLIFTING.build/Debug-watchos/WEIGHTLIFTING Watch App.build/Objects-normal/arm64_32/WalReplay.d",
+    "diagnostics" : "/Users/jmahmood/WEIGHTLIFTING/build/WEIGHTLIFTING.build/Debug-watchos/WEIGHTLIFTING Watch App.build/Objects-normal/arm64_32/WalReplay.dia",
+    "object" : "/Users/jmahmood/WEIGHTLIFTING/build/WEIGHTLIFTING.build/Debug-watchos/WEIGHTLIFTING Watch App.build/Objects-normal/arm64_32/WalReplay.o",
+    "swift-dependencies" : "/Users/jmahmood/WEIGHTLIFTING/build/WEIGHTLIFTING.build/Debug-watchos/WEIGHTLIFTING Watch App.build/Objects-normal/arm64_32/WalReplay.swiftdeps"
+  }
+}

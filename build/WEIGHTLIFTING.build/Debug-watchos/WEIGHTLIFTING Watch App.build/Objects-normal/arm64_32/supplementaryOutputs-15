@@ -1,0 +1,30 @@
+{
+  "/Users/jmahmood/WEIGHTLIFTING/WEIGHTLIFTING Watch App/UI/Screens/RepsPickerScreen.swift" : {
+    "const-values" : "/Users/jmahmood/WEIGHTLIFTING/build/WEIGHTLIFTING.build/Debug-watchos/WEIGHTLIFTING Watch App.build/Objects-normal/arm64_32/RepsPickerScreen.swiftconstvalues",
+    "dependencies" : "/Users/jmahmood/WEIGHTLIFTING/build/WEIGHTLIFTING.build/Debug-watchos/WEIGHTLIFTING Watch App.build/Objects-normal/arm64_32/RepsPickerScreen.d",
+    "diagnostics" : "/Users/jmahmood/WEIGHTLIFTING/build/WEIGHTLIFTING.build/Debug-watchos/WEIGHTLIFTING Watch App.build/Objects-normal/arm64_32/RepsPickerScreen.dia",
+    "object" : "/Users/jmahmood/WEIGHTLIFTING/build/WEIGHTLIFTING.build/Debug-watchos/WEIGHTLIFTING Watch App.build/Objects-normal/arm64_32/RepsPickerScreen.o",
+    "swift-dependencies" : "/Users/jmahmood/WEIGHTLIFTING/build/WEIGHTLIFTING.build/Debug-watchos/WEIGHTLIFTING Watch App.build/Objects-normal/arm64_32/RepsPickerScreen.swiftdeps"
+  },
+  "/Users/jmahmood/WEIGHTLIFTING/WEIGHTLIFTING Watch App/UI/Screens/RootView.swift" : {
+    "const-values" : "/Users/jmahmood/WEIGHTLIFTING/build/WEIGHTLIFTING.build/Debug-watchos/WEIGHTLIFTING Watch App.build/Objects-normal/arm64_32/RootView.swiftconstvalues",
+    "dependencies" : "/Users/jmahmood/WEIGHTLIFTING/build/WEIGHTLIFTING.build/Debug-watchos/WEIGHTLIFTING Watch App.build/Objects-normal/arm64_32/RootView.d",
+    "diagnostics" : "/Users/jmahmood/WEIGHTLIFTING/build/WEIGHTLIFTING.build/Debug-watchos/WEIGHTLIFTING Watch App.build/Objects-normal/arm64_32/RootView.dia",
+    "object" : "/Users/jmahmood/WEIGHTLIFTING/build/WEIGHTLIFTING.build/Debug-watchos/WEIGHTLIFTING Watch App.build/Objects-normal/arm64_32/RootView.o",
+    "swift-dependencies" : "/Users/jmahmood/WEIGHTLIFTING/build/WEIGHTLIFTING.build/Debug-watchos/WEIGHTLIFTING Watch App.build/Objects-normal/arm64_32/RootView.swiftdeps"
+  },
+  "/Users/jmahmood/WEIGHTLIFTING/WEIGHTLIFTING Watch App/UI/Screens/SetCardView.swift" : {
+    "const-values" : "/Users/jmahmood/WEIGHTLIFTING/build/WEIGHTLIFTING.build/Debug-watchos/WEIGHTLIFTING Watch App.build/Objects-normal/arm64_32/SetCardView.swiftconstvalues",
+    "dependencies" : "/Users/jmahmood/WEIGHTLIFTING/build/WEIGHTLIFTING.build/Debug-watchos/WEIGHTLIFTING Watch App.build/Objects-normal/arm64_32/SetCardView.d",
+    "diagnostics" : "/Users/jmahmood/WEIGHTLIFTING/build/WEIGHTLIFTING.build/Debug-watchos/WEIGHTLIFTING Watch App.build/Objects-normal/arm64_32/SetCardView.dia",
+    "object" : "/Users/jmahmood/WEIGHTLIFTING/build/WEIGHTLIFTING.build/Debug-watchos/WEIGHTLIFTING Watch App.build/Objects-normal/arm64_32/SetCardView.o",
+    "swift-dependencies" : "/Users/jmahmood/WEIGHTLIFTING/build/WEIGHTLIFTING.build/Debug-watchos/WEIGHTLIFTING Watch App.build/Objects-normal/arm64_32/SetCardView.swiftdeps"
+  },
+  "/Users/jmahmood/WEIGHTLIFTING/WEIGHTLIFTING Watch App/UI/Screens/WeightPickerScreen.swift" : {
+    "const-values" : "/Users/jmahmood/WEIGHTLIFTING/build/WEIGHTLIFTING.build/Debug-watchos/WEIGHTLIFTING Watch App.build/Objects-normal/arm64_32/WeightPickerScreen.swiftconstvalues",
+    "dependencies" : "/Users/jmahmood/WEIGHTLIFTING/build/WEIGHTLIFTING.build/Debug-watchos/WEIGHTLIFTING Watch App.build/Objects-normal/arm64_32/WeightPickerScreen.d",
+    "diagnostics" : "/Users/jmahmood/WEIGHTLIFTING/build/WEIGHTLIFTING.build/Debug-watchos/WEIGHTLIFTING Watch App.build/Objects-normal/arm64_32/WeightPickerScreen.dia",
+    "object" : "/Users/jmahmood/WEIGHTLIFTING/build/WEIGHTLIFTING.build/Debug-watchos/WEIGHTLIFTING Watch App.build/Objects-normal/arm64_32/WeightPickerScreen.o",
+    "swift-dependencies" : "/Users/jmahmood/WEIGHTLIFTING/build/WEIGHTLIFTING.build/Debug-watchos/WEIGHTLIFTING Watch App.build/Objects-normal/arm64_32/WeightPickerScreen.swiftdeps"
+  }
+}

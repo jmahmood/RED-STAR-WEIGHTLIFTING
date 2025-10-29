@@ -34,6 +34,7 @@ struct SessionMeta: Codable, Equatable {
     var lastSaveAt: Date?
     var timedSetsSkipped: Bool
     var switchHistory: [String]
+    var sessionCompleted: Bool
 
     init(
         sessionId: String,
@@ -46,7 +47,8 @@ struct SessionMeta: Codable, Equatable {
         pending: [Pending] = [],
         lastSaveAt: Date? = nil,
         timedSetsSkipped: Bool = false,
-        switchHistory: [String] = []
+        switchHistory: [String] = [],
+        sessionCompleted: Bool = false
     ) {
         self.sessionId = sessionId
         self.planName = planName
@@ -59,6 +61,7 @@ struct SessionMeta: Codable, Equatable {
         self.lastSaveAt = lastSaveAt
         self.timedSetsSkipped = timedSetsSkipped
         self.switchHistory = switchHistory
+        self.sessionCompleted = sessionCompleted
     }
 
     init(from decoder: Decoder) throws {
@@ -75,6 +78,7 @@ struct SessionMeta: Codable, Equatable {
         lastSaveAt = try container.decodeIfPresent(Date.self, forKey: .lastSaveAt)
         timedSetsSkipped = try container.decodeIfPresent(Bool.self, forKey: .timedSetsSkipped) ?? false
         switchHistory = try container.decodeIfPresent([String].self, forKey: .switchHistory) ?? []
+        sessionCompleted = try container.decodeIfPresent(Bool.self, forKey: .sessionCompleted) ?? false
     }
 
     private enum CodingKeys: String, CodingKey {
@@ -89,5 +93,6 @@ struct SessionMeta: Codable, Equatable {
         case lastSaveAt
         case timedSetsSkipped
         case switchHistory
+        case sessionCompleted
     }
 }

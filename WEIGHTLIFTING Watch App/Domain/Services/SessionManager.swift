@@ -34,6 +34,7 @@ protocol SessionManaging {
     func save(set item: DeckItem, weight: Double, reps: Int, effort: DeckItem.Effort)
     func undoLast()
     func switchDay(to newDayLabel: String)
+    func markSessionCompleted()
 }
 
 final class SessionManager: SessionManaging {
@@ -147,7 +148,19 @@ final class SessionManager: SessionManaging {
 
                 let context = SessionContext(deck: mutatedDeck, sessionID: sessionID, plan: plan, day: day)
                 self.activeContext = context
-                self.subject.send(.active(context))
+
+                // Check for auto-advance
+                if meta.sessionCompleted,
+                   let lastSave = meta.lastSaveAt,
+                   Date().timeIntervalSince(lastSave) > 3600, // more than 1 hour
+                   let sessionDate = self.parseSessionDate(sessionID),
+                   Calendar.current.isDateInYesterday(sessionDate) {
+                    // Auto-advance to next day
+                    let nextDayLabel = self.nextDayLabel(after: day.label, in: plan)
+                    self.switchDay(to: nextDayLabel)
+                } else {
+                    self.subject.send(.active(context))
+                }
             } catch {
                 self.subject.send(.error(error))
             }
@@ -324,6 +337,26 @@ final class SessionManager: SessionManaging {
             let context = SessionContext(deck: mutatedDeck, sessionID: sessionID, plan: plan, day: targetDay)
             self.activeContext = context
             self.subject.send(.active(context))
+        }
+    }
+
+    func markSessionCompleted() {
+        queue.async {
+            guard var meta = self.activeMeta,
+                  let sessionID = self.activeSessionID else {
+                return
+            }
+
+            meta.sessionCompleted = true
+            self.activeMeta = meta
+
+            do {
+                try self.saveMeta(meta, sessionID: sessionID)
+            } catch {
+                #if DEBUG
+                print("SessionManager: failed to mark session completed \(error)")
+                #endif
+            }
         }
     }
 }
@@ -541,5 +574,19 @@ extension SessionManager {
         return signature.data(using: .utf8).map { data in
             data.base64EncodedString()
         } ?? UUID().uuidString
+    }
+
+    private func parseSessionDate(_ sessionID: String) -> Date? {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withFullDate]
+        return formatter.date(from: String(sessionID.prefix(10))) // YYYY-MM-DD
+    }
+
+    private func nextDayLabel(after currentLabel: String, in plan: PlanV03) -> String {
+        guard let currentIndex = plan.scheduleOrder.firstIndex(of: currentLabel) else {
+            return plan.scheduleOrder.first ?? currentLabel
+        }
+        let nextIndex = (currentIndex + 1) % plan.scheduleOrder.count
+        return plan.scheduleOrder[nextIndex]
     }
 }

@@ -46,6 +46,7 @@ struct SessionView: View {
     @State private var undoTimer: Timer?
     @State private var switchToastMessage: String?
     @State private var switchToastWorkItem: DispatchWorkItem?
+    @State private var showEndScreen = false
 
     private let haptics = WatchHaptics()
 
@@ -72,92 +73,164 @@ struct SessionView: View {
     }
 
     var body: some View {
-        ZStack(alignment: .topLeading) {
-            TabView(selection: $currentIndex) {
-                ForEach(Array(deck.enumerated()), id: \.element.id) { entry in
-                    let item = entry.element
-                    ScrollView {
-                        SetCardHost(
-                            item: item,
-                            state: binding(for: item),
-                            setPosition: (
-                                current: position(for: item),
-                                total: totalSets(for: item.exerciseCode)
-                            ),
-                            targetDisplay: targetDisplay(for: item),
-                            prevCompletions: item.prevCompletions,
-                            isCompleted: completedSetIDs.contains(item.id),
-                            onExerciseTap: { presentSwitch(for: item) },
-                            onSave: { saveDraft(for: item) }
-                        )
-                        .padding(.horizontal, 12)
-                        .padding(.top, 8)
-                    }
-                    .tag(entry.offset)
-                }
-            }
-            .padding(.top, 30)
-            .tabViewStyle(.page)
-
-            SessionHeaderView(vm: sessionVM)
-                .padding(.top, 4)
-                .padding(.horizontal, 12)
-        }
-        .navigationTitle("")
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar(.hidden, for: .navigationBar)
-        .sheet(isPresented: $sessionVM.isWorkoutSheetVisible) {
-            WorkoutSwitchSheet(vm: sessionVM)
-        }
-        .sheet(item: $switchSheet) { sheet in
-            ExerciseSwitchSheet(
-                currentName: sheet.currentName,
-                currentCode: sheet.currentCode,
-                altOptions: sheet.altOptions,
-                recentOptions: sheet.recentOptions,
-                onApply: { selectedCode, scope in
-                    applySwitch(itemID: sheet.itemID, to: selectedCode, scope: scope)
-                    switchSheet = nil
+        if showEndScreen {
+            EndOfSessionView(
+                context: currentContext,
+                completedSetIDs: completedSetIDs,
+                onStartNewSession: {
+                    let nextDay = nextDayLabel()
+                    container.sessionManager.switchDay(to: nextDay)
+                    resetForNewSession()
                 },
-                onCancel: {
-                    switchSheet = nil
+                onAddAdhoc: {
+                    showEndScreen = false
+                    // TODO: Implement adhoc exercise addition
                 }
             )
-        }
-        .overlay(alignment: .top) {
-            if let message = switchToastMessage {
-                ToastBanner(message: message)
-                    .padding(.top, 4)
-                    .transition(.move(edge: .top).combined(with: .opacity))
+            .navigationTitle("")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar(.hidden, for: .navigationBar)
+            .sheet(isPresented: $sessionVM.isWorkoutSheetVisible) {
+                WorkoutSwitchSheet(vm: sessionVM)
             }
-        }
-        .overlay(alignment: .bottom) {
-            if showUndoToast {
-                ToastUndoChip(
-                    title: "Saved",
-                    actionTitle: "Undo",
-                    countdown: undoCountdown,
-                    action: {
-                        if undoLastSavedSet() {
-                            container.sessionManager.undoLast()
-                        }
-                        hideUndoToast()
+            .sheet(item: $switchSheet) { sheet in
+                ExerciseSwitchSheet(
+                    currentName: sheet.currentName,
+                    currentCode: sheet.currentCode,
+                    altOptions: sheet.altOptions,
+                    recentOptions: sheet.recentOptions,
+                    onApply: { selectedCode, scope in
+                        applySwitch(itemID: sheet.itemID, to: selectedCode, scope: scope)
+                        switchSheet = nil
+                    },
+                    onCancel: {
+                        switchSheet = nil
                     }
                 )
-                .padding(.horizontal, 8)
-                .padding(.bottom, 12)
-                .transition(.move(edge: .bottom).combined(with: .opacity))
+            }
+            .overlay(alignment: .top) {
+                if let message = switchToastMessage {
+                    ToastBanner(message: message)
+                        .padding(.top, 4)
+                        .transition(.move(edge: .top).combined(with: .opacity))
+                }
+            }
+            .overlay(alignment: .bottom) {
+                if showUndoToast {
+                    ToastUndoChip(
+                        title: "Saved",
+                        actionTitle: "Undo",
+                        countdown: undoCountdown,
+                        action: {
+                            if undoLastSavedSet() {
+                                container.sessionManager.undoLast()
+                            }
+                            hideUndoToast()
+                        }
+                    )
+                    .padding(.horizontal, 8)
+                    .padding(.bottom, 12)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+                }
+            }
+            .animation(.easeInOut(duration: 0.2), value: showUndoToast)
+            .animation(.easeInOut(duration: 0.2), value: switchToastMessage != nil)
+            .onAppear {
+                configureViewModel(with: currentContext)
+            }
+            .onReceive(sessionStore.$session) { state in
+                guard case .active(let newContext) = state else { return }
+                handleContextUpdate(newContext)
+            }
+        } else {
+            ZStack(alignment: .topLeading) {
+                TabView(selection: $currentIndex) {
+                    ForEach(Array(deck.enumerated()), id: \.element.id) { entry in
+                        let item = entry.element
+                        ScrollView {
+                            SetCardHost(
+                                item: item,
+                                state: binding(for: item),
+                                setPosition: (
+                                    current: position(for: item),
+                                    total: totalSets(for: item.exerciseCode)
+                                ),
+                                targetDisplay: targetDisplay(for: item),
+                                prevCompletions: item.prevCompletions,
+                                isCompleted: completedSetIDs.contains(item.id),
+                                onExerciseTap: { presentSwitch(for: item) },
+                                onSave: { saveDraft(for: item) }
+                            )
+                            .padding(.horizontal, 12)
+                            .padding(.top, 8)
+                        }
+                        .tag(entry.offset)
+                    }
+                }
+                .padding(.top, 30)
+                .tabViewStyle(.page)
+
+                SessionHeaderView(vm: sessionVM)
+                    .padding(.top, 4)
+                    .padding(.horizontal, 12)
+            }
+            .navigationTitle("")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar(.hidden, for: .navigationBar)
+            .sheet(isPresented: $sessionVM.isWorkoutSheetVisible) {
+                WorkoutSwitchSheet(vm: sessionVM)
+            }
+            .sheet(item: $switchSheet) { sheet in
+                ExerciseSwitchSheet(
+                    currentName: sheet.currentName,
+                    currentCode: sheet.currentCode,
+                    altOptions: sheet.altOptions,
+                    recentOptions: sheet.recentOptions,
+                    onApply: { selectedCode, scope in
+                        applySwitch(itemID: sheet.itemID, to: selectedCode, scope: scope)
+                        switchSheet = nil
+                    },
+                    onCancel: {
+                        switchSheet = nil
+                    }
+                )
+            }
+            .overlay(alignment: .top) {
+                if let message = switchToastMessage {
+                    ToastBanner(message: message)
+                        .padding(.top, 4)
+                        .transition(.move(edge: .top).combined(with: .opacity))
+                }
+            }
+            .overlay(alignment: .bottom) {
+                if showUndoToast {
+                    ToastUndoChip(
+                        title: "Saved",
+                        actionTitle: "Undo",
+                        countdown: undoCountdown,
+                        action: {
+                            if undoLastSavedSet() {
+                                container.sessionManager.undoLast()
+                            }
+                            hideUndoToast()
+                        }
+                    )
+                    .padding(.horizontal, 8)
+                    .padding(.bottom, 12)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+                }
+            }
+            .animation(.easeInOut(duration: 0.2), value: showUndoToast)
+            .animation(.easeInOut(duration: 0.2), value: switchToastMessage != nil)
+            .onAppear {
+                configureViewModel(with: currentContext)
+            }
+            .onReceive(sessionStore.$session) { state in
+                guard case .active(let newContext) = state else { return }
+                handleContextUpdate(newContext)
             }
         }
-        .animation(.easeInOut(duration: 0.2), value: showUndoToast)
-        .animation(.easeInOut(duration: 0.2), value: switchToastMessage != nil)
-        .onAppear {
-            configureViewModel(with: currentContext)
-        }
-        .onReceive(sessionStore.$session) { state in
-            guard case .active(let newContext) = state else { return }
-            handleContextUpdate(newContext)
-        }
+
     }
 
     private func configureViewModel(with context: SessionContext) {
@@ -185,6 +258,8 @@ struct SessionView: View {
         }
 
         resetForContext(using: newContext)
+        showEndScreen = false
+        showEndScreen = false
     }
 
     private func presentSwitchToast(for day: String) {
@@ -352,6 +427,7 @@ struct SessionView: View {
         undoTimer?.invalidate()
         undoTimer = nil
         switchSheet = nil
+        showEndScreen = false
         prefillActiveWeight()
     }
 
@@ -502,6 +578,11 @@ struct SessionView: View {
     private func markCompleted(_ item: DeckItem) {
         completedSetIDs.insert(item.id)
         completionOrder.append(item.id)
+        if completedSetIDs.count == deck.count {
+            container.sessionManager.markSessionCompleted()
+            showEndScreen = true
+            haptics.playSuccess()
+        }
     }
 
     @discardableResult
@@ -530,6 +611,19 @@ struct SessionView: View {
             currentIndex = first
             prefillActiveWeight()
         }
+    }
+
+    private func nextDayLabel() -> String {
+        guard let currentIndex = currentContext.plan.scheduleOrder.firstIndex(of: currentContext.day.label) else {
+            return currentContext.plan.scheduleOrder.first ?? currentContext.day.label
+        }
+        let nextIndex = (currentIndex + 1) % currentContext.plan.scheduleOrder.count
+        return currentContext.plan.scheduleOrder[nextIndex]
+    }
+
+    private func resetForNewSession() {
+        showEndScreen = false
+        // Other resets if needed
     }
 
     private struct SwitchSheetState: Identifiable {
@@ -573,6 +667,8 @@ struct SessionView: View {
             )
         }
     }
+
+
 }
 
 #Preview {

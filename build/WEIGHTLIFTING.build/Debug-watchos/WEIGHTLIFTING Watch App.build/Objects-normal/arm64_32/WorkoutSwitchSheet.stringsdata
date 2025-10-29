@@ -1,0 +1,32 @@
+{
+  "source": "/Users/jmahmood/WEIGHTLIFTING/WEIGHTLIFTING Watch App/UI/Screens/WorkoutSwitchSheet.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Switch Workout",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 47
+        }
+      },
+      {
+        "comment": "",
+        "key": "No workouts in plan.",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 18
+        }
+      },
+      {
+        "comment": "",
+        "key": "(current)",
+        "location": {
+          "startingColumn": 42,
+          "startingLine": 29
+        }
+      }
+    ]
+  },
+  "version": 1
+}

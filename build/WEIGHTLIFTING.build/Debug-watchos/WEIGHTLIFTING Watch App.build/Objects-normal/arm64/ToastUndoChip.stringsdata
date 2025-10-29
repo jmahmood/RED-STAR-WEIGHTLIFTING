@@ -1,0 +1,16 @@
+{
+  "source": "/Users/jmahmood/WEIGHTLIFTING/WEIGHTLIFTING Watch App/UI/Components/ToastUndoChip.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "%@ (%llds)",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 18
+        }
+      }
+    ]
+  },
+  "version": 1
+}
