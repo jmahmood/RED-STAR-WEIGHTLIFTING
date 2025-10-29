@@ -47,6 +47,7 @@ struct SessionView: View {
     @State private var switchToastMessage: String?
     @State private var switchToastWorkItem: DispatchWorkItem?
     @State private var showEndScreen = false
+    @State private var adhocSheet: AdhocSheetState?
 
     private let haptics = WatchHaptics()
 
@@ -82,32 +83,43 @@ struct SessionView: View {
                     container.sessionManager.switchDay(to: nextDay)
                     resetForNewSession()
                 },
-                onAddAdhoc: {
-                    showEndScreen = false
-                    // TODO: Implement adhoc exercise addition
-                }
-            )
-            .navigationTitle("")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar(.hidden, for: .navigationBar)
-            .sheet(isPresented: $sessionVM.isWorkoutSheetVisible) {
-                WorkoutSwitchSheet(vm: sessionVM)
-            }
-            .sheet(item: $switchSheet) { sheet in
-                ExerciseSwitchSheet(
-                    currentName: sheet.currentName,
-                    currentCode: sheet.currentCode,
-                    altOptions: sheet.altOptions,
-                    recentOptions: sheet.recentOptions,
-                    onApply: { selectedCode, scope in
-                        applySwitch(itemID: sheet.itemID, to: selectedCode, scope: scope)
-                        switchSheet = nil
-                    },
-                    onCancel: {
-                        switchSheet = nil
-                    }
-                )
-            }
+                 onAddAdhoc: {
+                     adhocSheet = AdhocSheetState()
+                 }
+             )
+             .navigationTitle("")
+             .navigationBarTitleDisplayMode(.inline)
+             .toolbar(.hidden, for: .navigationBar)
+             .sheet(isPresented: $sessionVM.isWorkoutSheetVisible) {
+                 WorkoutSwitchSheet(vm: sessionVM)
+             }
+             .sheet(item: $switchSheet) { sheet in
+                 ExerciseSwitchSheet(
+                     currentName: sheet.currentName,
+                     currentCode: sheet.currentCode,
+                     altOptions: sheet.altOptions,
+                     recentOptions: sheet.recentOptions,
+                     onApply: { selectedCode, scope in
+                         applySwitch(itemID: sheet.itemID, to: selectedCode, scope: scope)
+                         switchSheet = nil
+                     },
+                     onCancel: {
+                         switchSheet = nil
+                     }
+                 )
+             }
+             .sheet(item: $adhocSheet) { _ in
+                 AdhocExerciseSheet(
+                     context: currentContext,
+                     onSelect: { code in
+                         addAdhocExercise(code: code)
+                         adhocSheet = nil
+                     },
+                     onCancel: {
+                         adhocSheet = nil
+                     }
+                 )
+             }
             .overlay(alignment: .top) {
                 if let message = switchToastMessage {
                     ToastBanner(message: message)
@@ -143,11 +155,11 @@ struct SessionView: View {
                 handleContextUpdate(newContext)
             }
         } else {
-            ZStack(alignment: .topLeading) {
-                TabView(selection: $currentIndex) {
-                    ForEach(Array(deck.enumerated()), id: \.element.id) { entry in
-                        let item = entry.element
-                        ScrollView {
+            TabView(selection: $currentIndex) {
+                ForEach(Array(deck.enumerated()), id: \.element.id) { entry in
+                    let item = entry.element
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 16) {
                             SetCardHost(
                                 item: item,
                                 state: binding(for: item),
@@ -163,17 +175,17 @@ struct SessionView: View {
                             )
                             .padding(.horizontal, 12)
                             .padding(.top, 8)
-                        }
-                        .tag(entry.offset)
-                    }
-                }
-                .padding(.top, 30)
-                .tabViewStyle(.page)
 
-                SessionHeaderView(vm: sessionVM)
-                    .padding(.top, 4)
-                    .padding(.horizontal, 12)
+                            SessionHeaderView(vm: sessionVM)
+                                .padding(.horizontal, 12)
+                                .padding(.bottom, 20)
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    .tag(entry.offset)
+                }
             }
+            .tabViewStyle(.page)
             .navigationTitle("")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar(.hidden, for: .navigationBar)
@@ -626,6 +638,42 @@ struct SessionView: View {
         // Other resets if needed
     }
 
+    private func addAdhocExercise(code: String) {
+        let name = currentContext.plan.exerciseNames[code] ?? code
+        let prev = (try? container.indexService.fetchLastTwo(for: code)) ?? []
+        let targetReps = prev.first?.reps.map { "\($0)" } ?? "3-5"
+        let item = DeckItem(
+            id: UUID(),
+            kind: .straight,
+            supersetID: nil,
+            segmentID: 999, // adhoc
+            sequence: deck.count + 1000, // high sequence
+            setIndex: 1,
+            round: nil,
+            exerciseCode: code,
+            exerciseName: name,
+            altGroup: nil,
+            targetReps: targetReps,
+            unit: currentContext.plan.unit,
+            isWarmup: false,
+            badges: [],
+            canSkip: false,
+            restSeconds: nil,
+            adlib: true,
+            prevCompletions: prev
+        )
+        deck.append(item)
+        let defaultWeight = prev.first?.weight ?? 0
+        let defaultReps = SessionView.defaultReps(for: item)
+        editingStates[item.id] = SetEditingState(
+            weight: defaultWeight,
+            reps: defaultReps,
+            effort: .expected
+        )
+        currentIndex = deck.count - 1
+        showEndScreen = false
+    }
+
     private struct SwitchSheetState: Identifiable {
         let itemID: UUID
         let currentCode: String
@@ -640,6 +688,63 @@ struct SessionView: View {
         var weight: Double
         var reps: Int
         var effort: DeckItem.Effort
+    }
+
+    private struct AdhocExerciseSheet: View {
+        let context: SessionContext
+        let onSelect: (String) -> Void
+        let onCancel: () -> Void
+
+        @State private var searchText = ""
+        @State private var selectedGroup: String?
+
+        var body: some View {
+            NavigationView {
+                VStack {
+                    TextField("Search exercises", text: $searchText)
+                        .textFieldStyle(.plain)
+                        .padding()
+
+                    if searchText.isEmpty {
+                        if selectedGroup == nil {
+                            List(context.plan.altGroups.keys.sorted(), id: \.self) { group in
+                                Button(group) {
+                                    selectedGroup = group
+                                }
+                            }
+                        } else if let group = selectedGroup {
+                            List(context.plan.altGroups[group] ?? [], id: \.self) { code in
+                                Button(context.plan.exerciseNames[code] ?? code) {
+                                    onSelect(code)
+                                }
+                            }
+                        }
+                    } else {
+                        let filtered = context.plan.exerciseNames.filter { $0.value.localizedCaseInsensitiveContains(searchText) }
+                        List(filtered.keys.sorted(), id: \.self) { code in
+                            Button(context.plan.exerciseNames[code] ?? code) {
+                                onSelect(code)
+                            }
+                        }
+                    }
+                }
+                .navigationTitle("Add Adhoc Exercise")
+                .toolbar {
+                    if selectedGroup != nil {
+                        ToolbarItem(placement: .cancellationAction) {
+                            Button("Back") { selectedGroup = nil }
+                        }
+                    }
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Cancel") { onCancel() }
+                    }
+                }
+            }
+        }
+    }
+
+    private struct AdhocSheetState: Identifiable {
+        let id = UUID()
     }
 
     private struct SetCardHost: View {

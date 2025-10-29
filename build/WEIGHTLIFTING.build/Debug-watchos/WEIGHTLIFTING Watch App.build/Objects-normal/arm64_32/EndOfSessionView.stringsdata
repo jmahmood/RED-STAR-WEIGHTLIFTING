@@ -15,7 +15,7 @@
         "key": "Start New Session",
         "location": {
           "startingColumn": 24,
-          "startingLine": 37
+          "startingLine": 49
         }
       },
       {
@@ -23,14 +23,14 @@
         "key": "Add Adhoc Exercise",
         "location": {
           "startingColumn": 24,
-          "startingLine": 42
+          "startingLine": 54
         }
       },
       {
         "comment": "",
         "key": "Summary:",
         "location": {
-          "startingColumn": 26,
+          "startingColumn": 27,
           "startingLine": 25
         }
       },
@@ -38,7 +38,7 @@
         "comment": "",
         "key": "Sets completed: %lld",
         "location": {
-          "startingColumn": 26,
+          "startingColumn": 27,
           "startingLine": 29
         }
       },
@@ -46,7 +46,7 @@
         "comment": "",
         "key": "Total weight: %@",
         "location": {
-          "startingColumn": 26,
+          "startingColumn": 27,
           "startingLine": 30
         }
       },
@@ -54,8 +54,16 @@
         "comment": "",
         "key": "Duration: %@",
         "location": {
-          "startingColumn": 26,
+          "startingColumn": 27,
           "startingLine": 31
+        }
+      },
+      {
+        "comment": "",
+        "key": "vs Last: %lld %@",
+        "location": {
+          "startingColumn": 35,
+          "startingLine": 35
         }
       }
     ]
