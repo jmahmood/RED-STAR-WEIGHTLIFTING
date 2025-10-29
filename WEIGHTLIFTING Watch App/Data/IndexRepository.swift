@@ -8,8 +8,8 @@
 import Foundation
 
 protocol IndexDataStore {
-    func readIndex() throws -> [String: [DeckItem.PrevCompletion]]
-    func writeIndex(_ index: [String: [DeckItem.PrevCompletion]]) throws
+    func readIndex() throws -> [String: Last2]
+    func writeIndex(_ index: [String: Last2]) throws
 }
 
 struct IndexRepository: IndexDataStore {
@@ -19,7 +19,7 @@ struct IndexRepository: IndexDataStore {
         self.fileSystem = fileSystem
     }
 
-    func readIndex() throws -> [String: [DeckItem.PrevCompletion]] {
+    func readIndex() throws -> [String: Last2] {
         let url = try fileSystem.indexURL()
         if !fileSystem.fileExists(at: url) {
             return [:]
@@ -27,15 +27,13 @@ struct IndexRepository: IndexDataStore {
         let data = try Data(contentsOf: url)
         guard !data.isEmpty else { return [:] }
         let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .iso8601
-        return try decoder.decode([String: [DeckItem.PrevCompletion]].self, from: data)
+        return try decoder.decode([String: Last2].self, from: data)
     }
 
-    func writeIndex(_ index: [String: [DeckItem.PrevCompletion]]) throws {
+    func writeIndex(_ index: [String: Last2]) throws {
         let url = try fileSystem.indexURL()
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
-        encoder.dateEncodingStrategy = .iso8601
         let data = try encoder.encode(index)
         try fileSystem.writeAtomic(data, to: url)
     }

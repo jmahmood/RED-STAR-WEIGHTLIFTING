@@ -37,6 +37,7 @@ final class AppContainer: ObservableObject {
         self.globalCsv = GlobalCsv(fileSystem: fileSystem)
         let indexDataStore = IndexRepository(fileSystem: fileSystem)
         self.indexService = IndexService(dataStore: indexDataStore, fileSystem: fileSystem)
+        indexService.ensureValidAgainstCSV()
         self.planRepository = PlanRepository(fileSystem: fileSystem, bundle: .main)
         self.deckBuilder = DeckBuilder()
 

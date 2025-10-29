@@ -17,6 +17,7 @@ struct SetCardView: View {
     let prevCompletions: [DeckItem.PrevCompletion]
     let isCompleted: Bool
     let onExerciseTap: () -> Void
+    let onWeightTap: () -> Void
     let onSave: () -> Void
 
     var body: some View {
@@ -26,7 +27,7 @@ struct SetCardView: View {
             DotsView(total: setPosition.total, currentIndex: max(0, setPosition.current - 1))
 
             VStack(alignment: .leading, spacing: 14) {
-                NavigationLink(destination: WeightPickerScreen(value: $weight, unit: item.unit)) {
+                Button(action: onWeightTap) {
                     ValueRow(title: "Weight", valueText: weightDisplay, trailing: latestWeightText)
                 }
                 .buttonStyle(.plain)
@@ -187,6 +188,7 @@ struct SetCardView: View {
             prevCompletions: [],
             isCompleted: false,
             onExerciseTap: {},
+            onWeightTap: {},
             onSave: {}
         )
     }

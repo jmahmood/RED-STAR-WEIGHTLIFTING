@@ -42,14 +42,14 @@ struct SessionView: View {
     @State private var completedSetIDs: Set<UUID> = []
     @State private var completionOrder: [UUID] = []
     @State private var showUndoToast = false
-    @State private var undoCountdown = 0
-    @State private var undoTimer: Timer?
+    @State private var undoDeadline: Date?
     @State private var switchToastMessage: String?
     @State private var switchToastWorkItem: DispatchWorkItem?
     @State private var exportToastMessage: String?
     @State private var exportToastWorkItem: DispatchWorkItem?
     @State private var showEndScreen = false
     @State private var adhocSheet: AdhocSheetState?
+    @State private var activeWeightPicker: ActiveWeightPicker?
 
     private let haptics = WatchHaptics()
 
@@ -122,7 +122,7 @@ struct SessionView: View {
                          switchSheet = nil
                      }
                  )
-             }
+            }
              .sheet(item: $adhocSheet) { _ in
                  AdhocExerciseSheet(
                      context: currentContext,
@@ -135,37 +135,53 @@ struct SessionView: View {
                      }
                  )
              }
+            .sheet(item: $activeWeightPicker) { picker in
+                let stateBinding = binding(for: picker.item)
+                NavigationStack {
+                    WeightPickerScreen(
+                        value: Binding(
+                            get: { stateBinding.wrappedValue.weight },
+                            set: { newValue in
+                                var updated = stateBinding.wrappedValue
+                                updated.weight = newValue
+                                stateBinding.wrappedValue = updated
+                            }
+                        ),
+                        unit: picker.item.unit
+                    )
+                }
+            }
             .overlay(alignment: .top) {
                 VStack(spacing: 4) {
                     if let exportMessage = exportToastMessage {
                         ToastBanner(message: exportMessage)
                             .transition(.move(edge: .top).combined(with: .opacity))
-                    }
-                    if let message = switchToastMessage {
-                        ToastBanner(message: message)
-                            .transition(.move(edge: .top).combined(with: .opacity))
-                    }
-                }
-                .padding(.top, 4)
-            }
-            .overlay(alignment: .bottom) {
-                if showUndoToast {
-                    ToastUndoChip(
-                        title: "Saved",
-                        actionTitle: "Undo",
-                        countdown: undoCountdown,
-                        action: {
-                            if undoLastSavedSet() {
-                                container.sessionManager.undoLast()
-                            }
-                            hideUndoToast()
-                        }
-                    )
-                    .padding(.horizontal, 8)
-                    .padding(.bottom, 12)
-                    .transition(.move(edge: .bottom).combined(with: .opacity))
-                }
-            }
+                     }
+                     if let message = switchToastMessage {
+                         ToastBanner(message: message)
+                             .transition(.move(edge: .top).combined(with: .opacity))
+                     }
+                 }
+                 .padding(.top, 4)
+             }
+             .overlay(alignment: .bottom) {
+                 if showUndoToast, let deadline = undoDeadline {
+                     ToastUndoChip(
+                         title: "Saved",
+                         actionTitle: "Undo",
+                         deadline: deadline,
+                         action: {
+                             if undoLastSavedSet() {
+                                 container.sessionManager.undoLast()
+                             }
+                             hideUndoToast()
+                         }
+                     )
+                     .padding(.horizontal, 8)
+                     .padding(.bottom, 12)
+                     .transition(.move(edge: .bottom).combined(with: .opacity))
+                 }
+             }
             .animation(.easeInOut(duration: 0.2), value: showUndoToast)
             .animation(.easeInOut(duration: 0.2), value: switchToastMessage != nil)
             .animation(.easeInOut(duration: 0.2), value: exportToastMessage != nil)
@@ -196,6 +212,7 @@ struct SessionView: View {
                                 prevCompletions: item.prevCompletions,
                                 isCompleted: completedSetIDs.contains(item.id),
                                 onExerciseTap: { presentSwitch(for: item) },
+                                onWeightTap: { presentWeightPicker(for: item) },
                                 onSave: { saveDraft(for: item) }
                             )
                             .padding(.horizontal, 12)
@@ -245,6 +262,34 @@ struct SessionView: View {
                     }
                 )
             }
+            .sheet(item: $adhocSheet) { _ in
+                AdhocExerciseSheet(
+                    context: currentContext,
+                    onSelect: { code in
+                        addAdhocExercise(code: code)
+                        adhocSheet = nil
+                    },
+                    onCancel: {
+                        adhocSheet = nil
+                    }
+                )
+            }
+            .sheet(item: $activeWeightPicker) { picker in
+                let stateBinding = binding(for: picker.item)
+                NavigationStack {
+                    WeightPickerScreen(
+                        value: Binding(
+                            get: { stateBinding.wrappedValue.weight },
+                            set: { newValue in
+                                var updated = stateBinding.wrappedValue
+                                updated.weight = newValue
+                                stateBinding.wrappedValue = updated
+                            }
+                        ),
+                        unit: picker.item.unit
+                    )
+                }
+            }
             .overlay(alignment: .top) {
                 VStack(spacing: 4) {
                     if let exportMessage = exportToastMessage {
@@ -258,27 +303,27 @@ struct SessionView: View {
                 }
                 .padding(.top, 4)
             }
-            .overlay(alignment: .bottom) {
-                if showUndoToast {
-                    ToastUndoChip(
-                        title: "Saved",
-                        actionTitle: "Undo",
-                        countdown: undoCountdown,
-                        action: {
-                            if undoLastSavedSet() {
-                                container.sessionManager.undoLast()
-                            }
-                            hideUndoToast()
-                        }
-                    )
-                    .padding(.horizontal, 8)
-                    .padding(.bottom, 12)
-                    .transition(.move(edge: .bottom).combined(with: .opacity))
-                }
-            }
-            .animation(.easeInOut(duration: 0.2), value: showUndoToast)
-            .animation(.easeInOut(duration: 0.2), value: switchToastMessage != nil)
-            .animation(.easeInOut(duration: 0.2), value: exportToastMessage != nil)
+             .overlay(alignment: .bottom) {
+                 if showUndoToast, let deadline = undoDeadline {
+                     ToastUndoChip(
+                         title: "Saved",
+                         actionTitle: "Undo",
+                         deadline: deadline,
+                         action: {
+                             if undoLastSavedSet() {
+                                 container.sessionManager.undoLast()
+                             }
+                             hideUndoToast()
+                         }
+                     )
+                     .padding(.horizontal, 8)
+                     .padding(.bottom, 12)
+                     .transition(.move(edge: .bottom).combined(with: .opacity))
+                 }
+             }
+             .animation(.easeInOut(duration: 0.2), value: showUndoToast)
+             .animation(.easeInOut(duration: 0.2), value: switchToastMessage != nil)
+             .animation(.easeInOut(duration: 0.2), value: exportToastMessage != nil)
             .onAppear {
                 configureViewModel(with: currentContext)
             }
@@ -464,27 +509,13 @@ struct SessionView: View {
     }
 
     private func presentUndoToast() {
-        undoTimer?.invalidate()
-        undoCountdown = 5
+        undoDeadline = Date().addingTimeInterval(5)
         showUndoToast = true
-
-        let timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
-            if self.undoCountdown <= 1 {
-                timer.invalidate()
-                self.undoTimer = nil
-                self.showUndoToast = false
-            } else {
-                self.undoCountdown -= 1
-            }
-        }
-        undoTimer = timer
-        RunLoop.main.add(timer, forMode: .common)
     }
 
     private func hideUndoToast() {
-        undoTimer?.invalidate()
-        undoTimer = nil
         showUndoToast = false
+        undoDeadline = nil
     }
 
     private func resetForContext(using context: SessionContext) {
@@ -509,8 +540,7 @@ struct SessionView: View {
         completionOrder.removeAll()
         currentIndex = 0
         showUndoToast = false
-        undoTimer?.invalidate()
-        undoTimer = nil
+        undoDeadline = nil
         switchSheet = nil
         showEndScreen = false
         prefillActiveWeight()
@@ -547,6 +577,10 @@ struct SessionView: View {
             altOptions: altOptions,
             recentOptions: mappedRecents
         )
+    }
+
+    private func presentWeightPicker(for item: DeckItem) {
+        activeWeightPicker = ActiveWeightPicker(item: item)
     }
 
     private func applySwitch(itemID: UUID, to newCode: String, scope: ExerciseSwitchScope) {
@@ -757,6 +791,11 @@ struct SessionView: View {
         var id: UUID { itemID }
     }
 
+    private struct ActiveWeightPicker: Identifiable {
+        let item: DeckItem
+        var id: UUID { item.id }
+    }
+
     private struct SetEditingState {
         var weight: Double
         var reps: Int
@@ -828,6 +867,7 @@ struct SessionView: View {
         let prevCompletions: [DeckItem.PrevCompletion]
         let isCompleted: Bool
         let onExerciseTap: () -> Void
+        let onWeightTap: () -> Void
         let onSave: () -> Void
 
         var body: some View {
@@ -841,6 +881,7 @@ struct SessionView: View {
                 prevCompletions: prevCompletions,
                 isCompleted: isCompleted,
                 onExerciseTap: onExerciseTap,
+                onWeightTap: onWeightTap,
                 onSave: onSave
             )
         }

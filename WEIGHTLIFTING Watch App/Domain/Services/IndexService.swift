@@ -6,12 +6,41 @@
 //
 
 import Foundation
+import os.signpost
+
+struct IndexEntry: Codable, Equatable {
+    let date: String
+    let time: String
+    let weight: Double?
+    let unit: String
+    let reps: Int?
+
+    var signature: String { "\(date)|\(time)" }
+}
+
+typealias Last2 = [IndexEntry]
+
+extension IndexEntry {
+    init(from row: CsvRow) {
+        self.date = row.dateString
+        self.time = row.timeString
+        self.weight = Double(row.weight).flatMap { $0 > 0 ? $0 : nil }
+        self.unit = row.unit
+        self.reps = Int(row.reps).flatMap { $0 > 0 ? $0 : nil }
+    }
+
+    static func maybeFrom(_ row: CsvRow) -> IndexEntry? {
+        guard !row.exerciseCode.isEmpty, let _ = Double(row.weight) else { return nil }
+        return IndexEntry(from: row)
+    }
+}
 
 protocol IndexRepositorying {
     func applyCommit(_ row: CsvRow) throws
     func fetchLastTwo(for exerciseCode: String) throws -> [DeckItem.PrevCompletion]
     func latestCompletion(for exerciseCode: String) throws -> DeckItem.PrevCompletion?
     func recentExercises(inLast days: Int, limit: Int) throws -> [IndexService.RecentExercise]
+    func ensureValidAgainstCSV()
 }
 
 final class IndexService: IndexRepositorying {
@@ -24,50 +53,54 @@ final class IndexService: IndexRepositorying {
     private let fileSystem: FileSystem
     private let queue = DispatchQueue(label: "IndexService.queue", qos: .utility)
 
-    private var cache: [String: [DeckItem.PrevCompletion]] = [:]
-    private var cacheSignature: CacheSignature?
+    private var cache: [String: Last2] = [:]
+    private var persistScheduled = false
+    private var csvSizeAtPersist: UInt64 = 0
 
     init(dataStore: IndexDataStore, fileSystem: FileSystem) {
         self.dataStore = dataStore
         self.fileSystem = fileSystem
+        // Load existing index
+        if let loaded = try? dataStore.readIndex() {
+            cache = loaded
+            csvSizeAtPersist = (try? fileSystem.fileSize(at: fileSystem.globalCsvURL())) ?? 0
+        }
     }
 
     func applyCommit(_ row: CsvRow) throws {
-        try queue.sync {
-            try loadCache(force: false)
-            guard let completion = makeCompletion(from: row) else { return }
-            var current = cache[row.exerciseCode] ?? []
-            current.insert(completion, at: 0)
-            cache[row.exerciseCode] = Array(current.prefix(2))
-            try dataStore.writeIndex(cache)
-            cacheSignature = makeSignature()
+        queue.async {
+            let e = IndexEntry(from: row)
+            var l2 = self.cache[row.exerciseCode] ?? []
+            l2.removeAll { $0.signature == e.signature }
+            l2.insert(e, at: 0)
+            if l2.count > 2 { l2.removeLast() }
+            self.cache[row.exerciseCode] = l2
+            self.schedulePersist()
+            os_signpost(.event, log: .default, name: "index.applyCommit.coalescedWrite")
         }
     }
 
     func fetchLastTwo(for exerciseCode: String) throws -> [DeckItem.PrevCompletion] {
-        try queue.sync {
-            try loadCache(force: false)
-            return cache[exerciseCode] ?? []
+        queue.sync {
+            return cache[exerciseCode]?.compactMap { makeCompletion(from: $0) } ?? []
         }
     }
 
     func latestCompletion(for exerciseCode: String) throws -> DeckItem.PrevCompletion? {
-        try queue.sync {
-            try loadCache(force: false)
-            return cache[exerciseCode]?.first
+        queue.sync {
+            return cache[exerciseCode]?.first.flatMap { makeCompletion(from: $0) }
         }
     }
 
     func recentExercises(inLast days: Int = 7, limit: Int = 8) throws -> [RecentExercise] {
-        try queue.sync {
-            try loadCache(force: false)
+        queue.sync {
             let threshold = Calendar.current.date(byAdding: .day, value: -days, to: Date()) ?? Date.distantPast
             let candidates = cache.compactMap { pair -> RecentExercise? in
                 let (code, completions) = pair
-                guard let latest = completions.first, latest.date >= threshold else {
+                guard let latest = completions.first, let completion = makeCompletion(from: latest), completion.date >= threshold else {
                     return nil
                 }
-                return RecentExercise(exerciseCode: code, latest: latest)
+                return RecentExercise(exerciseCode: code, latest: completion)
             }
             let sorted = candidates.sorted { lhs, rhs in
                 lhs.latest.date > rhs.latest.date
@@ -75,161 +108,76 @@ final class IndexService: IndexRepositorying {
             return Array(sorted.prefix(limit))
         }
     }
+
+    func ensureValidAgainstCSV() {
+        queue.sync {
+            let csvSize = (try? self.fileSystem.fileSize(at: self.fileSystem.globalCsvURL())) ?? 0
+            guard self.cache.isEmpty || csvSize < self.csvSizeAtPersist else { return }
+            self.rebuildFromCSVLocked()
+        }
+    }
 }
 
 // MARK: - Private helpers
 
 private extension IndexService {
-    struct CacheSignature: Equatable {
-        let indexDate: Date?
-        let csvDate: Date?
-        let csvPath: String?
+    func makeCompletion(from entry: IndexEntry) -> DeckItem.PrevCompletion? {
+        guard let weight = entry.weight else { return nil }
+        let timestamp = CsvDateFormatter.date(from: entry.date, timeString: entry.time) ?? Date()
+        return DeckItem.PrevCompletion(date: timestamp, weight: weight, reps: entry.reps, effort: nil) // effort not in IndexEntry
     }
 
-    func makeCompletion(from row: CsvRow) -> DeckItem.PrevCompletion? {
-        guard let weight = Double(row.weight), !row.weight.isEmpty else {
-            return nil
+    func schedulePersist() {
+        guard !persistScheduled else { return }
+        persistScheduled = true
+        queue.asyncAfter(deadline: .now() + 0.5) { [self] in
+            persistScheduled = false
+            do { try persistLocked() } catch { /* log */ }
         }
-        let reps = Int(row.reps)
-        let effort = DeckItem.Effort(rawValue: row.effort)
-        let timestamp = CsvDateFormatter.date(from: row.dateString, timeString: row.timeString) ?? Date()
-        return DeckItem.PrevCompletion(date: timestamp, weight: weight, reps: reps, effort: effort)
     }
 
-    func loadCache(force: Bool) throws {
-        let signature = makeSignature()
-        if !force, signature == cacheSignature {
-            return
-        }
-
-        let rawIndex: [String: [DeckItem.PrevCompletion]]
-        if let csvDate = signature.csvDate {
-            if let indexDate = signature.indexDate,
-               indexDate >= csvDate,
-               let stored = try? dataStore.readIndex() {
-                rawIndex = stored
-            } else {
-                rawIndex = try rebuildIndexFromCSV()
-            }
-        } else if let stored = try? dataStore.readIndex() {
-            rawIndex = stored
-        } else {
-            rawIndex = [:]
-        }
-
-        cache = rawIndex
-        cacheSignature = makeSignature()
+    func persistLocked() throws {
+        let url = try fileSystem.indexURL()
+        let data = try JSONEncoder().encode(cache)
+        try data.write(to: url, options: .atomic)
+        csvSizeAtPersist = try fileSystem.fileSize(at: fileSystem.globalCsvURL())
     }
 
-    func makeSignature() -> CacheSignature {
-        let indexDate: Date?
-        let csvDate: Date?
-        let csvURL = resolveCsvURL()
+    func rebuildFromCSVLocked() {
+        os_signpost(.event, log: .default, name: "index.rebuild.full")
+        // streaming parse lines → update cache in memory; persist once at end
         do {
-            let url = try fileSystem.indexURL()
-            indexDate = (try? FileManager.default.attributesOfItem(atPath: url.path)[.modificationDate] as? Date) ?? nil
+            var map: [String: Last2] = [:]
+            let content = try String(contentsOf: fileSystem.globalCsvURL(), encoding: .utf8)
+            let lines = content.split(whereSeparator: \.isNewline)
+            guard let headerLine = lines.first else { return }
+            let headers = parseCSVRow(String(headerLine))
+            guard headers.contains("ex_code") else { return }
+
+            for slice in lines.dropFirst() {
+                let line = String(slice)
+                if line.trimmingCharacters(in: .whitespaces).isEmpty { continue }
+                let values = parseCSVRow(line)
+                if values.count != headers.count { continue }
+                var rowDict: [String: String] = [:]
+                for (i, h) in headers.enumerated() { rowDict[h] = values[i] }
+                guard let exCode = rowDict["ex_code"], !exCode.isEmpty,
+                      let weightStr = rowDict["weight"], let weight = Double(weightStr), weight > 0 else { continue }
+                let reps = rowDict["reps"].flatMap { Int($0) }
+                let date = rowDict["date"] ?? ""
+                let time = rowDict["time"] ?? ""
+                let unit = rowDict["unit"] ?? "lbs"
+                let entry = IndexEntry(date: date, time: time, weight: weight, unit: unit, reps: reps)
+                var l2 = map[exCode] ?? []
+                l2.insert(entry, at: 0)
+                if l2.count > 2 { l2.removeLast() }
+                map[exCode] = l2
+            }
+            cache = map
+            try persistLocked()
         } catch {
-            indexDate = nil
+            cache = [:]
         }
-
-        if let csvURL {
-            csvDate = (try? FileManager.default.attributesOfItem(atPath: csvURL.path)[.modificationDate] as? Date) ?? nil
-        } else {
-            csvDate = nil
-        }
-
-        return CacheSignature(indexDate: indexDate, csvDate: csvDate, csvPath: csvURL?.path)
-    }
-
-    func rebuildIndexFromCSV() throws -> [String: [DeckItem.PrevCompletion]] {
-        guard let csvURL = resolveCsvURL() else {
-            return [:]
-        }
-
-        let content = try String(contentsOf: csvURL, encoding: .utf8)
-        let lines = content.split(whereSeparator: \.isNewline)
-        guard let headerLine = lines.first else {
-            return [:]
-        }
-
-        let headers = parseCSVRow(String(headerLine))
-        guard headers.contains("ex_code") else { return [:] }
-
-        var scratch: [String: [(completion: DeckItem.PrevCompletion, sortDate: Date?)]] = [:]
-
-        for slice in lines.dropFirst() {
-            let line = String(slice)
-            if line.trimmingCharacters(in: .whitespaces).isEmpty {
-                continue
-            }
-            let values = parseCSVRow(line)
-            if values.count != headers.count {
-                continue
-            }
-
-            var row: [String: String] = [:]
-            for (index, header) in headers.enumerated() {
-                row[header] = values[index]
-            }
-
-            guard let exCode = row["ex_code"], !exCode.isEmpty else { continue }
-            guard
-                let weightString = row["weight"], !weightString.isEmpty,
-                let weight = Double(weightString)
-            else { continue }
-
-            let reps = row["reps"].flatMap { Int($0) }
-            let effortRaw = row["effort_1to5"].flatMap { Int($0) }
-
-            let dateString = row["date"] ?? ""
-            let timeString = row["time"] ?? ""
-            let sortDate = CsvDateFormatter.date(from: dateString, timeString: timeString)
-
-            let completion = DeckItem.PrevCompletion(
-                date: sortDate ?? Date(),
-                weight: weight,
-                reps: reps,
-                effort: effortRaw.flatMap(DeckItem.Effort.init(rawValue:))
-            )
-
-            scratch[exCode, default: []].append((completion, sortDate))
-        }
-
-        var result: [String: [DeckItem.PrevCompletion]] = [:]
-        for (code, entries) in scratch {
-            let sorted = entries.sorted { lhs, rhs in
-                switch (lhs.sortDate, rhs.sortDate) {
-                case let (l?, r?):
-                    return l > r
-                case (.some, nil):
-                    return true
-                case (nil, .some):
-                    return false
-                case (nil, nil):
-                    return false
-                }
-            }
-            let trimmed = sorted.prefix(2).map { $0.completion }
-            if !trimmed.isEmpty {
-                result[code] = Array(trimmed)
-            }
-        }
-
-        try dataStore.writeIndex(result)
-        return result
-    }
-
-    func resolveCsvURL() -> URL? {
-        if let url = try? fileSystem.globalCsvURL(), FileManager.default.fileExists(atPath: url.path) {
-            return url
-        }
-
-        let fallback = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
-            .appendingPathComponent("lifts.csv", isDirectory: false)
-        if FileManager.default.fileExists(atPath: fallback.path) {
-            return fallback
-        }
-        return nil
     }
 
     func parseCSVRow(_ line: String) -> [String] {

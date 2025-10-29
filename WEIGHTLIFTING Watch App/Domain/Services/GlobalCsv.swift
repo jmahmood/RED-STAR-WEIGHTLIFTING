@@ -15,6 +15,8 @@ final class GlobalCsv: GlobalCsvWriting {
     private let fileSystem: FileSystem
     private static let guardQueue = DispatchQueue(label: "GlobalCsv.guardQueue")
     private static var lastCommit: (sessionID: String, timestamp: Date)?
+    private let syncQueue = DispatchQueue(label: "GlobalCsv.syncQueue")
+    private var pendingSync: DispatchWorkItem?
 
     init(fileSystem: FileSystem) {
         self.fileSystem = fileSystem
@@ -29,18 +31,17 @@ final class GlobalCsv: GlobalCsvWriting {
         let csvURL = try prepareGlobalCsv()
         let line = mutableRow.serialize() + "\n"
         let data = Data(line.utf8)
-        try fileSystem.append(data, to: csvURL, performFsync: true)
-        fileSystem.fsyncDirectory(containing: csvURL)
+        try fileSystem.append(data, to: csvURL, performFsync: false)
+        scheduleSync(for: csvURL)
     }
 
     func sync() throws {
         let csvURL = try prepareGlobalCsv()
-        guard let handle = FileHandle(forUpdatingAtPath: csvURL.path) else {
-            throw FileSystem.FileError.fileHandleUnavailable(csvURL)
+        try syncQueue.sync {
+            pendingSync?.cancel()
+            pendingSync = nil
+            try flush(csvURL)
         }
-        defer { try? handle.close() }
-        try handle.synchronize()
-        fileSystem.fsyncDirectory(containing: csvURL)
     }
 
     private static func enforceUniqueTimestamp(for row: inout CsvRow) {
@@ -64,5 +65,32 @@ final class GlobalCsv: GlobalCsvWriting {
         let headerData = "\(CsvRow.header)\n".data(using: .utf8)
         try fileSystem.ensureFile(at: csvURL, contents: headerData)
         return csvURL
+    }
+
+    private func scheduleSync(for url: URL) {
+        syncQueue.async {
+            self.pendingSync?.cancel()
+            let workItem = DispatchWorkItem { [weak self] in
+                guard let self else { return }
+                do {
+                    try self.flush(url)
+                } catch {
+                    #if DEBUG
+                    print("GlobalCsv: sync flush failed \(error)")
+                    #endif
+                }
+            }
+            self.pendingSync = workItem
+            self.syncQueue.asyncAfter(deadline: .now() + 1.0, execute: workItem)
+        }
+    }
+
+    private func flush(_ url: URL) throws {
+        guard let handle = FileHandle(forUpdatingAtPath: url.path) else {
+            throw FileSystem.FileError.fileHandleUnavailable(url)
+        }
+        defer { try? handle.close() }
+        try handle.synchronize()
+        fileSystem.fsyncDirectory(containing: url)
     }
 }

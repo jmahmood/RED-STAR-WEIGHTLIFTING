@@ -6,12 +6,19 @@
 //
 
 import SwiftUI
+import Combine
 
 struct ToastUndoChip: View {
     let title: String
     let actionTitle: String
-    let countdown: Int
+    let deadline: Date
     let action: () -> Void
+
+    @State private var now = Date()
+
+    private var countdown: Int {
+        max(0, Int(deadline.timeIntervalSince(now).rounded(.down)))
+    }
 
     var body: some View {
         HStack {
@@ -26,9 +33,12 @@ struct ToastUndoChip: View {
             RoundedRectangle(cornerRadius: 12)
                 .fill(Color.gray.opacity(0.2))
         )
+        .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) { t in
+            if countdown > 0 { now = t }
+        }
     }
 }
 
 #Preview {
-    ToastUndoChip(title: "Saved", actionTitle: "Undo", countdown: 5, action: {})
+    ToastUndoChip(title: "Saved", actionTitle: "Undo", deadline: Date().addingTimeInterval(5), action: {})
 }

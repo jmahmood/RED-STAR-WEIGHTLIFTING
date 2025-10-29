@@ -65,7 +65,6 @@ final class SessionManager: SessionManaging {
 
     private var pendingSaves: [UInt64: PendingSave] = [:]
     private var pendingOrder: [UInt64] = []
-    private var timers: [UInt64: DispatchSourceTimer] = [:]
 
     init(
         fileSystem: FileSystem,
@@ -252,23 +251,23 @@ final class SessionManager: SessionManaging {
                 #endif
             }
 
-            self.scheduleCommit(for: pending, sessionID: sessionID)
+            CommitWheel.shared.arm(seq: Int(sequence), deadline: deadline) { [weak self] in
+                self?.commit(sequence: sequence, sessionID: sessionID)
+            }
         }
     }
 
     func undoLast() {
         queue.async {
             guard let sequence = self.pendingOrder.last,
-                  var pending = self.pendingSaves.removeValue(forKey: sequence),
+                  self.pendingSaves.removeValue(forKey: sequence) != nil,
                   var meta = self.activeMeta,
                   let sessionID = self.activeSessionID else {
                 return
             }
 
             self.pendingOrder.removeLast()
-            if let timer = self.timers.removeValue(forKey: sequence) {
-                timer.cancel()
-            }
+            CommitWheel.shared.cancel(seq: Int(sequence))
 
             meta.pending.removeAll { $0.sequence == sequence }
             self.activeMeta = meta
@@ -369,27 +368,13 @@ private extension SessionManager {
         let sessionID: String
     }
 
-    private func scheduleCommit(for pending: PendingSave, sessionID: String) {
-        let deadline = pending.deadline
-        let timeInterval = max(0, deadline.timeIntervalSinceNow)
-        let timer = DispatchSource.makeTimerSource(queue: queue)
-        timer.schedule(deadline: .now() + timeInterval)
-        timer.setEventHandler { [weak self] in
-            self?.commit(sequence: pending.sequence, sessionID: sessionID)
-        }
-        timers[pending.sequence] = timer
-        timer.resume()
-    }
+
 
     private func commit(sequence: UInt64, sessionID: String) {
         guard let pending = pendingSaves.removeValue(forKey: sequence) else {
-            timers[sequence]?.cancel()
-            timers.removeValue(forKey: sequence)
             return
         }
 
-        timers[sequence]?.cancel()
-        timers.removeValue(forKey: sequence)
         pendingOrder.removeAll { $0 == sequence }
 
         do {
@@ -448,8 +433,6 @@ private extension SessionManager {
     }
 
     func handlePendingEntries(meta: inout SessionMeta, sessionID: String) {
-        timers.values.forEach { $0.cancel() }
-        timers.removeAll()
         pendingSaves.removeAll()
         pendingOrder.removeAll()
 
@@ -474,12 +457,14 @@ private extension SessionManager {
                     print("SessionManager: replay commit failed \(error)")
                     #endif
                 }
-            } else {
-                pendingSaves[pending.sequence] = adjusted
-                pendingOrder.append(pending.sequence)
-                scheduleCommit(for: adjusted, sessionID: sessionID)
-                retained.append(pending)
-            }
+             } else {
+                 pendingSaves[pending.sequence] = adjusted
+                 pendingOrder.append(pending.sequence)
+                 CommitWheel.shared.arm(seq: Int(pending.sequence), deadline: adjusted.deadline) { [weak self] in
+                     self?.commit(sequence: pending.sequence, sessionID: sessionID)
+                 }
+                 retained.append(pending)
+             }
         }
 
         meta.pending = retained

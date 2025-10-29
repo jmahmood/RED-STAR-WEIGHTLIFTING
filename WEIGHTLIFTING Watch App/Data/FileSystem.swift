@@ -110,7 +110,7 @@ struct FileSystem {
 
         let tempURL = folder.appendingPathComponent(UUID().uuidString)
         try data.write(to: tempURL, options: .atomic)
-        try fileManager.replaceItemAt(url, withItemAt: tempURL)
+        _ = try fileManager.replaceItemAt(url, withItemAt: tempURL)
     }
 
     func copyIfMissing(from sourceURL: URL, to destinationURL: URL) throws {
@@ -148,6 +148,11 @@ struct FileSystem {
 
     func availableBytes() -> Int64? {
         return try? fileManager.attributesOfFileSystem(forPath: rootURL.path)[.systemFreeSize] as? Int64
+    }
+
+    func fileSize(at url: URL) throws -> UInt64 {
+        let attributes = try fileManager.attributesOfItem(atPath: url.path)
+        return attributes[.size] as? UInt64 ?? 0
     }
 
     // MARK: - Helpers
