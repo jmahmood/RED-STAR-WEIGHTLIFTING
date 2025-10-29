@@ -39,6 +39,7 @@ struct WalReplay {
 
             if retained.count != meta.pending.count {
                 meta.pending = retained
+                meta.sessionId = sessionID
                 save(meta: meta, for: sessionID)
             }
         }

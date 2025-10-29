@@ -32,6 +32,7 @@ struct SessionView: View {
     @EnvironmentObject private var container: AppContainer
     let context: SessionContext
 
+    @StateObject private var sessionVM = SessionVM()
     @State private var deck: [DeckItem]
     @State private var editingStates: [UUID: SetEditingState]
     @State private var currentIndex: Int
@@ -42,6 +43,8 @@ struct SessionView: View {
     @State private var showUndoToast = false
     @State private var undoCountdown = 0
     @State private var undoTimer: Timer?
+    @State private var switchToastMessage: String?
+    @State private var switchToastWorkItem: DispatchWorkItem?
 
     private let haptics = WatchHaptics()
 
@@ -68,32 +71,38 @@ struct SessionView: View {
     }
 
     var body: some View {
-        TabView(selection: $currentIndex) {
-            ForEach(Array(deck.enumerated()), id: \.element.id) { entry in
-                let item = entry.element
-                ScrollView {
-                    SetCardHost(
-                        item: item,
-                        state: binding(for: item),
-                        setPosition: (
-                            current: position(for: item),
-                            total: totalSets(for: item.exerciseCode)
-                        ),
-                        targetDisplay: targetDisplay(for: item),
-                        prevCompletions: item.prevCompletions,
-                        isCompleted: completedSetIDs.contains(item.id),
-                        onExerciseTap: { presentSwitch(for: item) },
-                        onSave: { saveDraft(for: item) }
-                    )
-                    .padding(.horizontal, 12)
-                    .padding(.top, 8)
+        VStack(spacing: 0) {
+            SessionHeaderView(vm: sessionVM)
+            TabView(selection: $currentIndex) {
+                ForEach(Array(deck.enumerated()), id: \.element.id) { entry in
+                    let item = entry.element
+                    ScrollView {
+                        SetCardHost(
+                            item: item,
+                            state: binding(for: item),
+                            setPosition: (
+                                current: position(for: item),
+                                total: totalSets(for: item.exerciseCode)
+                            ),
+                            targetDisplay: targetDisplay(for: item),
+                            prevCompletions: item.prevCompletions,
+                            isCompleted: completedSetIDs.contains(item.id),
+                            onExerciseTap: { presentSwitch(for: item) },
+                            onSave: { saveDraft(for: item) }
+                        )
+                        .padding(.horizontal, 12)
+                        .padding(.top, 8)
+                    }
+                    .tag(entry.offset)
                 }
-                .tag(entry.offset)
             }
+            .tabViewStyle(.page)
         }
-        .tabViewStyle(.page)
-        .navigationTitle(context.day.label)
+        .navigationTitle(sessionVM.activeWorkoutName.isEmpty ? context.day.label : sessionVM.activeWorkoutName)
         .navigationBarTitleDisplayMode(.inline)
+        .sheet(isPresented: $sessionVM.isWorkoutSheetVisible) {
+            WorkoutSwitchSheet(vm: sessionVM)
+        }
         .sheet(item: $switchSheet) { sheet in
             ExerciseSwitchSheet(
                 currentName: sheet.currentName,
@@ -108,6 +117,13 @@ struct SessionView: View {
                     switchSheet = nil
                 }
             )
+        }
+        .overlay(alignment: .top) {
+            if let message = switchToastMessage {
+                ToastBanner(message: message)
+                    .padding(.top, 4)
+                    .transition(.move(edge: .top).combined(with: .opacity))
+            }
         }
         .overlay(alignment: .bottom) {
             if showUndoToast {
@@ -128,9 +144,49 @@ struct SessionView: View {
             }
         }
         .animation(.easeInOut(duration: 0.2), value: showUndoToast)
-        .onChange(of: context.sessionID) { _ in
-            resetForContext()
+        .animation(.easeInOut(duration: 0.2), value: switchToastMessage != nil)
+        .onAppear {
+            configureViewModel()
         }
+        .onChange(of: context.sessionID) { _ in
+            configureViewModel()
+            resetForContext()
+            hideSwitchToast()
+        }
+        .onChange(of: context.day.label) { _ in
+            let previousSessionID = sessionVM.sessionIdentifier
+            sessionVM.sync(with: context)
+            if previousSessionID == context.sessionID {
+                resetForContext()
+            }
+        }
+    }
+
+    private func configureViewModel() {
+        sessionVM.configure(
+            sessionManager: container.sessionManager,
+            context: context,
+            onDidSwitch: { day in
+                presentSwitchToast(for: day)
+            }
+        )
+    }
+
+    private func presentSwitchToast(for day: String) {
+        switchToastWorkItem?.cancel()
+        switchToastMessage = "Switched to \(day)"
+        let workItem = DispatchWorkItem {
+            switchToastMessage = nil
+            switchToastWorkItem = nil
+        }
+        switchToastWorkItem = workItem
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: workItem)
+    }
+
+    private func hideSwitchToast() {
+        switchToastWorkItem?.cancel()
+        switchToastWorkItem = nil
+        switchToastMessage = nil
     }
 
     private func binding(for item: DeckItem) -> Binding<SetEditingState> {
@@ -281,6 +337,7 @@ struct SessionView: View {
         undoTimer?.invalidate()
         undoTimer = nil
         switchSheet = nil
+        prefillActiveWeight()
     }
 
     private func presentSwitch(for item: DeckItem) {

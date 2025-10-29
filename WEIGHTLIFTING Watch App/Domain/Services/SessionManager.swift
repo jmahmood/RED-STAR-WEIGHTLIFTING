@@ -33,6 +33,7 @@ protocol SessionManaging {
     )
     func save(set item: DeckItem, weight: Double, reps: Int, effort: DeckItem.Effort)
     func undoLast()
+    func switchDay(to newDayLabel: String)
 }
 
 final class SessionManager: SessionManaging {
@@ -89,19 +90,46 @@ final class SessionManager: SessionManaging {
         queue.async {
             do {
                 let plan = try self.planRepository.loadActivePlan()
-                guard let dayLabel = plan.scheduleOrder.first,
-                      let day = plan.day(named: dayLabel) else {
+                let sessionID = SessionManager.makeSessionID(date: Date())
+                let existingMeta = self.loadMeta(sessionID: sessionID)
+
+                guard let fallbackDayLabel = plan.scheduleOrder.first else {
+                    self.subject.send(.error(SessionError.noPlanDay))
+                    return
+                }
+
+                let resolvedDayLabel = existingMeta
+                    .flatMap { meta in plan.day(named: meta.dayLabel)?.label }
+                    ?? fallbackDayLabel
+
+                guard let day = plan.day(named: resolvedDayLabel) else {
                     self.subject.send(.error(SessionError.noPlanDay))
                     return
                 }
 
                 let baseDeck = self.deckBuilder.buildDeck(for: day, plan: plan)
-                let sessionID = SessionManager.makeSessionID(date: Date())
                 let deckHash = SessionManager.computeDeckHash(for: baseDeck)
 
-                var meta = self.loadMeta(sessionID: sessionID) ?? SessionMeta(deckHash: deckHash)
-                if meta.deckHash != deckHash {
-                    meta = SessionMeta(deckHash: deckHash)
+                var meta: SessionMeta
+                if var persisted = existingMeta {
+                    if persisted.deckHash != deckHash {
+                        persisted.mutationMap.removeAll()
+                        persisted.sequenceOverrides.removeAll()
+                        persisted.deckHash = deckHash
+                    } else {
+                        persisted.deckHash = deckHash
+                    }
+                    persisted.sessionId = sessionID
+                    persisted.planName = plan.planName
+                    persisted.dayLabel = day.label
+                    meta = persisted
+                } else {
+                    meta = SessionMeta(
+                        sessionId: sessionID,
+                        planName: plan.planName,
+                        dayLabel: day.label,
+                        deckHash: deckHash
+                    )
                 }
 
                 self.baseDeck = baseDeck
@@ -173,7 +201,6 @@ final class SessionManager: SessionManaging {
         queue.async {
             guard var meta = self.activeMeta,
                   let plan = self.activePlan,
-                  let day = self.activeDay,
                   let sessionID = self.activeSessionID else {
                 return
             }
@@ -182,6 +209,8 @@ final class SessionManager: SessionManaging {
             meta.nextSequence += 1
             let savedAt = Date()
             let deadline = savedAt.addingTimeInterval(5)
+            meta.lastSaveAt = savedAt
+            meta.planName = plan.planName
 
             let row = self.buildRow(
                 for: item,
@@ -191,7 +220,7 @@ final class SessionManager: SessionManaging {
                 sequence: sequence,
                 savedAt: savedAt,
                 plan: plan,
-                day: day,
+                dayLabel: meta.dayLabel,
                 sessionID: sessionID
             )
 
@@ -241,6 +270,60 @@ final class SessionManager: SessionManaging {
             }
 
             // Restore UI state for the pending row if needed.
+        }
+    }
+
+    func switchDay(to newDayLabel: String) {
+        queue.async {
+            guard var meta = self.activeMeta,
+                  let plan = self.activePlan,
+                  let sessionID = self.activeSessionID else {
+                return
+            }
+
+            guard meta.dayLabel != newDayLabel,
+                  let targetDay = plan.day(named: newDayLabel) else {
+                return
+            }
+
+            let newBaseDeck = self.deckBuilder.buildDeck(for: targetDay, plan: plan)
+            let newDeckHash = SessionManager.computeDeckHash(for: newBaseDeck)
+
+            if !meta.dayLabel.isEmpty {
+                meta.switchHistory.append(meta.dayLabel)
+            } else if let activeDay = self.activeDay {
+                meta.switchHistory.append(activeDay.label)
+            }
+
+            meta.dayLabel = targetDay.label
+            meta.planName = plan.planName
+            meta.sessionId = sessionID
+            meta.deckHash = newDeckHash
+            meta.mutationMap.removeAll()
+            meta.sequenceOverrides.removeAll()
+
+            if newBaseDeck.contains(where: { $0.canSkip }) {
+                meta.timedSetsSkipped = false
+            }
+
+            self.baseDeck = newBaseDeck
+            self.activeDay = targetDay
+
+            let mutatedDeck = self.mutateDeck(newBaseDeck, with: meta, plan: plan)
+            self.activeDeck = mutatedDeck
+            self.activeMeta = meta
+
+            do {
+                try self.saveMeta(meta, sessionID: sessionID)
+            } catch {
+                #if DEBUG
+                print("SessionManager: failed to persist meta during switch \(error)")
+                #endif
+            }
+
+            let context = SessionContext(deck: mutatedDeck, sessionID: sessionID, plan: plan, day: targetDay)
+            self.activeContext = context
+            self.subject.send(.active(context))
         }
     }
 }
@@ -300,7 +383,7 @@ private extension SessionManager {
         sequence: UInt64,
         savedAt: Date,
         plan: PlanV03,
-        day: PlanV03.Day,
+        dayLabel: String,
         sessionID: String
     ) -> CsvRow {
         let weightString = formatWeight(weight)
@@ -309,7 +392,7 @@ private extension SessionManager {
             sessionID: sessionID,
             date: savedAt,
             planName: plan.planName,
-            dayLabel: day.label,
+            dayLabel: dayLabel,
             segmentID: item.segmentID,
             supersetID: item.supersetID,
             exerciseCode: item.exerciseCode,
@@ -401,7 +484,9 @@ private extension SessionManager {
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
         encoder.dateEncodingStrategy = .iso8601
-        let data = try encoder.encode(meta)
+        var mutableMeta = meta
+        mutableMeta.sessionId = sessionID
+        let data = try encoder.encode(mutableMeta)
         try fileSystem.writeAtomic(data, to: url)
     }
 
