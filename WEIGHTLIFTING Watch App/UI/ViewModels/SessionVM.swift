@@ -11,6 +11,7 @@ import Foundation
 final class SessionVM: ObservableObject {
     @Published var activeWorkoutName: String = ""
     @Published var isWorkoutSheetVisible = false
+    @Published var isWorkoutMenuVisible = false
     @Published var planDays: [String] = []
     @Published var planName: String = ""
 
@@ -35,6 +36,7 @@ final class SessionVM: ObservableObject {
         sync(with: context)
         if previousSessionID != context.sessionID {
             isWorkoutSheetVisible = false
+            isWorkoutMenuVisible = false
         }
     }
 
@@ -50,10 +52,28 @@ final class SessionVM: ObservableObject {
         if isWorkoutSheetVisible && !planDays.contains(activeWorkoutName) {
             isWorkoutSheetVisible = false
         }
+        if isWorkoutMenuVisible && !planDays.contains(activeWorkoutName) {
+            isWorkoutMenuVisible = false
+        }
     }
 
     func presentWorkoutSwitchSheet() {
         isWorkoutSheetVisible = true
+    }
+
+    func presentWorkoutMenu() {
+        isWorkoutMenuVisible = true
+    }
+
+    func dismissWorkoutMenu() {
+        isWorkoutMenuVisible = false
+    }
+
+    func presentWorkoutSwitchFromMenu() {
+        isWorkoutMenuVisible = false
+        DispatchQueue.main.async {
+            self.isWorkoutSheetVisible = true
+        }
     }
 
     func switchWorkout(to newDayLabel: String) {

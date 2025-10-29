@@ -51,7 +51,7 @@ final class AppContainer: ObservableObject {
             globalCsv: globalCsv,
             indexRepository: indexService
         )
-        self.exportService = ExportService(fileSystem: fileSystem)
+        self.exportService = ExportService(fileSystem: fileSystem, globalCsv: globalCsv)
         self.complicationService = ComplicationService()
 
         let sessionStore = SessionStore(sessionManager: sessionManager)

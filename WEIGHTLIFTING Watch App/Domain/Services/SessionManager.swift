@@ -561,9 +561,9 @@ extension SessionManager {
     }
 
     static func makeSessionID(date: Date) -> String {
-        let formatter = ISO8601DateFormatter()
-        formatter.formatOptions = [.withFullDate, .withDashSeparatorInDate, .withTime, .withColonSeparatorInTime]
-        return formatter.string(from: date)
+        let base = sessionIDFormatter.string(from: date)
+        let milliseconds = Int((date.timeIntervalSince1970.truncatingRemainder(dividingBy: 1)) * 1000)
+        return "\(base)-\(String(format: "%03d", abs(milliseconds)))"
     }
 
     static func computeDeckHash(for deck: [DeckItem]) -> String {
@@ -589,4 +589,13 @@ extension SessionManager {
         let nextIndex = (currentIndex + 1) % plan.scheduleOrder.count
         return plan.scheduleOrder[nextIndex]
     }
+
+    private static let sessionIDFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.calendar = Calendar(identifier: .gregorian)
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = TimeZone(secondsFromGMT: 0)
+        formatter.dateFormat = "yyyy-MM-dd'T'HH-mm-ss'Z'"
+        return formatter
+    }()
 }

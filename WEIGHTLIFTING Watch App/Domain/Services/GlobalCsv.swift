@@ -33,6 +33,16 @@ final class GlobalCsv: GlobalCsvWriting {
         fileSystem.fsyncDirectory(containing: csvURL)
     }
 
+    func sync() throws {
+        let csvURL = try prepareGlobalCsv()
+        guard let handle = FileHandle(forUpdatingAtPath: csvURL.path) else {
+            throw FileSystem.FileError.fileHandleUnavailable(csvURL)
+        }
+        defer { try? handle.close() }
+        try handle.synchronize()
+        fileSystem.fsyncDirectory(containing: csvURL)
+    }
+
     private static func enforceUniqueTimestamp(for row: inout CsvRow) {
         guard let candidate = CsvDateFormatter.date(from: row.dateString, timeString: row.timeString) else {
             lastCommit = (row.sessionID, Date())

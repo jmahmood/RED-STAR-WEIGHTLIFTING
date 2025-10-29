@@ -46,6 +46,8 @@ struct SessionView: View {
     @State private var undoTimer: Timer?
     @State private var switchToastMessage: String?
     @State private var switchToastWorkItem: DispatchWorkItem?
+    @State private var exportToastMessage: String?
+    @State private var exportToastWorkItem: DispatchWorkItem?
     @State private var showEndScreen = false
     @State private var adhocSheet: AdhocSheetState?
 
@@ -90,13 +92,26 @@ struct SessionView: View {
              .navigationTitle("")
              .navigationBarTitleDisplayMode(.inline)
              .toolbar(.hidden, for: .navigationBar)
-             .sheet(isPresented: $sessionVM.isWorkoutSheetVisible) {
-                 WorkoutSwitchSheet(vm: sessionVM)
-             }
-             .sheet(item: $switchSheet) { sheet in
-                 ExerciseSwitchSheet(
-                     currentName: sheet.currentName,
-                     currentCode: sheet.currentCode,
+            .sheet(isPresented: $sessionVM.isWorkoutSheetVisible) {
+                WorkoutSwitchSheet(vm: sessionVM)
+            }
+            .sheet(isPresented: $sessionVM.isWorkoutMenuVisible) {
+                NavigationStack {
+                    WorkoutMenuView(
+                        vm: sessionVM,
+                        onExport: {
+                            container.exportService.exportSnapshotToPhone()
+                        },
+                        onAddExercise: {
+                            adhocSheet = AdhocSheetState()
+                        }
+                    )
+                }
+            }
+            .sheet(item: $switchSheet) { sheet in
+                ExerciseSwitchSheet(
+                    currentName: sheet.currentName,
+                    currentCode: sheet.currentCode,
                      altOptions: sheet.altOptions,
                      recentOptions: sheet.recentOptions,
                      onApply: { selectedCode, scope in
@@ -121,11 +136,17 @@ struct SessionView: View {
                  )
              }
             .overlay(alignment: .top) {
-                if let message = switchToastMessage {
-                    ToastBanner(message: message)
-                        .padding(.top, 4)
-                        .transition(.move(edge: .top).combined(with: .opacity))
+                VStack(spacing: 4) {
+                    if let exportMessage = exportToastMessage {
+                        ToastBanner(message: exportMessage)
+                            .transition(.move(edge: .top).combined(with: .opacity))
+                    }
+                    if let message = switchToastMessage {
+                        ToastBanner(message: message)
+                            .transition(.move(edge: .top).combined(with: .opacity))
+                    }
                 }
+                .padding(.top, 4)
             }
             .overlay(alignment: .bottom) {
                 if showUndoToast {
@@ -147,12 +168,16 @@ struct SessionView: View {
             }
             .animation(.easeInOut(duration: 0.2), value: showUndoToast)
             .animation(.easeInOut(duration: 0.2), value: switchToastMessage != nil)
+            .animation(.easeInOut(duration: 0.2), value: exportToastMessage != nil)
             .onAppear {
                 configureViewModel(with: currentContext)
             }
             .onReceive(sessionStore.$session) { state in
                 guard case .active(let newContext) = state else { return }
                 handleContextUpdate(newContext)
+            }
+            .onReceive(container.exportService.eventsPublisher) { event in
+                handleExportEvent(event)
             }
         } else {
             TabView(selection: $currentIndex) {
@@ -192,6 +217,19 @@ struct SessionView: View {
             .sheet(isPresented: $sessionVM.isWorkoutSheetVisible) {
                 WorkoutSwitchSheet(vm: sessionVM)
             }
+            .sheet(isPresented: $sessionVM.isWorkoutMenuVisible) {
+                NavigationStack {
+                    WorkoutMenuView(
+                        vm: sessionVM,
+                        onExport: {
+                            container.exportService.exportSnapshotToPhone()
+                        },
+                        onAddExercise: {
+                            adhocSheet = AdhocSheetState()
+                        }
+                    )
+                }
+            }
             .sheet(item: $switchSheet) { sheet in
                 ExerciseSwitchSheet(
                     currentName: sheet.currentName,
@@ -208,11 +246,17 @@ struct SessionView: View {
                 )
             }
             .overlay(alignment: .top) {
-                if let message = switchToastMessage {
-                    ToastBanner(message: message)
-                        .padding(.top, 4)
-                        .transition(.move(edge: .top).combined(with: .opacity))
+                VStack(spacing: 4) {
+                    if let exportMessage = exportToastMessage {
+                        ToastBanner(message: exportMessage)
+                            .transition(.move(edge: .top).combined(with: .opacity))
+                    }
+                    if let message = switchToastMessage {
+                        ToastBanner(message: message)
+                            .transition(.move(edge: .top).combined(with: .opacity))
+                    }
                 }
+                .padding(.top, 4)
             }
             .overlay(alignment: .bottom) {
                 if showUndoToast {
@@ -234,12 +278,16 @@ struct SessionView: View {
             }
             .animation(.easeInOut(duration: 0.2), value: showUndoToast)
             .animation(.easeInOut(duration: 0.2), value: switchToastMessage != nil)
+            .animation(.easeInOut(duration: 0.2), value: exportToastMessage != nil)
             .onAppear {
                 configureViewModel(with: currentContext)
             }
             .onReceive(sessionStore.$session) { state in
                 guard case .active(let newContext) = state else { return }
                 handleContextUpdate(newContext)
+            }
+            .onReceive(container.exportService.eventsPublisher) { event in
+                handleExportEvent(event)
             }
         }
 
@@ -272,6 +320,31 @@ struct SessionView: View {
         resetForContext(using: newContext)
         showEndScreen = false
         showEndScreen = false
+    }
+
+    private func handleExportEvent(_ event: ExportService.ExportEvent) {
+        switch event {
+        case .queued:
+            presentExportToast(message: "Export queued")
+            haptics.playClick()
+        case .delivered:
+            presentExportToast(message: "Export ready on phone")
+            haptics.playSuccess()
+        case .failed(_, let error):
+            presentExportToast(message: error.displayMessage)
+            haptics.playError()
+        }
+    }
+
+    private func presentExportToast(message: String) {
+        exportToastWorkItem?.cancel()
+        exportToastMessage = message
+        let workItem = DispatchWorkItem {
+            exportToastMessage = nil
+            exportToastWorkItem = nil
+        }
+        exportToastWorkItem = workItem
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: workItem)
     }
 
     private func presentSwitchToast(for day: String) {

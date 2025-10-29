@@ -8,14 +8,39 @@
 import SwiftUI
 
 struct WorkoutMenuView: View {
+    @ObservedObject var vm: SessionVM
+    let onExport: () -> Void
+    let onAddExercise: (() -> Void)?
+
     var body: some View {
         List {
-            Button("Switch Workout") {}
-            Button("Add Exercise") {}
+            Button("Switch Workout") {
+                vm.presentWorkoutSwitchFromMenu()
+            }
+
+            Button("Export CSV to Phone") {
+                vm.dismissWorkoutMenu()
+                DispatchQueue.main.async {
+                    onExport()
+                }
+            }
+
+            if let onAddExercise {
+                Button("Add Exercise") {
+                    vm.dismissWorkoutMenu()
+                    DispatchQueue.main.async {
+                        onAddExercise()
+                    }
+                }
+            }
         }
+        .navigationTitle("Workout")
     }
 }
 
 #Preview {
-    WorkoutMenuView()
+    let vm = SessionVM()
+    vm.planName = "Minimalist 4x"
+    vm.activeWorkoutName = "Upper A"
+    return WorkoutMenuView(vm: vm, onExport: {}, onAddExercise: {})
 }

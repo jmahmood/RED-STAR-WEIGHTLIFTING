@@ -9,9 +9,19 @@ import SwiftUI
 
 @main
 struct WEIGHTLIFTINGApp: App {
+    @StateObject private var exportInbox = ExportInboxStore()
+    @Environment(\.scenePhase) private var scenePhase
+
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(exportInbox)
+                .onAppear {
+                    exportInbox.updateScenePhase(scenePhase)
+                }
+                .onChange(of: scenePhase) { phase in
+                    exportInbox.updateScenePhase(phase)
+                }
         }
     }
 }
