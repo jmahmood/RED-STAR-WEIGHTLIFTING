@@ -1,0 +1,297 @@
+{
+  "name": "Essentials: Block 1 (Weeks 1-4)",
+  "author": "Jeff Nippard",
+  "unit": "lb",
+  "dictionary": {
+    "ARMS.DB.FRENCH": "DB French Press",
+    "ARMS.EZ.SKULL": "EZ-Bar Skull Crusher",
+    "BP.DB.FLAT": "Flat Dumbbell Press",
+    "BP.MACH.CHEST": "Machine Chest Press",
+    "CALF.MACH.LPTOE": "Leg Press Toe Press",
+    "CALF.MACH.SEAT": "Seated Calf Raise",
+    "CALF.SSB.STND": "Standing Calf Raise",
+    "CORE.CBL.CRUNCH": "Reverse Cable Crunch",
+    "CORE.HANG.LEG": "Hanging Leg Raise",
+    "CORE.MACH.CRUNCH": "Machine Crunch",
+    "CORE.MACH.CRUNCH": "Machine Crunch",
+    "CORE.REV.CRUNCH": "Reverse Crunch",
+    "CURL.CBL.BYSN": "Bayesian Cable Curl",
+    "CURL.CBL.EZ": "Cable EZ Curl",
+    "CURL.DB.INCLN": "Dumbbell Incline Curl",
+    "CURL.DB.STND": "Dumbbell Curl",
+    "CURL.EZ.STND": "EZ-Bar Curl",
+    "DIP.BW.STND": "Weighted Dip",
+    "DL.BB.RDL": "Romanian Deadlift",
+    "DL.DB.RDL": "Dumbbell Romanian Deadlift",
+    "DL.TB.RDL": "Trapbar Romanian Deadlift",
+    "EXT.MACH.LP": "Leg Press",
+    "HAM.BW.NORD": "Nordic Ham Curl",
+    "HAM.CURL.LYING": "Lying Leg Curl",
+    "HAM.CURL.SEATED": "Seated Hamstring Curl",
+    "HE.MACH.45": "45 Degree Hyperextension",
+    "LUNGE.DB.WALK": "Dumbbell Lunge Walk",
+    "OHP.BB.STND": "Standing Barbell Press",
+    "OHP.DB.ARNOLD.STD": "Standing DB Arnold Press",
+    "OHP.DB.SEAT": "Seated Dumbbell Shoulder Press",
+    "OHP.MACH.SEAT": "Machine Shoulder Press",
+    "PULLDN.CBL.SEAT": "Lat Pulldown (2-Grip)",
+    "PULLDN.MACH.SEAT": "Machine Pulldown",
+    "PULLUP.BW.2GRIP": "Pull-Up (2-Grip)",
+    "QUAD.MACH.EXT": "Leg Extension Machine",
+    "RAISE.DB.STND": "Lateral Dumbbell Raise",
+    "RAISE.CBL.STND": "Cable Lateral Raise",
+    "RAISE.MACH.STND": "Machine Lateral Raise",
+    "ROW.BB.PNDLY": "Pendlay Row",
+    "ROW.BB.SUPP": "Chest-Supported T-Bar Row",
+    "ROW.BB.TBAR": "T-Bar Row",
+    "ROW.CBL.SEAT": "Seated Cable Row",
+    "ROW.DB.STND": "Standing Dumbbell Row",
+    "ROW.TB.PNDLY": "Pendlay Trapbar Row",
+    "SQ.DB.GOB": "Goblet Squat",
+    "SQ.MACH.HACK": "Hack Squat",
+    "SQ.SSB.STND": "SSB Squat",
+    "STEPUP.DB.STND": "Dumbbell Stepup",
+    "TRI.CBL.KICKBACK": "Tricep Cable Kickback",
+    "TRI.CBL.OH": "Overhead Cable Triceps Extension",
+    "TRI.CBL.PUSHDN": "Tricep Cable Pushdown",
+    "TRI.DB.KICKBACK": "Tricep Dumbbell Kickback"
+  },
+  "groups": {
+    "GROUP_ABS": ["CORE.HANG.LEG", "CORE.REV.CRUNCH"],
+    "GROUP_BI_CURL": ["CURL.EZ.STND", "CURL.DB.STND", "CURL.CBL.EZ"],
+    "GROUP_BI_CURL_2": ["CURL.CBL.BYSN", "CURL.DB.INCLN", "CURL.DB.STND"],
+    "GROUP_CALF": ["CALF.SSB.STND", "CALF.MACH.SEAT", "CALF.MACH.LPTOE"],
+    "GROUP_CHEST_PRESS": ["BP.DB.FLAT", "BP.MACH.CHEST", "DIP.BW.STND"],
+    "GROUP_RDL_BACKEXT": ["DL.DB.RDL", "DL.BB.RDL", "DL.TB.RDL", "HE.MACH.45"],
+    "GROUP_LATERAL": ["RAISE.DB.STND", "RAISE.CBL.STND", "RAISE.MACH.STND"],
+    "GROUP_LEG_PRESS_ALT": ["EXT.MACH.LP", "SQ.DB.GOB", "LUNGE.DB.WALK"],
+    "GROUP_QUAD_ISO": ["QUAD.MACH.EXT", "STEUP.DB", "SQ.DB.GOB"],
+    "GROUP_HAM_CURL": ["HAM.CURL.SEATED", "HAM.BW.NORD", "HAM.CURL.LYING"],
+    "GROUP_OHP": ["OHP.DB.SEAT", "OHP.MACH.SEAT", "OHP.DB.ARNOLD.STD"],
+    "GROUP_OHP_2": ["OHP.MACH.SEAT", "OHP.BB.STND", "OHP.DB.ARNOLD.STD"],
+    "GROUP_ROW": ["ROW.CBL.SEAT", "ROW.BB.SUPP", "ROW.DB.STND"],
+    "GROUP_ROW_2": ["ROW.TB.PNDLY", "ROW.BB.TBAR", "ROW.CBL.SEAT"],
+    "GROUP_SQUAT": ["SQ.SSB.STND", "SQ.MACH.HACK", "EXT.MACH.LP"],
+    "GROUP_TRI_EXT": ["ARMS.EZ.SKULL", "ARMS.DB.FRENCH", "TRI.CBL.OH"],
+    "GROUP_TRI_EXT_2": ["TRI.CBL.PUSHDN", "TRI.CBL.KICKBACK", "TRI.DB.KICKBACK"],
+    "GROUP_VERTICAL_PULL_2GRIP": ["PULLDN.CBL.SEAT", "PULLUP.BW.2GRIP", "PULLDN.MACH.SEAT"],
+    "GROUP_ABS_EXTENDED": ["CORE.CBL.CRUNCH", "CORE.MACH.CRUNCH", "CORE.MACH.CRUNCH"]
+  },
+  "phase": { "index": 1, "weeks": [1, 2, 3, 4] },
+  "progression": {
+    "mode": "double_progression",
+    "reps_first": true,
+    "load_increment_kg": 2.5,
+    "cap_rpe": 9.0
+  },
+  "warmup": {
+    "pattern": "percent_of_top",
+    "stages": [
+      { "pct_1rm": 0.3, "reps": 8 },
+      { "pct_1rm": 0.5, "reps": 5 },
+      { "pct_1rm": 0.7, "reps": 3 }
+    ],
+    "round_to": 2.5,
+    "merge_after_rounding": true
+  },
+  "schedule": [
+    {
+      "day": 1,
+      "label": "Upper A",
+      "segments": [
+        {
+          "type": "scheme",
+          "ex": "BP.DB.FLAT",
+          "alt_group": "GROUP_CHEST_PRESS",
+          "sets": [
+            { "label": "Top Set", "reps": { "min": 4, "max": 6 }, "rpe": 8.5, "rest_sec": 150, "track_pr": true },
+            { "label": "Back-off", "sets": 1, "reps": { "min": 8, "max": 10 }, "rpe": 8.5, "rest_sec": 150 }
+          ]
+        },
+        {
+          "type": "straight",
+          "ex": "PULLDN.CBL.SEAT",
+          "alt_group": "GROUP_VERTICAL_PULL_2GRIP",
+          "sets": 2,
+          "reps": { "min": 10, "max": 12 },
+          "rpe": 9.5,
+          "rest_sec": 120
+        },
+        {
+          "type": "straight",
+          "ex": "OHP.DB.SEAT",
+          "alt_group": "GROUP_OHP",
+          "sets": 2,
+          "reps": { "min": 10, "max": 12 },
+          "rpe": 9.5,
+          "rest_sec": 120
+        }
+,        {
+          "type": "straight",
+          "ex": "ROW.CBL.SEAT",
+          "alt_group": "GROUP_ROW",
+          "sets": 2,
+          "reps": { "min": 10, "max": 12 },
+          "rpe": 9.5,
+          "rest_sec": 120,
+          "intensifier": { "kind": "dropset", "when": "last_set", "drop_pct": 0.15, "steps": 1 }
+        },
+        {
+          "type": "superset",
+          "label": "Arms Superset",
+          "rounds": 2,
+          "rest_sec": 0,
+          "rest_between_rounds_sec": 60,
+          "items": [
+            { "ex": "ARMS.EZ.SKULL", "alt_group": "GROUP_TRI_EXT", "sets": 1, "reps": { "min": 12, "max": 15 }, "rpe": 9.5 },
+            { "ex": "CURL.EZ.STND", "alt_group": "GROUP_BI_CURL", "sets": 1, "reps": { "min": 12, "max": 15 }, "rpe": 9.5 }
+          ]
+        }
+      ]
+    },
+    {
+      "day": 2,
+      "label": "Lower A",
+      "segments": [
+        {
+          "type": "scheme",
+          "ex": "SQ.SSB.STND",
+          "alt_group": "GROUP_SQUAT",
+          "sets": [
+            { "label": "Top Set", "reps": { "min": 4, "max": 6 }, "rpe": 8.5, "rest_sec": 150, "track_pr": true },
+            { "label": "Back-off", "sets": 1, "reps": { "min": 8, "max": 10 }, "rpe": 8.5, "rest_sec": 150 }
+          ]
+        },
+        {
+          "type": "straight",
+          "ex": "HAM.CURL.SEATED",
+          "alt_group": "GROUP_HAM_CURL",
+          "sets": 1,
+          "reps": { "min": 10, "max": 12 },
+          "rpe": 9.5,
+          "rest_sec": 105,
+          "intensifier": { "kind": "dropset", "when": "last_set", "drop_pct": 0.15, "steps": 1 }
+        },
+        {
+          "type": "superset",
+          "label": "Calves + Abs",
+          "rounds": 2,
+          "rest_sec": 0,
+          "rest_between_rounds_sec": 60,
+          "items": [
+            { "ex": "CALF.SSB.STND", "alt_group": "GROUP_CALF", "sets": 1, "reps": { "min": 10, "max": 12 }, "rpe": 9.5 },
+            { "ex": "CORE.HANG.LEG", "alt_group": "GROUP_ABS", "sets": 1, "reps": { "min": 10, "max": 12 }, "rpe": 9.0 }
+          ]
+        }
+      ]
+    },
+    {
+      "day": 3,
+      "label": "Upper B",
+      "segments": [
+        {
+          "type": "straight",
+          "ex": "ROW.TB.PNDLY",
+          "alt_group": "GROUP_ROW_2",
+          "sets": 2,
+          "reps": { "min": 9, "max": 10 },
+          "rpe": 9.5,
+          "rest_sec": 120        },
+        {
+          "type": "straight",
+          "ex": "OHP.BB.STND",
+          "alt_group": "GROUP_OHP_2",
+          "sets": 2,
+          "reps": { "min": 10, "max": 12 },
+          "rpe": 9.5,
+          "rest_sec": 120
+        },
+        {
+          "type": "straight",
+          "ex": "PULLDN.CBL.SEAT",
+          "alt_group": "GROUP_VERTICAL_PULL_2GRIP",
+          "sets": 2,
+          "reps": { "min": 10, "max": 12 },
+          "rpe": 9.5,
+          "rest_sec": 120
+        },
+        {
+          "type": "straight",
+          "ex": "BP.DB.FLAT",
+          "alt_group": "GROUP_CHEST_PRESS",
+          "sets": 2,
+          "reps": { "min": 8, "max": 10 },
+          "rpe": 8.5,
+          "rest_sec": 120,
+          "intensifier": { "kind": "dropset", "when": "last_set", "drop_pct": 0.50, "steps": 1 }
+        },
+        {
+          "type": "superset",
+          "label": "Biceps/Triceps",
+          "rounds": 2,
+          "rest_sec": 0,
+          "rest_between_rounds_sec": 60,
+          "items": [
+            { "ex": "CURL.CBL.BYSN", "alt_group": "GROUP_BI_CURL_2", "sets": 1, "reps": { "min": 12, "max": 15 }, "rpe": 9.5 },
+            { "ex": "TRI.CBL.PUSHDN", "alt_group": "GROUP_TRI_EXT_2", "sets": 1, "reps": { "min": 12, "max": 15 }, "rpe": 9.5 }
+          ]
+        },
+        {
+          "type": "straight",
+          "ex": "RAISE.DB.STND",
+          "alt_group": "GROUP_LATERAL",
+          "sets": 1,
+          "reps": { "min": 12, "max": 15 },
+          "rpe": 9.5,
+          "rest_sec": 60,
+          "intensifier": { "kind": "dropset", "when": "last_set", "drop_pct": 0.50, "steps": 1 }
+        }
+      ]
+    },
+    {
+      "day": 4,
+      "label": "Lower B",
+      "segments": [
+        {
+          "type": "straight",
+          "ex": "DL.TB.RDL",
+          "alt_group": "GROUP_RDL_BACKEXT",
+          "sets": 2,
+          "reps": { "min": 10, "max": 12 },
+          "rpe": 9.5,
+          "rest_sec": 150
+        },
+        {
+          "type": "straight",
+          "ex": "LUNGE.DB.WALK",
+          "alt_group": "GROUP_LEG_PRESS_ALT",
+          "sets": 3,
+          "reps": { "min": 10, "max": 12 },
+          "rpe": 9.5,
+          "rest_sec": 150
+        },
+        {
+          "type": "straight",
+          "ex": "QUAD.MACH.EXT",
+          "alt_group": "GROUP_QUAD_ISO",
+          "sets": 1,
+          "reps": { "min": 10, "max": 12 },
+          "rpe": 9.5,
+          "rest_sec": 90,
+          "intensifier": { "kind": "dropset", "when": "last_set", "drop_pct": 0.15, "steps": 1 }
+        },
+        {
+          "type": "superset",
+          "label": "Calves + Abs",
+          "rounds": 2,
+          "rest_sec": 0,
+          "rest_between_rounds_sec": 90,
+          "items": [
+            { "ex": "CALF.SSB.STND", "alt_group": "GROUP_CALF", "sets": 1, "reps": { "min": 12, "max": 15 }, "rpe": 9.5 },
+            { "ex": "CORE.CBL.CRUNCH", "alt_group": "GROUP_ABS_EXTENDED", "sets": 1, "reps": { "min": 12, "max": 15 }, "rpe": 9.0 }
+          ]
+        }
+      ]
+    }
+  ]
+}
