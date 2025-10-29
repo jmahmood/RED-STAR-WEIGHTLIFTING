@@ -30,8 +30,9 @@ struct RootView: View {
 
 struct SessionView: View {
     @EnvironmentObject private var container: AppContainer
-    let context: SessionContext
+    @EnvironmentObject private var sessionStore: SessionStore
 
+    @State private var currentContext: SessionContext
     @StateObject private var sessionVM = SessionVM()
     @State private var deck: [DeckItem]
     @State private var editingStates: [UUID: SetEditingState]
@@ -49,7 +50,7 @@ struct SessionView: View {
     private let haptics = WatchHaptics()
 
     init(context: SessionContext) {
-        self.context = context
+        _currentContext = State(initialValue: context)
         let initialDeck = context.deck
         _deck = State(initialValue: initialDeck)
 
@@ -71,8 +72,7 @@ struct SessionView: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            SessionHeaderView(vm: sessionVM)
+        ZStack(alignment: .topLeading) {
             TabView(selection: $currentIndex) {
                 ForEach(Array(deck.enumerated()), id: \.element.id) { entry in
                     let item = entry.element
@@ -96,10 +96,16 @@ struct SessionView: View {
                     .tag(entry.offset)
                 }
             }
+            .padding(.top, 30)
             .tabViewStyle(.page)
+
+            SessionHeaderView(vm: sessionVM)
+                .padding(.top, 4)
+                .padding(.horizontal, 12)
         }
-        .navigationTitle(sessionVM.activeWorkoutName.isEmpty ? context.day.label : sessionVM.activeWorkoutName)
+        .navigationTitle("")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar(.hidden, for: .navigationBar)
         .sheet(isPresented: $sessionVM.isWorkoutSheetVisible) {
             WorkoutSwitchSheet(vm: sessionVM)
         }
@@ -146,23 +152,15 @@ struct SessionView: View {
         .animation(.easeInOut(duration: 0.2), value: showUndoToast)
         .animation(.easeInOut(duration: 0.2), value: switchToastMessage != nil)
         .onAppear {
-            configureViewModel()
+            configureViewModel(with: currentContext)
         }
-        .onChange(of: context.sessionID) { _ in
-            configureViewModel()
-            resetForContext()
-            hideSwitchToast()
-        }
-        .onChange(of: context.day.label) { _ in
-            let previousSessionID = sessionVM.sessionIdentifier
-            sessionVM.sync(with: context)
-            if previousSessionID == context.sessionID {
-                resetForContext()
-            }
+        .onReceive(sessionStore.$session) { state in
+            guard case .active(let newContext) = state else { return }
+            handleContextUpdate(newContext)
         }
     }
 
-    private func configureViewModel() {
+    private func configureViewModel(with context: SessionContext) {
         sessionVM.configure(
             sessionManager: container.sessionManager,
             context: context,
@@ -170,6 +168,23 @@ struct SessionView: View {
                 presentSwitchToast(for: day)
             }
         )
+    }
+
+    private func handleContextUpdate(_ newContext: SessionContext) {
+        let previousContext = currentContext
+        currentContext = newContext
+        sessionVM.sync(with: newContext)
+        guard previousContext.sessionID != newContext.sessionID ||
+            previousContext.day.label != newContext.day.label else {
+            return
+        }
+
+        if previousContext.sessionID != newContext.sessionID {
+            configureViewModel(with: newContext)
+            hideSwitchToast()
+        }
+
+        resetForContext(using: newContext)
     }
 
     private func presentSwitchToast(for day: String) {
@@ -312,7 +327,7 @@ struct SessionView: View {
         showUndoToast = false
     }
 
-    private func resetForContext() {
+    private func resetForContext(using context: SessionContext) {
         let newDeck = context.deck
         deck = newDeck
         let initialStates = Dictionary(uniqueKeysWithValues: newDeck.map { item in
@@ -438,14 +453,14 @@ struct SessionView: View {
     }
 
     private func displayName(for code: String) -> String {
-        context.plan.exerciseNames[code] ?? code
+        currentContext.plan.exerciseNames[code] ?? code
     }
 
     private func altGroupOptions(for item: DeckItem) -> [String] {
         guard let group = item.altGroup else {
             return [item.exerciseCode]
         }
-        var codes = context.plan.altGroups[group] ?? []
+        var codes = currentContext.plan.altGroups[group] ?? []
         if !codes.contains(item.exerciseCode) {
             codes.insert(item.exerciseCode, at: 0)
         }
@@ -477,7 +492,7 @@ struct SessionView: View {
     }
 
     private func formattedWeight(_ weight: Double) -> String {
-        let symbol = context.plan.unit.displaySymbol
+        let symbol = currentContext.plan.unit.displaySymbol
         if abs(weight - weight.rounded()) < 0.0001 {
             return "\(Int(weight)) \(symbol)"
         }
