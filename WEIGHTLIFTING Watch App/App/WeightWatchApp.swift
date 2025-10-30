@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import ClockKit
 
 @main
 struct WeightWatchApp: App {
@@ -23,6 +24,16 @@ struct WeightWatchApp: App {
             .onChange(of: scenePhase) { phase in
                 guard phase == .active else { return }
                 container.exportService.handleScenePhaseChange()
+                container.complicationService.reloadComplications()
+            }
+            .onContinueUserActivity("com.weightlifting.nextSet") { userActivity in
+                // Handle deep-link to next set
+                if let userInfo = userActivity.userInfo,
+                   let sessionID = userInfo["sessionID"] as? String,
+                   let deckIndex = userInfo["deckIndex"] as? Int {
+                    // TODO: Navigate to the set at deckIndex in sessionID
+                    print("Navigate to session \(sessionID) index \(deckIndex)")
+                }
             }
         }
     }

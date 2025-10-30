@@ -18,6 +18,7 @@ final class AppContainer: ObservableObject {
     let sessionManager: SessionManager
     let exportService: ExportService
     let complicationService: ComplicationService
+    let complicationController: ComplicationController
 
     let sessionStore: SessionStore
     let deckStore: DeckStore
@@ -44,16 +45,20 @@ final class AppContainer: ObservableObject {
         let walReplay = WalReplay(fileSystem: fileSystem, globalCsv: globalCsv, indexRepository: indexService)
         walReplay.replayPendingSessions()
 
+        self.complicationService = ComplicationService()
+        self.complicationController = ComplicationController()
+
         self.sessionManager = SessionManager(
             fileSystem: fileSystem,
             planRepository: planRepository,
             deckBuilder: deckBuilder,
             walLog: walLog,
             globalCsv: globalCsv,
-            indexRepository: indexService
+            indexRepository: indexService,
+            complicationService: complicationService
         )
         self.exportService = ExportService(fileSystem: fileSystem, globalCsv: globalCsv)
-        self.complicationService = ComplicationService()
+//        self.complicationService = ComplicationService()
 
         let sessionStore = SessionStore(sessionManager: sessionManager)
         self.sessionStore = sessionStore

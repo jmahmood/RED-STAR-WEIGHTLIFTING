@@ -152,6 +152,11 @@
 					};
 					4CCCDDE42EB1ABBE0013B7A6 = {
 						CreatedOnToolsVersion = 26.0.1;
+						SystemCapabilities = {
+							com.apple.Complication = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -343,10 +348,9 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 589DL222X4;
 				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_KEY_CFBundleDisplayName = WEIGHTLIFTING;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.jawaadmahmood.WEIGHTLIFTING;
+				INFOPLIST_FILE = "WEIGHTLIFTING Watch App/Resources/WatchAppInfo.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -376,10 +380,9 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 589DL222X4;
 				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_KEY_CFBundleDisplayName = WEIGHTLIFTING;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.jawaadmahmood.WEIGHTLIFTING;
+				INFOPLIST_FILE = "WEIGHTLIFTING Watch App/Resources/WatchAppInfo.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

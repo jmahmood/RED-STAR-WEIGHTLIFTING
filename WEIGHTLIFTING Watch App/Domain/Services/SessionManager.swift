@@ -44,6 +44,7 @@ final class SessionManager: SessionManaging {
     private let walLog: WalLogging
     private let globalCsv: GlobalCsvWriting
     private let indexRepository: IndexRepositorying
+    private let complicationService: ComplicationService
 
     private let subject = CurrentValueSubject<SessionState, Never>(.idle)
     private let queue = DispatchQueue(label: "SessionManager.queue", qos: .userInitiated)
@@ -72,7 +73,8 @@ final class SessionManager: SessionManaging {
         deckBuilder: DeckBuilding,
         walLog: WalLogging,
         globalCsv: GlobalCsvWriting,
-        indexRepository: IndexRepositorying
+        indexRepository: IndexRepositorying,
+        complicationService: ComplicationService
     ) {
         self.fileSystem = fileSystem
         self.planRepository = planRepository
@@ -80,6 +82,7 @@ final class SessionManager: SessionManaging {
         self.walLog = walLog
         self.globalCsv = globalCsv
         self.indexRepository = indexRepository
+        self.complicationService = complicationService
     }
 
     var sessionPublisher: AnyPublisher<SessionState, Never> {
@@ -145,13 +148,15 @@ final class SessionManager: SessionManaging {
 
                 self.activeMeta = meta
 
-                let context = SessionContext(deck: mutatedDeck, sessionID: sessionID, plan: plan, day: day)
-                self.activeContext = context
+                 let context = SessionContext(deck: mutatedDeck, sessionID: sessionID, plan: plan, day: day)
+                 self.activeContext = context
+
+                 self.complicationService.updateNextUp(context: context, meta: meta)
 
                 // Check for auto-advance
                 if meta.sessionCompleted,
                    let lastSave = meta.lastSaveAt,
-                   Date().timeIntervalSince(lastSave) > 3600, // more than 1 hour
+                   Date().timeIntervalSince1970 - lastSave.timeIntervalSince1970 > 3600, // more than 1 hour
                    let sessionDate = self.parseSessionDate(sessionID),
                    Calendar.current.isDateInYesterday(sessionDate) {
                     // Auto-advance to next day
@@ -192,8 +197,8 @@ final class SessionManager: SessionManaging {
             }
 
             self.activeMeta = meta
-           self.activeDeck = self.mutateDeck(self.baseDeck, with: meta, plan: plan)
-           self.activeContext = SessionContext(deck: self.activeDeck, sessionID: sessionID, plan: plan, day: day)
+            self.activeDeck = self.mutateDeck(self.baseDeck, with: meta, plan: plan)
+            self.activeContext = SessionContext(deck: self.activeDeck, sessionID: sessionID, plan: plan, day: day)
 
             do {
                 try self.saveMeta(meta, sessionID: sessionID)
@@ -204,6 +209,7 @@ final class SessionManager: SessionManaging {
             }
 
             if let context = self.activeContext {
+                self.complicationService.updateNextUp(context: context, meta: meta)
                 self.subject.send(.active(context))
             }
         }
@@ -240,7 +246,10 @@ final class SessionManager: SessionManaging {
             self.pendingSaves[sequence] = pending
             self.pendingOrder.append(sequence)
             meta.pending.append(SessionMeta.Pending(sequence: sequence, savedAt: savedAt, row: row))
-            self.activeMeta = meta
+             self.activeMeta = meta
+             if let context = self.activeContext {
+                 self.complicationService.updateNextUp(context: context, meta: meta)
+             }
 
             do {
                 try self.saveMeta(meta, sessionID: sessionID)
@@ -270,7 +279,11 @@ final class SessionManager: SessionManaging {
             CommitWheel.shared.cancel(seq: Int(sequence))
 
             meta.pending.removeAll { $0.sequence == sequence }
-            self.activeMeta = meta
+             self.activeMeta = meta
+
+             if let context = self.activeContext {
+                 self.complicationService.updateNextUp(context: context, meta: meta)
+             }
 
             do {
                 try self.saveMeta(meta, sessionID: sessionID)
@@ -333,9 +346,10 @@ final class SessionManager: SessionManaging {
                 #endif
             }
 
-            let context = SessionContext(deck: mutatedDeck, sessionID: sessionID, plan: plan, day: targetDay)
-            self.activeContext = context
-            self.subject.send(.active(context))
+             let context = SessionContext(deck: mutatedDeck, sessionID: sessionID, plan: plan, day: targetDay)
+             self.activeContext = context
+             self.complicationService.updateNextUp(context: context, meta: meta)
+             self.subject.send(.active(context))
         }
     }
 

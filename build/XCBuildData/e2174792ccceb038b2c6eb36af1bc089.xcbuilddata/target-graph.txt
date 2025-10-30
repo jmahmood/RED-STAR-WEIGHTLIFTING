@@ -1,2 +1,0 @@
-Target dependency graph (1 target)
-Target 'WEIGHTLIFTING Watch App' in project 'WEIGHTLIFTING' (no dependencies)
