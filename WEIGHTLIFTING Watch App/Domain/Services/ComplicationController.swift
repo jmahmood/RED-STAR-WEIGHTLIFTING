@@ -85,16 +85,18 @@ final class ComplicationController: NSObject, CLKComplicationDataSource {
 
         switch family {
         case .modularLarge:
-            let template = CLKComplicationTemplateModularLargeStandardBody()
-            template.headerTextProvider = CLKSimpleTextProvider(text: "Next Up")
-            template.body1TextProvider = CLKSimpleTextProvider(text: data.exerciseName)
-            template.body2TextProvider = CLKSimpleTextProvider(text: footerText)
+            let template = CLKComplicationTemplateModularLargeStandardBody(
+                headerTextProvider: CLKSimpleTextProvider(text: "Next Up"),
+                body1TextProvider: CLKSimpleTextProvider(text: data.exerciseName),
+                body2TextProvider: CLKSimpleTextProvider(text: footerText)
+            )
             return template
         case .graphicRectangular:
-            let template = CLKComplicationTemplateGraphicRectangularStandardBody()
-            template.headerTextProvider = CLKSimpleTextProvider(text: "Next Up")
-            template.body1TextProvider = CLKSimpleTextProvider(text: data.exerciseName)
-            template.body2TextProvider = CLKSimpleTextProvider(text: footerText)
+            let template = CLKComplicationTemplateGraphicRectangularStandardBody(
+                headerTextProvider: CLKSimpleTextProvider(text: "Next Up"),
+                body1TextProvider: CLKSimpleTextProvider(text: data.exerciseName),
+                body2TextProvider: CLKSimpleTextProvider(text: footerText)
+            )
             return template
         default:
             return nil

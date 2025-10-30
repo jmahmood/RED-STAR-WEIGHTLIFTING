@@ -29,8 +29,6 @@ struct ExerciseSwitchSheet: View {
     let onApply: (String, ExerciseSwitchScope) -> Void
     let onCancel: () -> Void
 
-    @State private var selection: String
-
     init(
         currentName: String,
         currentCode: String,
@@ -45,7 +43,6 @@ struct ExerciseSwitchSheet: View {
         self.recentOptions = recentOptions
         self.onApply = onApply
         self.onCancel = onCancel
-        _selection = State(initialValue: currentCode)
     }
 
     var body: some View {
@@ -68,7 +65,6 @@ struct ExerciseSwitchSheet: View {
                     }
                 }
 
-                actionButtons
                 cancelButton
             }
             .padding()
@@ -87,28 +83,7 @@ struct ExerciseSwitchSheet: View {
         .padding(.top, 4)
     }
 
-    private var actionButtons: some View {
-        VStack(spacing: 8) {
-            Button {
-                onApply(selection, .remaining)
-            } label: {
-                Text("Apply to Remaining")
-                    .frame(maxWidth: .infinity)
-            }
-            .buttonStyle(.borderedProminent)
 
-            Button {
-                onApply(selection, .thisSet)
-            } label: {
-                Text("This set only")
-                    .font(.caption2)
-                    .foregroundStyle(Color.secondary)
-                    .padding(.vertical, 4)
-                    .frame(maxWidth: .infinity)
-            }
-            .buttonStyle(.plain)
-        }
-    }
 
     private var cancelButton: some View {
         Button("Cancel", role: .cancel, action: onCancel)
@@ -134,7 +109,8 @@ struct ExerciseSwitchSheet: View {
     @ViewBuilder
     private func row(for option: ExerciseSwitchOption) -> some View {
         Button {
-            selection = option.code
+            onApply(option.code, .remaining)
+            onCancel()
         } label: {
             HStack(alignment: .firstTextBaseline, spacing: 8) {
                 VStack(alignment: .leading, spacing: 2) {
@@ -148,21 +124,12 @@ struct ExerciseSwitchSheet: View {
                     }
                 }
                 Spacer()
-                if selection == option.code {
-                    Image(systemName: "checkmark")
-                        .font(.footnote)
-                        .foregroundColor(.accentColor)
-                }
             }
             .padding(.vertical, 4)
             .frame(maxWidth: .infinity, alignment: .leading)
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .background(
-            RoundedRectangle(cornerRadius: 8)
-                .fill(selection == option.code ? Color.accentColor.opacity(0.1) : Color.clear)
-        )
     }
 
     private struct OptionEntry: Identifiable {

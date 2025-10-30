@@ -43,6 +43,7 @@ struct SessionView: View {
     @State private var completionOrder: [UUID] = []
     @State private var showUndoToast = false
     @State private var undoDeadline: Date?
+    @State private var undoToastWorkItem: DispatchWorkItem?
     @State private var switchToastMessage: String?
     @State private var switchToastWorkItem: DispatchWorkItem?
     @State private var exportToastMessage: String?
@@ -153,6 +154,20 @@ struct SessionView: View {
             }
             .overlay(alignment: .top) {
                 VStack(spacing: 4) {
+                    if showUndoToast, let deadline = undoDeadline {
+                        ToastUndoChip(
+                            title: "Saved",
+                            actionTitle: "Undo",
+                            deadline: deadline,
+                            action: {
+                                if undoLastSavedSet() {
+                                    container.sessionManager.undoLast()
+                                }
+                                hideUndoToast()
+                            }
+                        )
+                        .transition(.move(edge: .top).combined(with: .opacity))
+                    }
                     if let exportMessage = exportToastMessage {
                         ToastBanner(message: exportMessage)
                             .transition(.move(edge: .top).combined(with: .opacity))
@@ -161,27 +176,9 @@ struct SessionView: View {
                          ToastBanner(message: message)
                              .transition(.move(edge: .top).combined(with: .opacity))
                      }
-                 }
-                 .padding(.top, 4)
-             }
-             .overlay(alignment: .bottom) {
-                 if showUndoToast, let deadline = undoDeadline {
-                     ToastUndoChip(
-                         title: "Saved",
-                         actionTitle: "Undo",
-                         deadline: deadline,
-                         action: {
-                             if undoLastSavedSet() {
-                                 container.sessionManager.undoLast()
-                             }
-                             hideUndoToast()
-                         }
-                     )
-                     .padding(.horizontal, 8)
-                     .padding(.bottom, 12)
-                     .transition(.move(edge: .bottom).combined(with: .opacity))
-                 }
-             }
+                }
+                .padding(.top, 4)
+            }
             .animation(.easeInOut(duration: 0.2), value: showUndoToast)
             .animation(.easeInOut(duration: 0.2), value: switchToastMessage != nil)
             .animation(.easeInOut(duration: 0.2), value: exportToastMessage != nil)
@@ -292,6 +289,20 @@ struct SessionView: View {
             }
             .overlay(alignment: .top) {
                 VStack(spacing: 4) {
+                    if showUndoToast, let deadline = undoDeadline {
+                        ToastUndoChip(
+                            title: "Saved",
+                            actionTitle: "Undo",
+                            deadline: deadline,
+                            action: {
+                                if undoLastSavedSet() {
+                                    container.sessionManager.undoLast()
+                                }
+                                hideUndoToast()
+                            }
+                        )
+                        .transition(.move(edge: .top).combined(with: .opacity))
+                    }
                     if let exportMessage = exportToastMessage {
                         ToastBanner(message: exportMessage)
                             .transition(.move(edge: .top).combined(with: .opacity))
@@ -303,24 +314,6 @@ struct SessionView: View {
                 }
                 .padding(.top, 4)
             }
-             .overlay(alignment: .bottom) {
-                 if showUndoToast, let deadline = undoDeadline {
-                     ToastUndoChip(
-                         title: "Saved",
-                         actionTitle: "Undo",
-                         deadline: deadline,
-                         action: {
-                             if undoLastSavedSet() {
-                                 container.sessionManager.undoLast()
-                             }
-                             hideUndoToast()
-                         }
-                     )
-                     .padding(.horizontal, 8)
-                     .padding(.bottom, 12)
-                     .transition(.move(edge: .bottom).combined(with: .opacity))
-                 }
-             }
              .animation(.easeInOut(duration: 0.2), value: showUndoToast)
              .animation(.easeInOut(duration: 0.2), value: switchToastMessage != nil)
              .animation(.easeInOut(duration: 0.2), value: exportToastMessage != nil)
@@ -509,11 +502,19 @@ struct SessionView: View {
     }
 
     private func presentUndoToast() {
+        undoToastWorkItem?.cancel()
         undoDeadline = Date().addingTimeInterval(5)
         showUndoToast = true
+        let workItem = DispatchWorkItem {
+            hideUndoToast()
+        }
+        undoToastWorkItem = workItem
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5, execute: workItem)
     }
 
     private func hideUndoToast() {
+        undoToastWorkItem?.cancel()
+        undoToastWorkItem = nil
         showUndoToast = false
         undoDeadline = nil
     }
@@ -539,6 +540,8 @@ struct SessionView: View {
         completedSetIDs.removeAll()
         completionOrder.removeAll()
         currentIndex = 0
+        undoToastWorkItem?.cancel()
+        undoToastWorkItem = nil
         showUndoToast = false
         undoDeadline = nil
         switchSheet = nil

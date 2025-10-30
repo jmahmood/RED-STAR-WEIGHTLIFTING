@@ -19,9 +19,7 @@ struct WEIGHTLIFTINGApp: App {
                 .onAppear {
                     exportInbox.updateScenePhase(scenePhase)
                 }
-                .onChange(of: scenePhase) { phase in
-                    exportInbox.updateScenePhase(phase)
-                }
+                .onChange(of: scenePhase, perform: exportInbox.updateScenePhase)
         }
     }
 }
