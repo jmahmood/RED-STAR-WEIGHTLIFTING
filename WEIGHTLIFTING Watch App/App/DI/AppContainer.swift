@@ -12,13 +12,14 @@ final class AppContainer: ObservableObject {
     let fileSystem: FileSystem
     let walLog: WalLog
     let globalCsv: GlobalCsv
-    let indexService: IndexRepositorying
+    let indexService: IndexService
     let planRepository: PlanRepository
     let deckBuilder: DeckBuilder
     let sessionManager: SessionManager
     let exportService: ExportService
     let complicationService: ComplicationService
     let complicationController: ComplicationController
+    let companionIncomingService: CompanionIncomingService
 
     let sessionStore: SessionStore
     let deckStore: DeckStore
@@ -57,8 +58,18 @@ final class AppContainer: ObservableObject {
             indexRepository: indexService,
             complicationService: complicationService
         )
-        self.exportService = ExportService(fileSystem: fileSystem, globalCsv: globalCsv)
-//        self.complicationService = ComplicationService()
+        let incomingService = CompanionIncomingService(
+            fileSystem: fileSystem,
+            sessionManager: sessionManager,
+            indexService: indexService,
+            complicationService: complicationService
+        )
+        self.companionIncomingService = incomingService
+        self.exportService = ExportService(
+            fileSystem: fileSystem,
+            globalCsv: globalCsv,
+            incomingHandler: incomingService.handle(file:)
+        )
 
         let sessionStore = SessionStore(sessionManager: sessionManager)
         self.sessionStore = sessionStore

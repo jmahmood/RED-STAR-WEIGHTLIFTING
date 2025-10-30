@@ -41,6 +41,7 @@ protocol IndexRepositorying {
     func latestCompletion(for exerciseCode: String) throws -> DeckItem.PrevCompletion?
     func recentExercises(inLast days: Int, limit: Int) throws -> [IndexService.RecentExercise]
     func ensureValidAgainstCSV()
+    func rebuildFromCSV()
 }
 
 final class IndexService: IndexRepositorying {
@@ -113,6 +114,12 @@ final class IndexService: IndexRepositorying {
         queue.sync {
             let csvSize = (try? self.fileSystem.fileSize(at: self.fileSystem.globalCsvURL())) ?? 0
             guard self.cache.isEmpty || csvSize < self.csvSizeAtPersist else { return }
+            self.rebuildFromCSVLocked()
+        }
+    }
+
+    func rebuildFromCSV() {
+        queue.sync {
             self.rebuildFromCSVLocked()
         }
     }
@@ -215,4 +222,3 @@ private extension IndexService {
         return result
     }
 }
-

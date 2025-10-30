@@ -68,6 +68,7 @@ final class ExportService: NSObject {
     private var pendingSnapshots: [SnapshotRecord] = []
     private var activeSnapshots: [String: SnapshotRecord] = [:]
     private let prunerKeepCount = 5
+    private let incomingHandler: ((WCSessionFile) -> Void)?
 
     var eventsPublisher: AnyPublisher<ExportEvent, Never> {
         eventsSubject
@@ -79,7 +80,8 @@ final class ExportService: NSObject {
         fileSystem: FileSystem,
         globalCsv: GlobalCsv,
         fileManager: FileManager = .default,
-        dateFormatter: DateFormatter? = nil
+        dateFormatter: DateFormatter? = nil,
+        incomingHandler: ((WCSessionFile) -> Void)? = nil
     ) {
         self.fileSystem = fileSystem
         self.globalCsv = globalCsv
@@ -89,6 +91,7 @@ final class ExportService: NSObject {
         formatter.timeZone = .current
         formatter.dateFormat = "yyyy-MM-dd'T'HH-mm-ss-SSS"
         self.timestampFormatter = formatter
+        self.incomingHandler = incomingHandler
         super.init()
         configureSession()
     }
@@ -266,5 +269,9 @@ extension ExportService: WCSessionDelegate {
                 self.pruneSnapshotsIfNeeded()
             }
         }
+    }
+
+    func session(_ session: WCSession, didReceive file: WCSessionFile) {
+        incomingHandler?(file)
     }
 }

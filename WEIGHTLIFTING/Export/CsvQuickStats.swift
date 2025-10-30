@@ -60,4 +60,13 @@ struct CsvQuickStats: Codable {
         return CsvQuickStats(schema: schema, rows: rowCount, sizeBytes: sizeBytes, sha256: sha256)
     }
 }
+
+extension CsvQuickStats: Equatable {
+    static func == (lhs: CsvQuickStats, rhs: CsvQuickStats) -> Bool {
+        lhs.schema == rhs.schema &&
+            lhs.rows == rhs.rows &&
+            lhs.sizeBytes == rhs.sizeBytes &&
+            lhs.sha256 == rhs.sha256
+    }
+}
 #endif

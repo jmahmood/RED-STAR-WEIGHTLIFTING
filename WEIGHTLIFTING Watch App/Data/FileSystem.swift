@@ -146,6 +146,14 @@ struct FileSystem {
         }
     }
 
+    func removeDirectoryContents(_ directory: Directory) throws {
+        let target = try directoryURL(directory)
+        let contents = try fileManager.contentsOfDirectory(at: target, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
+        for item in contents {
+            try fileManager.removeItem(at: item)
+        }
+    }
+
     func availableBytes() -> Int64? {
         return try? fileManager.attributesOfFileSystem(forPath: rootURL.path)[.systemFreeSize] as? Int64
     }
