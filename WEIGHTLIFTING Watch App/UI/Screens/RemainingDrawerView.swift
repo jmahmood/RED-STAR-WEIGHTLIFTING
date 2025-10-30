@@ -37,7 +37,7 @@ struct RemainingDrawerView: View {
             kind: .straight,
             supersetID: nil,
             segmentID: index,
-            sequence: index,
+            sequence: UInt64(index),
             setIndex: index,
             round: nil,
             exerciseCode: "CODE\(index)",
@@ -51,5 +51,5 @@ struct RemainingDrawerView: View {
             restSeconds: 90
         )
     }
-    return RemainingDrawerView(remaining: sampleItems)
+    RemainingDrawerView(remaining: sampleItems)
 }

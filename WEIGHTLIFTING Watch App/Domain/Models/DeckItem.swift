@@ -74,7 +74,7 @@ struct DeckItem: Identifiable, Hashable {
     let kind: Kind
     let supersetID: String?
     let segmentID: Int
-    let sequence: Int
+    let sequence: UInt64
     let setIndex: Int
     let round: Int?
     var exerciseCode: String

@@ -10,7 +10,7 @@ import Foundation
 struct SessionMeta: Codable, Equatable {
     struct Mutation: Codable, Equatable {
         let newCode: String
-        let startSequence: Int
+        let startSequence: UInt64
     }
 
     struct Override: Codable, Equatable {
@@ -28,13 +28,14 @@ struct SessionMeta: Codable, Equatable {
     var dayLabel: String
     var deckHash: String
     var mutationMap: [String: Mutation]
-    var sequenceOverrides: [Int: Override]
+    var sequenceOverrides: [UInt64: Override]
     var nextSequence: UInt64
     var pending: [Pending]
     var lastSaveAt: Date?
     var timedSetsSkipped: Bool
     var switchHistory: [String]
     var sessionCompleted: Bool
+    var completedSequences: [UInt64]
 
     init(
         sessionId: String,
@@ -42,13 +43,14 @@ struct SessionMeta: Codable, Equatable {
         dayLabel: String,
         deckHash: String,
         mutationMap: [String: Mutation] = [:],
-        sequenceOverrides: [Int: Override] = [:],
+        sequenceOverrides: [UInt64: Override] = [:],
         nextSequence: UInt64 = 1,
         pending: [Pending] = [],
         lastSaveAt: Date? = nil,
         timedSetsSkipped: Bool = false,
         switchHistory: [String] = [],
-        sessionCompleted: Bool = false
+        sessionCompleted: Bool = false,
+        completedSequences: [UInt64] = []
     ) {
         self.sessionId = sessionId
         self.planName = planName
@@ -62,6 +64,7 @@ struct SessionMeta: Codable, Equatable {
         self.timedSetsSkipped = timedSetsSkipped
         self.switchHistory = switchHistory
         self.sessionCompleted = sessionCompleted
+        self.completedSequences = completedSequences
     }
 
     init(from decoder: Decoder) throws {
@@ -72,13 +75,14 @@ struct SessionMeta: Codable, Equatable {
         dayLabel = try container.decodeIfPresent(String.self, forKey: .dayLabel) ?? ""
         deckHash = try container.decode(String.self, forKey: .deckHash)
         mutationMap = try container.decodeIfPresent([String: Mutation].self, forKey: .mutationMap) ?? [:]
-        sequenceOverrides = try container.decodeIfPresent([Int: Override].self, forKey: .sequenceOverrides) ?? [:]
+        sequenceOverrides = try container.decodeIfPresent([UInt64: Override].self, forKey: .sequenceOverrides) ?? [:]
         nextSequence = try container.decodeIfPresent(UInt64.self, forKey: .nextSequence) ?? 1
         pending = try container.decodeIfPresent([Pending].self, forKey: .pending) ?? []
         lastSaveAt = try container.decodeIfPresent(Date.self, forKey: .lastSaveAt)
         timedSetsSkipped = try container.decodeIfPresent(Bool.self, forKey: .timedSetsSkipped) ?? false
         switchHistory = try container.decodeIfPresent([String].self, forKey: .switchHistory) ?? []
         sessionCompleted = try container.decodeIfPresent(Bool.self, forKey: .sessionCompleted) ?? false
+        completedSequences = try container.decodeIfPresent([UInt64].self, forKey: .completedSequences) ?? []
     }
 
     private enum CodingKeys: String, CodingKey {
@@ -94,5 +98,6 @@ struct SessionMeta: Codable, Equatable {
         case timedSetsSkipped
         case switchHistory
         case sessionCompleted
+        case completedSequences
     }
 }

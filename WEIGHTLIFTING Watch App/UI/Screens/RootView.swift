@@ -73,7 +73,17 @@ struct SessionView: View {
             )
         })
         _editingStates = State(initialValue: initialStates)
-        _currentIndex = State(initialValue: 0)
+        let completedSequencesSet = Set(context.completedSequences)
+        let completedIDs = Set(initialDeck.filter { completedSequencesSet.contains($0.sequence) }.map { $0.id })
+        let initialOrder = context.completedSequences.compactMap { sequence in
+            initialDeck.first(where: { $0.sequence == sequence })?.id
+        }
+        let nextIndex = initialDeck.firstIndex(where: { !completedSequencesSet.contains($0.sequence) }) ?? 0
+        _currentIndex = State(initialValue: nextIndex)
+        _completedSetIDs = State(initialValue: completedIDs)
+        _completionOrder = State(initialValue: initialOrder)
+        let shouldShowEnd = !initialDeck.isEmpty && completedIDs.count == initialDeck.count
+        _showEndScreen = State(initialValue: shouldShowEnd)
     }
 
     var body: some View {
@@ -357,7 +367,19 @@ struct SessionView: View {
 
         resetForContext(using: newContext)
         showEndScreen = false
-        showEndScreen = false
+
+        // Update completed set IDs based on completed sequences
+        completedSetIDs = Set(newContext.deck.filter { newContext.completedSequences.contains($0.sequence) }.map { $0.id })
+        completionOrder = newContext.completedSequences.compactMap { sequence in
+            newContext.deck.first(where: { $0.sequence == sequence })?.id
+        }
+
+        if let nextIndex = newContext.deck.firstIndex(where: { !newContext.completedSequences.contains($0.sequence) }) {
+            currentIndex = nextIndex
+            prefillActiveWeight()
+        } else if !newContext.deck.isEmpty {
+            showEndScreen = true
+        }
     }
 
     private func handleExportEvent(_ event: ExportService.ExportEvent) {
@@ -423,7 +445,7 @@ struct SessionView: View {
     private func saveDraft(for item: DeckItem) {
         guard let state = editingStates[item.id] else { return }
         let startingIndex = currentIndex
-        container.sessionManager.save(set: item, weight: state.weight, reps: state.reps, effort: state.effort)
+        container.sessionManager.save(`set`: item, weight: state.weight, reps: state.reps, effort: state.effort)
         propagateDefaults(from: item, state: state)
         markCompleted(item)
         haptics.playSuccess()
@@ -604,7 +626,7 @@ struct SessionView: View {
             }
         }
 
-        var affectedSequences: [Int] = []
+        var affectedSequences: [UInt64] = []
 
         for index in indicesToUpdate {
             let prior = deck[index]
@@ -757,7 +779,7 @@ struct SessionView: View {
             kind: .straight,
             supersetID: nil,
             segmentID: 999, // adhoc
-            sequence: deck.count + 1000, // high sequence
+            sequence: UInt64(deck.count + 1000), // high sequence
             setIndex: 1,
             round: nil,
             exerciseCode: code,

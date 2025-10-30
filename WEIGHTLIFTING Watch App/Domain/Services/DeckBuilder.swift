@@ -14,7 +14,7 @@ protocol DeckBuilding {
 struct DeckBuilder: DeckBuilding {
     func buildDeck(for day: PlanV03.Day, plan: PlanV03) -> [DeckItem] {
         var deck: [DeckItem] = []
-        var sequence = 1
+        var sequence: UInt64 = 1
 
         for (segmentIndex, segment) in day.segments.enumerated() {
             switch segment {

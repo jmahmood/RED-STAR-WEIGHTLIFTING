@@ -19,6 +19,7 @@ struct SessionContext {
     let sessionID: String
     let plan: PlanV03
     let day: PlanV03.Day
+    let completedSequences: [UInt64]
 }
 
 protocol SessionManaging {
@@ -28,10 +29,10 @@ protocol SessionManaging {
         originalCode: String,
         newCode: String,
         scope: ExerciseSwitchScope,
-        startSequence: Int,
-        affectedSequences: [Int]
+        startSequence: UInt64,
+        affectedSequences: [UInt64]
     )
-    func save(set item: DeckItem, weight: Double, reps: Int, effort: DeckItem.Effort)
+    func save(`set` item: DeckItem, weight: Double, reps: Int, effort: DeckItem.Effort)
     func undoLast()
     func switchDay(to newDayLabel: String)
     func markSessionCompleted()
@@ -90,11 +91,20 @@ final class SessionManager: SessionManaging {
     }
 
     func loadInitialSession() {
-        queue.async {
+        queue.async(group: nil, execute: {
             do {
                 let plan = try self.planRepository.loadActivePlan()
-                let sessionID = SessionManager.makeSessionID(date: Date())
-                let existingMeta = self.loadMeta(sessionID: sessionID)
+                let restoredSession = self.restoreLatestSessionMeta()
+                let sessionID: String
+                let existingMeta: SessionMeta?
+
+                if let restored = restoredSession, restored.meta.planName == plan.planName {
+                    sessionID = restored.sessionID
+                    existingMeta = restored.meta
+                } else {
+                    sessionID = SessionManager.makeSessionID(date: Date())
+                    existingMeta = nil
+                }
 
                 guard let fallbackDayLabel = plan.scheduleOrder.first else {
                     self.subject.send(.error(SessionError.noPlanDay))
@@ -148,10 +158,10 @@ final class SessionManager: SessionManaging {
 
                 self.activeMeta = meta
 
-                 let context = SessionContext(deck: mutatedDeck, sessionID: sessionID, plan: plan, day: day)
-                 self.activeContext = context
+                let context = SessionContext(deck: mutatedDeck, sessionID: sessionID, plan: plan, day: day, completedSequences: meta.completedSequences)
+                self.activeContext = context
 
-                 self.complicationService.updateNextUp(context: context, meta: meta)
+                self.complicationService.updateNextUp(context: context, meta: meta)
 
                 // Check for auto-advance
                 if meta.sessionCompleted,
@@ -168,17 +178,17 @@ final class SessionManager: SessionManaging {
             } catch {
                 self.subject.send(.error(error))
             }
-        }
+        })
     }
 
     func recordMutation(
         originalCode: String,
         newCode: String,
         scope: ExerciseSwitchScope,
-        startSequence: Int,
-        affectedSequences: [Int]
+        startSequence: UInt64,
+        affectedSequences: [UInt64]
     ) {
-        queue.async {
+        queue.async(group: nil, execute: {
             guard var meta = self.activeMeta,
                   let plan = self.activePlan,
                   let day = self.activeDay,
@@ -198,38 +208,54 @@ final class SessionManager: SessionManaging {
 
             self.activeMeta = meta
             self.activeDeck = self.mutateDeck(self.baseDeck, with: meta, plan: plan)
-            self.activeContext = SessionContext(deck: self.activeDeck, sessionID: sessionID, plan: plan, day: day)
+            self.activeMeta = meta
 
             do {
                 try self.saveMeta(meta, sessionID: sessionID)
             } catch {
                 #if DEBUG
-                print("SessionManager: failed to persist mutation meta \(error)")
+                print("SessionManager: failed to persist meta during switch \(error)")
                 #endif
             }
 
-            if let context = self.activeContext {
-                self.complicationService.updateNextUp(context: context, meta: meta)
-                self.subject.send(.active(context))
-            }
-        }
+            let context = SessionContext(deck: self.activeDeck, sessionID: sessionID, plan: plan, day: day, completedSequences: meta.completedSequences)
+            self.activeContext = context
+            self.complicationService.updateNextUp(context: context, meta: meta)
+            self.subject.send(.active(context))
+        })
     }
 
-    func save(set item: DeckItem, weight: Double, reps: Int, effort: DeckItem.Effort) {
-        queue.async {
+    func markSessionCompleted() {
+        queue.async(group: nil, execute: {
             guard var meta = self.activeMeta,
-                  let plan = self.activePlan,
                   let sessionID = self.activeSessionID else {
                 return
             }
 
-            let sequence = meta.nextSequence
-            meta.nextSequence += 1
-            let savedAt = Date()
-            let deadline = savedAt.addingTimeInterval(5)
-            meta.lastSaveAt = savedAt
-            meta.planName = plan.planName
+            meta.sessionCompleted = true
+            self.activeMeta = meta
 
+            do {
+                try self.saveMeta(meta, sessionID: sessionID)
+            } catch {
+                #if DEBUG
+                print("SessionManager: failed to mark session completed \(error)")
+                #endif
+            }
+        })
+    }
+
+    func save(`set` item: DeckItem, weight: Double, reps: Int, effort: DeckItem.Effort) {
+        queue.async(group: nil, execute: {
+            guard var meta = self.activeMeta,
+                  let plan = self.activePlan,
+                  let day = self.activeDay,
+                  let sessionID = self.activeSessionID else {
+                return
+            }
+
+            let sequence = item.sequence
+            let savedAt = Date()
             let row = self.buildRow(
                 for: item,
                 weight: weight,
@@ -238,68 +264,79 @@ final class SessionManager: SessionManaging {
                 sequence: sequence,
                 savedAt: savedAt,
                 plan: plan,
-                dayLabel: meta.dayLabel,
+                dayLabel: day.label,
                 sessionID: sessionID
             )
 
-            let pending = PendingSave(sequence: sequence, row: row, savedAt: savedAt, deadline: deadline)
-            self.pendingSaves[sequence] = pending
+            let deadline = savedAt.addingTimeInterval(5)
+            let pendingSave = PendingSave(
+                sequence: sequence,
+                row: row,
+                savedAt: savedAt,
+                deadline: deadline
+            )
+
+            self.pendingSaves[sequence] = pendingSave
             self.pendingOrder.append(sequence)
-            meta.pending.append(SessionMeta.Pending(sequence: sequence, savedAt: savedAt, row: row))
-             self.activeMeta = meta
-             if let context = self.activeContext {
-                 self.complicationService.updateNextUp(context: context, meta: meta)
-             }
+
+            let metaPending = SessionMeta.Pending(
+                sequence: sequence,
+                savedAt: savedAt,
+                row: row
+            )
+            meta.pending.append(metaPending)
+            meta.lastSaveAt = savedAt
+            self.activeMeta = meta
 
             do {
                 try self.saveMeta(meta, sessionID: sessionID)
                 try self.walLog.append(sequence: sequence, savedAt: savedAt, row: row, sessionID: sessionID)
             } catch {
                 #if DEBUG
-                print("SessionManager: failed to persist WAL/meta \(error)")
+                print("SessionManager: failed to save set \(error)")
                 #endif
             }
 
             CommitWheel.shared.arm(seq: Int(sequence), deadline: deadline) { [weak self] in
                 self?.commit(sequence: sequence, sessionID: sessionID)
             }
-        }
+
+            if let context = self.activeContext {
+                self.complicationService.updateNextUp(context: context, meta: meta)
+            }
+        })
     }
 
     func undoLast() {
-        queue.async {
-            guard let sequence = self.pendingOrder.last,
-                  self.pendingSaves.removeValue(forKey: sequence) != nil,
+        queue.async(group: nil, execute: {
+            guard let lastSequence = self.pendingOrder.last,
                   var meta = self.activeMeta,
                   let sessionID = self.activeSessionID else {
                 return
             }
 
+            self.pendingSaves.removeValue(forKey: lastSequence)
             self.pendingOrder.removeLast()
-            CommitWheel.shared.cancel(seq: Int(sequence))
 
-            meta.pending.removeAll { $0.sequence == sequence }
-             self.activeMeta = meta
-
-             if let context = self.activeContext {
-                 self.complicationService.updateNextUp(context: context, meta: meta)
-             }
+            meta.pending.removeAll { $0.sequence == lastSequence }
+            self.activeMeta = meta
 
             do {
                 try self.saveMeta(meta, sessionID: sessionID)
-                try self.walLog.appendTombstone(sequence: sequence, sessionID: sessionID)
             } catch {
                 #if DEBUG
-                print("SessionManager: failed to append tombstone \(error)")
+                print("SessionManager: failed to save meta after undo \(error)")
                 #endif
             }
 
-            // Restore UI state for the pending row if needed.
-        }
+            if let context = self.activeContext {
+                self.complicationService.updateNextUp(context: context, meta: meta)
+            }
+        })
     }
 
     func switchDay(to newDayLabel: String) {
-        queue.async {
+        queue.async(group: nil, execute: {
             guard var meta = self.activeMeta,
                   let plan = self.activePlan,
                   let sessionID = self.activeSessionID else {
@@ -326,6 +363,7 @@ final class SessionManager: SessionManaging {
             meta.deckHash = newDeckHash
             meta.mutationMap.removeAll()
             meta.sequenceOverrides.removeAll()
+            meta.completedSequences = []
 
             if newBaseDeck.contains(where: { $0.canSkip }) {
                 meta.timedSetsSkipped = false
@@ -346,37 +384,47 @@ final class SessionManager: SessionManaging {
                 #endif
             }
 
-             let context = SessionContext(deck: mutatedDeck, sessionID: sessionID, plan: plan, day: targetDay)
-             self.activeContext = context
-             self.complicationService.updateNextUp(context: context, meta: meta)
-             self.subject.send(.active(context))
-        }
-    }
-
-    func markSessionCompleted() {
-        queue.async {
-            guard var meta = self.activeMeta,
-                  let sessionID = self.activeSessionID else {
-                return
-            }
-
-            meta.sessionCompleted = true
-            self.activeMeta = meta
-
-            do {
-                try self.saveMeta(meta, sessionID: sessionID)
-            } catch {
-                #if DEBUG
-                print("SessionManager: failed to mark session completed \(error)")
-                #endif
-            }
-        }
+            let context = SessionContext(deck: mutatedDeck, sessionID: sessionID, plan: plan, day: targetDay, completedSequences: meta.completedSequences)
+            self.activeContext = context
+            self.complicationService.updateNextUp(context: context, meta: meta)
+            self.subject.send(.active(context))
+        })
     }
 }
 
 // MARK: - Helpers
 
 private extension SessionManager {
+    func restoreLatestSessionMeta() -> (sessionID: String, meta: SessionMeta)? {
+        guard let metaFiles = try? fileSystem.listSessionMetaFiles(), !metaFiles.isEmpty else {
+            return nil
+        }
+
+        var latest: (date: Date, id: String, meta: SessionMeta)?
+
+        for url in metaFiles {
+            guard let sessionID = SessionManager.sessionID(fromMetaURL: url),
+                  let meta = self.loadMeta(sessionID: sessionID) else {
+                continue
+            }
+
+            let modifiedDate = (try? url.resourceValues(forKeys: [.contentModificationDateKey]))?.contentModificationDate
+            let candidateDate = modifiedDate ?? meta.lastSaveAt ?? Date.distantPast
+
+            if latest == nil || candidateDate > latest!.date {
+                latest = (candidateDate, sessionID, meta)
+            }
+        }
+
+        guard let latest else { return nil }
+        return (latest.id, latest.meta)
+    }
+
+    static func sessionID(fromMetaURL url: URL) -> String? {
+        let base = url.deletingPathExtension().deletingPathExtension().lastPathComponent
+        return base.isEmpty ? nil : base
+    }
+
     struct PendingTimerContext {
         let sequence: UInt64
         let sessionID: String
@@ -402,6 +450,7 @@ private extension SessionManager {
 
         if var meta = activeMeta {
             meta.pending.removeAll { $0.sequence == sequence }
+            meta.completedSequences.append(sequence)
             activeMeta = meta
             try? saveMeta(meta, sessionID: sessionID)
         }
@@ -466,6 +515,7 @@ private extension SessionManager {
                 do {
                     try globalCsv.appendCommitting(pending.row)
                     try indexRepository.applyCommit(pending.row)
+                    meta.completedSequences.append(pending.sequence)
                 } catch {
                     #if DEBUG
                     print("SessionManager: replay commit failed \(error)")
