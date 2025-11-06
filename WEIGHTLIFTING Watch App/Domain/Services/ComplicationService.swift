@@ -5,7 +5,7 @@
 //  Created by Auto on 2025-10-28.
 //
 
-import ClockKit
+import WidgetKit
 import Foundation
 
 struct ComplicationSnapshot: Equatable {
@@ -14,14 +14,6 @@ struct ComplicationSnapshot: Equatable {
     let footer: String
     let sessionID: String
     let deckIndex: Int
-}
-
-enum ComplicationDefaultsKey {
-    static let exercise = "complication_next_exercise"
-    static let detail = "complication_next_detail"
-    static let footer = "complication_next_footer"
-    static let sessionID = "complication_next_sessionID"
-    static let deckIndex = "complication_next_deckIndex"
 }
 
 extension ComplicationSnapshot {
@@ -47,26 +39,13 @@ final class ComplicationService {
     private let userDefaults: UserDefaults
     private var lastSnapshot: ComplicationSnapshot?
 
-    init(userDefaults: UserDefaults = .standard) {
+    init(userDefaults: UserDefaults = SharedDefaults.shared) {
         self.userDefaults = userDefaults
     }
 
     func reloadComplications() {
-        let server = CLKComplicationServer.sharedInstance()
-        guard let complications = server.activeComplications,
-              !complications.isEmpty else {
-            return
-        }
-
-        let work = {
-            complications.forEach { server.reloadTimeline(for: $0) }
-        }
-
-        if Thread.isMainThread {
-            work()
-        } else {
-            DispatchQueue.main.async(execute: work)
-        }
+        // Reload all WidgetKit timelines for complications
+        WidgetCenter.shared.reloadAllTimelines()
     }
 
     func updateNextUp(context: SessionContext, meta: SessionMeta) {

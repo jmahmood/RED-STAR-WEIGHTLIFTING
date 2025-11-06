@@ -18,7 +18,6 @@ final class AppContainer: ObservableObject {
     let sessionManager: SessionManager
     let exportService: ExportService
     let complicationService: ComplicationService
-    let complicationController: ComplicationController
     let companionIncomingService: CompanionIncomingService
 
     let sessionStore: SessionStore
@@ -47,7 +46,6 @@ final class AppContainer: ObservableObject {
         walReplay.replayPendingSessions()
 
         self.complicationService = ComplicationService()
-        self.complicationController = ComplicationController()
 
         self.sessionManager = SessionManager(
             fileSystem: fileSystem,

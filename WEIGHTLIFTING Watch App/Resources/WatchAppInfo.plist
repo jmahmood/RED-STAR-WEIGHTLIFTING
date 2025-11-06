@@ -29,12 +29,16 @@
 	<true/>
 	<key>WKCompanionAppBundleIdentifier</key>
 	<string>com.jawaadmahmood.WEIGHTLIFTING</string>
-	<key>CLKComplicationPrincipalClass</key>
-	<string>$(PRODUCT_MODULE_NAME).ComplicationController</string>
-	<key>CLKComplicationSupportedFamilies</key>
+	<key>CFBundleURLTypes</key>
 	<array>
-		<string>CLKComplicationFamilyModularLarge</string>
-		<string>CLKComplicationFamilyGraphicRectangular</string>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.jawaadmahmood.WEIGHTLIFTING</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>weightlifting</string>
+			</array>
+		</dict>
 	</array>
 </dict>
 </plist>
