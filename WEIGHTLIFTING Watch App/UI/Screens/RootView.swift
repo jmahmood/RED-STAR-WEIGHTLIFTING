@@ -190,7 +190,8 @@ struct SessionView: View {
                              .transition(.move(edge: .top).combined(with: .opacity))
                      }
                 }
-                .padding(.top, 4)
+                .padding(.horizontal, 8)
+                .padding(.top, 0)
             }
             .animation(.easeInOut(duration: 0.2), value: showUndoToast)
             .animation(.easeInOut(duration: 0.2), value: switchToastMessage != nil)
@@ -226,7 +227,7 @@ struct SessionView: View {
                                 onSave: { saveDraft(for: item) }
                             )
                             .padding(.horizontal, 12)
-                            .padding(.top, 8)
+                            .padding(.top, showUndoToast || switchToastMessage != nil || exportToastMessage != nil ? 40 : 8)
 
                             SessionHeaderView(vm: sessionVM)
                                 .padding(.horizontal, 12)
@@ -325,7 +326,8 @@ struct SessionView: View {
                             .transition(.move(edge: .top).combined(with: .opacity))
                     }
                 }
-                .padding(.top, 4)
+                .padding(.horizontal, 8)
+                .padding(.top, 0)
             }
              .animation(.easeInOut(duration: 0.2), value: showUndoToast)
              .animation(.easeInOut(duration: 0.2), value: switchToastMessage != nil)

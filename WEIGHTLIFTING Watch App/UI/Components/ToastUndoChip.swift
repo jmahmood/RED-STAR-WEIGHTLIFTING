@@ -21,21 +21,20 @@ struct ToastUndoChip: View {
     }
 
     var body: some View {
-        HStack {
-            Text("\(title) (\(countdown)s)")
-            Spacer()
-            Button(actionTitle, action: action)
-                .buttonStyle(.borderedProminent)
-                .controlSize(.mini)
-        }
-        .padding(8)
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color.gray.opacity(0.2))
-        )
-        .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) { t in
-            if countdown > 0 { now = t }
-        }
+        Text("✓ \(title) • Tap to \(actionTitle.lowercased()) (\(countdown)s)")
+            .font(.caption2)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 6)
+            .background(
+                Capsule()
+                    .fill(Color.gray.opacity(0.25))
+            )
+            .onTapGesture {
+                action()
+            }
+            .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) { t in
+                if countdown > 0 { now = t }
+            }
     }
 }
 
