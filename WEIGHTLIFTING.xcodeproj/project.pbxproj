@@ -79,6 +79,13 @@
 			);
 			target = 4CE325AF2EBC880A000753AE /* WEIGHTLIFTING ComplicationsExtension */;
 		};
+		4CE325D72EBC8E71000753AE /* Exceptions for "WEIGHTLIFTING Watch App" folder in "WEIGHTLIFTING Watch App" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Resources/WatchAppInfo.plist,
+			);
+			target = 4CCCDDE42EB1ABBE0013B7A6 /* WEIGHTLIFTING Watch App */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -90,6 +97,7 @@
 		4CCCDDE92EB1ABBE0013B7A6 /* WEIGHTLIFTING Watch App */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
+				4CE325D72EBC8E71000753AE /* Exceptions for "WEIGHTLIFTING Watch App" folder in "WEIGHTLIFTING Watch App" target */,
 				4CE325D42EBC8892000753AE /* Exceptions for "WEIGHTLIFTING Watch App" folder in "WEIGHTLIFTING ComplicationsExtension" target */,
 			);
 			path = "WEIGHTLIFTING Watch App";
@@ -244,7 +252,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 2610;
-				LastUpgradeCheck = 2600;
+				LastUpgradeCheck = 2610;
 				TargetAttributes = {
 					4CCCDDD72EB1ABBD0013B7A6 = {
 						CreatedOnToolsVersion = 26.0.1;
@@ -379,6 +387,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = 589DL222X4;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -402,6 +411,7 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -441,6 +451,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 589DL222X4;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -457,6 +468,7 @@
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 			};
 			name = Release;

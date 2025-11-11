@@ -93,7 +93,7 @@ struct SessionView: View {
                 completedSetIDs: completedSetIDs,
                 onStartNewSession: {
                     let nextDay = nextDayLabel()
-                    container.sessionManager.switchDay(to: nextDay)
+                    container.sessionManager.startNewSession(dayLabel: nextDay)
                     resetForNewSession()
                 },
                  onAddAdhoc: {
@@ -445,7 +445,7 @@ struct SessionView: View {
     private func saveDraft(for item: DeckItem) {
         guard let state = editingStates[item.id] else { return }
         let startingIndex = currentIndex
-        container.sessionManager.save(`set`: item, weight: state.weight, reps: state.reps, effort: state.effort)
+        container.sessionManager.save(set: item, weight: state.weight, reps: state.reps, effort: state.effort)
         propagateDefaults(from: item, state: state)
         markCompleted(item)
         haptics.playSuccess()

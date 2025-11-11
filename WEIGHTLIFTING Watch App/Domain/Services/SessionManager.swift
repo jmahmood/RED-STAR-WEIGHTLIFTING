@@ -35,6 +35,7 @@ protocol SessionManaging {
     func save(`set` item: DeckItem, weight: Double, reps: Int, effort: DeckItem.Effort)
     func undoLast()
     func switchDay(to newDayLabel: String)
+    func startNewSession(dayLabel: String)
     func markSessionCompleted()
 }
 
@@ -385,6 +386,64 @@ final class SessionManager: SessionManaging {
             }
 
             let context = SessionContext(deck: mutatedDeck, sessionID: sessionID, plan: plan, day: targetDay, completedSequences: meta.completedSequences)
+            self.activeContext = context
+            self.complicationService.updateNextUp(context: context, meta: meta)
+            self.subject.send(.active(context))
+        })
+    }
+
+    func startNewSession(dayLabel: String) {
+        queue.async(group: nil, execute: {
+            guard let plan = self.activePlan else {
+                return
+            }
+
+            guard let targetDay = plan.day(named: dayLabel) else {
+                return
+            }
+
+            // Generate a new session ID based on current date
+            let newSessionID = SessionManager.makeSessionID(date: Date())
+
+            let newBaseDeck = self.deckBuilder.buildDeck(for: targetDay, plan: plan)
+            let newDeckHash = SessionManager.computeDeckHash(for: newBaseDeck)
+
+            // Create fresh meta with the new session ID
+            var meta = SessionMeta(
+                sessionId: newSessionID,
+                planName: plan.planName,
+                dayLabel: targetDay.label,
+                deckHash: newDeckHash
+            )
+
+            // Add current day to switch history if we have an active session
+            if let oldMeta = self.activeMeta, !oldMeta.dayLabel.isEmpty {
+                meta.switchHistory.append(oldMeta.dayLabel)
+            } else if let activeDay = self.activeDay {
+                meta.switchHistory.append(activeDay.label)
+            }
+
+            // Clear any pending saves from the old session
+            self.pendingSaves.removeAll()
+            self.pendingOrder.removeAll()
+
+            self.baseDeck = newBaseDeck
+            self.activeDay = targetDay
+            self.activeSessionID = newSessionID
+
+            let mutatedDeck = self.mutateDeck(newBaseDeck, with: meta, plan: plan)
+            self.activeDeck = mutatedDeck
+            self.activeMeta = meta
+
+            do {
+                try self.saveMeta(meta, sessionID: newSessionID)
+            } catch {
+                #if DEBUG
+                print("SessionManager: failed to persist meta during startNewSession \(error)")
+                #endif
+            }
+
+            let context = SessionContext(deck: mutatedDeck, sessionID: newSessionID, plan: plan, day: targetDay, completedSequences: meta.completedSequences)
             self.activeContext = context
             self.complicationService.updateNextUp(context: context, meta: meta)
             self.subject.send(.active(context))
