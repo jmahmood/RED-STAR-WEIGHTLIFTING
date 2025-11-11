@@ -38,9 +38,11 @@ extension ComplicationSnapshot {
 final class ComplicationService {
     private let userDefaults: UserDefaults
     private var lastSnapshot: ComplicationSnapshot?
+    private let weightSuggestionService: WeightSuggesting
 
-    init(userDefaults: UserDefaults = SharedDefaults.shared) {
+    init(userDefaults: UserDefaults = SharedDefaults.shared, weightSuggestionService: WeightSuggesting = WeightSuggestionService()) {
         self.userDefaults = userDefaults
+        self.weightSuggestionService = weightSuggestionService
     }
 
     func reloadComplications() {
@@ -105,14 +107,12 @@ final class ComplicationService {
     private func formatDetail(for item: DeckItem, context: SessionContext, meta: SessionMeta) -> String {
         let reps = item.targetReps
 
-        // For set 2+, try to use the weight from set 1 of this exercise in the current session
-        let weight: Double
-        if item.setIndex > 1, let sessionWeight = findSet1Weight(for: item, in: context.deck, meta: meta) {
-            weight = sessionWeight
-        } else {
-            // For set 1 or if no session weight found, use historical data
-            weight = item.prevCompletions.last?.weight ?? 0
-        }
+        // Use weight suggestion service to calculate weight
+        let weight = weightSuggestionService.suggestWeight(
+            for: item,
+            sessionWeights: meta.sessionWeights,
+            deck: context.deck
+        )
 
         if weight == 0 {
             return reps
@@ -120,16 +120,6 @@ final class ComplicationService {
             let weightStr = formatWeight(weight)
             return "\(weightStr)\(item.unit.displaySymbol) × \(reps)"
         }
-    }
-
-    private func findSet1Weight(for item: DeckItem, in deck: [DeckItem], meta: SessionMeta) -> Double? {
-        // Find set 1 of the same exercise
-        guard let set1 = deck.first(where: { $0.exerciseCode == item.exerciseCode && $0.setIndex == 1 }) else {
-            return nil
-        }
-
-        // Return the weight if set 1 has been completed
-        return meta.sessionWeights[set1.sequence]
     }
 
     private func formatFooter(for item: DeckItem, in deck: [DeckItem], doneSequences: Set<UInt64>) -> String {

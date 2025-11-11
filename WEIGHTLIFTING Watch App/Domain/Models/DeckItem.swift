@@ -70,6 +70,18 @@ struct DeckItem: Identifiable, Hashable {
         }
     }
 
+    struct WeightPrescription: Hashable {
+        let scheme: String
+        let percentage: Double?
+        let baseSetIndex: Int
+
+        static let flat = WeightPrescription(
+            scheme: "flat",
+            percentage: nil,
+            baseSetIndex: 1
+        )
+    }
+
     let id: UUID
     let kind: Kind
     let supersetID: String?
@@ -86,6 +98,7 @@ struct DeckItem: Identifiable, Hashable {
     let badges: [String]
     let canSkip: Bool
     let restSeconds: Int?
+    let weightPrescription: WeightPrescription
 
     var adlib: Bool = false
     var prevCompletions: [PrevCompletion] = []

@@ -43,7 +43,8 @@ struct DeckBuilder: DeckBuilding {
                             isWarmup: false,
                             badges: badges,
                             canSkip: canSkip,
-                            restSeconds: straight.restSec
+                            restSeconds: straight.restSec,
+                            weightPrescription: .flat
                         )
                     )
                     sequence += 1
@@ -74,7 +75,8 @@ struct DeckBuilder: DeckBuilding {
                                 isWarmup: false,
                                 badges: badges,
                                 canSkip: false,
-                                restSeconds: entry.restSec ?? scheme.restSec
+                                restSeconds: entry.restSec ?? scheme.restSec,
+                                weightPrescription: .flat
                             )
                         )
                         sequence += 1
@@ -109,7 +111,8 @@ struct DeckBuilder: DeckBuilding {
                                     isWarmup: false,
                                     badges: badges,
                                     canSkip: false,
-                                    restSeconds: item.restSec ?? restSec
+                                    restSeconds: item.restSec ?? restSec,
+                                    weightPrescription: .flat
                                 )
                             )
                             sequence += 1

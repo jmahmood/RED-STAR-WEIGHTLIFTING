@@ -48,7 +48,8 @@ struct RemainingDrawerView: View {
             isWarmup: false,
             badges: [],
             canSkip: false,
-            restSeconds: 90
+            restSeconds: 90,
+            weightPrescription: .flat
         )
     }
     RemainingDrawerView(remaining: sampleItems)

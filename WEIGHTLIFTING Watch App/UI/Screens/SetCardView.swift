@@ -178,7 +178,8 @@ struct SetCardView: View {
                 isWarmup: false,
                 badges: ["DROP"],
                 canSkip: false,
-                restSeconds: 120
+                restSeconds: 120,
+                weightPrescription: .flat
             ),
             weight: .constant(135),
             reps: .constant(8),

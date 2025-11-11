@@ -38,6 +38,7 @@ struct SessionView: View {
     @State private var editingStates: [UUID: SetEditingState]
     @State private var currentIndex: Int
     @State private var weightCache: [String: Double] = [:]
+    @State private var sessionWeights: [UInt64: Double] = [:]
     @State private var switchSheet: SwitchSheetState?
     @State private var completedSetIDs: Set<UUID> = []
     @State private var completionOrder: [UUID] = []
@@ -53,8 +54,10 @@ struct SessionView: View {
     @State private var activeWeightPicker: ActiveWeightPicker?
 
     private let haptics = WatchHaptics()
+    private let weightSuggestionService: WeightSuggesting
 
-    init(context: SessionContext) {
+    init(context: SessionContext, weightSuggestionService: WeightSuggesting = WeightSuggestionService()) {
+        self.weightSuggestionService = weightSuggestionService
         _currentContext = State(initialValue: context)
         let initialDeck = context.deck
         _deck = State(initialValue: initialDeck)
@@ -427,20 +430,30 @@ struct SessionView: View {
     private func binding(for item: DeckItem) -> Binding<SetEditingState> {
         Binding(
             get: {
-                var state = editingStates[item.id] ?? SetEditingState(
+                // Check if we already have a state for this item
+                if let existingState = editingStates[item.id] {
+                    return existingState
+                }
+
+                // Create initial state
+                var state = SetEditingState(
                     weight: item.prevCompletions.first?.weight ?? 0,
                     reps: SessionView.defaultReps(for: item),
                     effort: item.prevCompletions.first?.effort ?? .expected
                 )
-                // For set 2+, always use the weight from set 1 in this session if available
-                if item.setIndex > 1, let cachedWeight = weightCache[shareKey(for: item)] {
-                    state.weight = cachedWeight
-                    editingStates[item.id] = state
-                } else if let cachedWeight = weightCache[shareKey(for: item)], state.weight == 0 {
-                    // For set 1, only use cached weight if no historical data exists
-                    state.weight = cachedWeight
-                    editingStates[item.id] = state
+
+                // Use weight suggestion service to calculate suggested weight
+                let suggestedWeight = weightSuggestionService.suggestWeight(
+                    for: item,
+                    sessionWeights: sessionWeights,
+                    deck: deck
+                )
+                if suggestedWeight > 0 {
+                    state.weight = suggestedWeight
                 }
+
+                // Only set editingStates if we don't already have one (avoid infinite loop)
+                editingStates[item.id] = state
                 return state
             },
             set: { editingStates[item.id] = $0 }
@@ -474,6 +487,9 @@ struct SessionView: View {
         if item.setIndex == 1 || weightCache[key] == nil {
             weightCache[key] = state.weight
         }
+        // Track weight by sequence for weight suggestion service
+        sessionWeights[item.sequence] = state.weight
+
         for deckItem in deck where shareKey(for: deckItem) == key {
             if deckItem.id == item.id { continue }
             if var existing = editingStates[deckItem.id], existing.weight == 0 {
@@ -567,6 +583,7 @@ struct SessionView: View {
         })
         editingStates = initialStates
         weightCache = [:]
+        sessionWeights = [:]
         completedSetIDs.removeAll()
         completionOrder.removeAll()
         currentIndex = 0
@@ -747,6 +764,8 @@ struct SessionView: View {
             if item.setIndex == 1 {
                 weightCache.removeValue(forKey: shareKey(for: item))
             }
+            // Remove from sessionWeights
+            sessionWeights.removeValue(forKey: item.sequence)
             currentIndex = index
             prefillActiveWeight()
         }
@@ -804,6 +823,7 @@ struct SessionView: View {
             badges: [],
             canSkip: false,
             restSeconds: nil,
+            weightPrescription: .flat,
             adlib: true,
             prevCompletions: prev
         )
