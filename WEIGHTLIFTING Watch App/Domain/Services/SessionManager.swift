@@ -286,6 +286,7 @@ final class SessionManager: SessionManaging {
                 row: row
             )
             meta.pending.append(metaPending)
+            meta.sessionWeights[sequence] = weight
             meta.lastSaveAt = savedAt
             self.activeMeta = meta
 
@@ -320,6 +321,7 @@ final class SessionManager: SessionManaging {
             self.pendingOrder.removeLast()
 
             meta.pending.removeAll { $0.sequence == lastSequence }
+            meta.sessionWeights.removeValue(forKey: lastSequence)
             self.activeMeta = meta
 
             do {

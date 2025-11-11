@@ -52,29 +52,14 @@ final class ComplicationService {
         // Collect all sequences that are done or in progress (pending + completed)
         let doneSequences = Set(meta.completedSequences + meta.pending.map { $0.sequence })
 
-        #if DEBUG
-        print("ComplicationService: updateNextUp called")
-        print("  Completed sequences: \(meta.completedSequences)")
-        print("  Pending sequences: \(meta.pending.map { $0.sequence })")
-        print("  Done sequences: \(doneSequences)")
-        print("  Deck sequences: \(context.deck.map { $0.sequence })")
-        #endif
-
         guard let nextItem = findNextItem(in: context.deck, doneSequences: doneSequences) else {
-            #if DEBUG
-            print("  No next item found - clearing")
-            #endif
             clearNextUp()
             return
         }
 
-        #if DEBUG
-        print("  Next item: \(nextItem.exerciseName) (seq: \(nextItem.sequence))")
-        #endif
-
         let snapshot = ComplicationSnapshot(
             exerciseName: nextItem.exerciseName,
-            detail: formatDetail(for: nextItem),
+            detail: formatDetail(for: nextItem, context: context, meta: meta),
             footer: formatFooter(for: nextItem, in: context.deck, doneSequences: doneSequences),
             sessionID: context.sessionID,
             deckIndex: context.deck.firstIndex(where: { $0.id == nextItem.id }) ?? 0
@@ -117,15 +102,34 @@ final class ComplicationService {
             .first
     }
 
-    private func formatDetail(for item: DeckItem) -> String {
+    private func formatDetail(for item: DeckItem, context: SessionContext, meta: SessionMeta) -> String {
         let reps = item.targetReps
-        let weight = item.prevCompletions.last?.weight ?? 0
+
+        // For set 2+, try to use the weight from set 1 of this exercise in the current session
+        let weight: Double
+        if item.setIndex > 1, let sessionWeight = findSet1Weight(for: item, in: context.deck, meta: meta) {
+            weight = sessionWeight
+        } else {
+            // For set 1 or if no session weight found, use historical data
+            weight = item.prevCompletions.last?.weight ?? 0
+        }
+
         if weight == 0 {
             return reps
         } else {
             let weightStr = formatWeight(weight)
             return "\(weightStr)\(item.unit.displaySymbol) × \(reps)"
         }
+    }
+
+    private func findSet1Weight(for item: DeckItem, in deck: [DeckItem], meta: SessionMeta) -> Double? {
+        // Find set 1 of the same exercise
+        guard let set1 = deck.first(where: { $0.exerciseCode == item.exerciseCode && $0.setIndex == 1 }) else {
+            return nil
+        }
+
+        // Return the weight if set 1 has been completed
+        return meta.sessionWeights[set1.sequence]
     }
 
     private func formatFooter(for item: DeckItem, in deck: [DeckItem], doneSequences: Set<UInt64>) -> String {

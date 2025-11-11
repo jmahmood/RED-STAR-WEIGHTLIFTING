@@ -432,7 +432,12 @@ struct SessionView: View {
                     reps: SessionView.defaultReps(for: item),
                     effort: item.prevCompletions.first?.effort ?? .expected
                 )
-                if let cachedWeight = weightCache[shareKey(for: item)], state.weight == 0 {
+                // For set 2+, always use the weight from set 1 in this session if available
+                if item.setIndex > 1, let cachedWeight = weightCache[shareKey(for: item)] {
+                    state.weight = cachedWeight
+                    editingStates[item.id] = state
+                } else if let cachedWeight = weightCache[shareKey(for: item)], state.weight == 0 {
+                    // For set 1, only use cached weight if no historical data exists
                     state.weight = cachedWeight
                     editingStates[item.id] = state
                 }
@@ -465,7 +470,10 @@ struct SessionView: View {
 
     private func propagateDefaults(from item: DeckItem, state: SetEditingState) {
         let key = shareKey(for: item)
-        weightCache[key] = state.weight
+        // Only cache weight from set 1, so set 2+ always use set 1's weight
+        if item.setIndex == 1 || weightCache[key] == nil {
+            weightCache[key] = state.weight
+        }
         for deckItem in deck where shareKey(for: deckItem) == key {
             if deckItem.id == item.id { continue }
             if var existing = editingStates[deckItem.id], existing.weight == 0 {
@@ -734,6 +742,11 @@ struct SessionView: View {
         guard let last = completionOrder.popLast() else { return false }
         completedSetIDs.remove(last)
         if let index = deck.firstIndex(where: { $0.id == last }) {
+            let item = deck[index]
+            // If undoing set 1, clear the weight cache so set 2+ revert to historical data
+            if item.setIndex == 1 {
+                weightCache.removeValue(forKey: shareKey(for: item))
+            }
             currentIndex = index
             prefillActiveWeight()
         }

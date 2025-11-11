@@ -49,7 +49,8 @@ struct SessionMeta: Codable, Equatable {
         timedSetsSkipped: Bool = false,
         switchHistory: [String] = [],
         sessionCompleted: Bool = false,
-        completedSequences: [UInt64] = []
+        completedSequences: [UInt64] = [],
+        sessionWeights: [UInt64: Double] = [:]
     ) {
         self.sessionId = sessionId
         self.planName = planName
@@ -63,6 +64,7 @@ struct SessionMeta: Codable, Equatable {
         self.switchHistory = switchHistory
         self.sessionCompleted = sessionCompleted
         self.completedSequences = completedSequences
+        self.sessionWeights = sessionWeights
     }
 
     init(from decoder: Decoder) throws {
@@ -80,6 +82,7 @@ struct SessionMeta: Codable, Equatable {
         switchHistory = try container.decodeIfPresent([String].self, forKey: .switchHistory) ?? []
         sessionCompleted = try container.decodeIfPresent(Bool.self, forKey: .sessionCompleted) ?? false
         completedSequences = try container.decodeIfPresent([UInt64].self, forKey: .completedSequences) ?? []
+        sessionWeights = try container.decodeIfPresent([UInt64: Double].self, forKey: .sessionWeights) ?? [:]
     }
 
     private enum CodingKeys: String, CodingKey {
@@ -95,5 +98,6 @@ struct SessionMeta: Codable, Equatable {
         case switchHistory
         case sessionCompleted
         case completedSequences
+        case sessionWeights
     }
 }
