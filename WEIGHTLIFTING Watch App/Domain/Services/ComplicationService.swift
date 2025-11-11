@@ -49,15 +49,33 @@ final class ComplicationService {
     }
 
     func updateNextUp(context: SessionContext, meta: SessionMeta) {
-        guard let nextItem = findNextItem(in: context.deck, after: meta.nextSequence) else {
+        // Collect all sequences that are done or in progress (pending + completed)
+        let doneSequences = Set(meta.completedSequences + meta.pending.map { $0.sequence })
+
+        #if DEBUG
+        print("ComplicationService: updateNextUp called")
+        print("  Completed sequences: \(meta.completedSequences)")
+        print("  Pending sequences: \(meta.pending.map { $0.sequence })")
+        print("  Done sequences: \(doneSequences)")
+        print("  Deck sequences: \(context.deck.map { $0.sequence })")
+        #endif
+
+        guard let nextItem = findNextItem(in: context.deck, doneSequences: doneSequences) else {
+            #if DEBUG
+            print("  No next item found - clearing")
+            #endif
             clearNextUp()
             return
         }
 
+        #if DEBUG
+        print("  Next item: \(nextItem.exerciseName) (seq: \(nextItem.sequence))")
+        #endif
+
         let snapshot = ComplicationSnapshot(
             exerciseName: nextItem.exerciseName,
             detail: formatDetail(for: nextItem),
-            footer: formatFooter(for: nextItem, in: context.deck, after: meta.nextSequence),
+            footer: formatFooter(for: nextItem, in: context.deck, doneSequences: doneSequences),
             sessionID: context.sessionID,
             deckIndex: context.deck.firstIndex(where: { $0.id == nextItem.id }) ?? 0
         )
@@ -91,8 +109,12 @@ final class ComplicationService {
         reloadComplications()
     }
 
-    private func findNextItem(in deck: [DeckItem], after sequence: UInt64) -> DeckItem? {
-        return deck.first { $0.sequence >= Int(sequence) }
+    private func findNextItem(in deck: [DeckItem], doneSequences: Set<UInt64>) -> DeckItem? {
+        // Find all incomplete items, sort by sequence, and return the first
+        return deck
+            .filter { !doneSequences.contains($0.sequence) }
+            .sorted { $0.sequence < $1.sequence }
+            .first
     }
 
     private func formatDetail(for item: DeckItem) -> String {
@@ -106,8 +128,12 @@ final class ComplicationService {
         }
     }
 
-    private func formatFooter(for item: DeckItem, in deck: [DeckItem], after sequence: UInt64) -> String {
-        let remaining = deck.filter { $0.sequence > item.sequence && $0.exerciseCode == item.exerciseCode }.count
+    private func formatFooter(for item: DeckItem, in deck: [DeckItem], doneSequences: Set<UInt64>) -> String {
+        let remaining = deck.filter {
+            $0.sequence > item.sequence &&
+            $0.exerciseCode == item.exerciseCode &&
+            !doneSequences.contains($0.sequence)
+        }.count
         if remaining > 0 {
             return "••• +\(remaining)"
         } else {

@@ -512,6 +512,11 @@ private extension SessionManager {
             meta.completedSequences.append(sequence)
             activeMeta = meta
             try? saveMeta(meta, sessionID: sessionID)
+
+            // Update complication after commit completes
+            if let context = activeContext {
+                complicationService.updateNextUp(context: context, meta: meta)
+            }
         }
     }
 

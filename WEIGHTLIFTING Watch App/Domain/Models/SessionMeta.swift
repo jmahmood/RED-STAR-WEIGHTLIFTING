@@ -29,13 +29,13 @@ struct SessionMeta: Codable, Equatable {
     var deckHash: String
     var mutationMap: [String: Mutation]
     var sequenceOverrides: [UInt64: Override]
-    var nextSequence: UInt64
     var pending: [Pending]
     var lastSaveAt: Date?
     var timedSetsSkipped: Bool
     var switchHistory: [String]
     var sessionCompleted: Bool
     var completedSequences: [UInt64]
+    var sessionWeights: [UInt64: Double]
 
     init(
         sessionId: String,
@@ -44,7 +44,6 @@ struct SessionMeta: Codable, Equatable {
         deckHash: String,
         mutationMap: [String: Mutation] = [:],
         sequenceOverrides: [UInt64: Override] = [:],
-        nextSequence: UInt64 = 1,
         pending: [Pending] = [],
         lastSaveAt: Date? = nil,
         timedSetsSkipped: Bool = false,
@@ -58,7 +57,6 @@ struct SessionMeta: Codable, Equatable {
         self.deckHash = deckHash
         self.mutationMap = mutationMap
         self.sequenceOverrides = sequenceOverrides
-        self.nextSequence = nextSequence
         self.pending = pending
         self.lastSaveAt = lastSaveAt
         self.timedSetsSkipped = timedSetsSkipped
@@ -76,7 +74,6 @@ struct SessionMeta: Codable, Equatable {
         deckHash = try container.decode(String.self, forKey: .deckHash)
         mutationMap = try container.decodeIfPresent([String: Mutation].self, forKey: .mutationMap) ?? [:]
         sequenceOverrides = try container.decodeIfPresent([UInt64: Override].self, forKey: .sequenceOverrides) ?? [:]
-        nextSequence = try container.decodeIfPresent(UInt64.self, forKey: .nextSequence) ?? 1
         pending = try container.decodeIfPresent([Pending].self, forKey: .pending) ?? []
         lastSaveAt = try container.decodeIfPresent(Date.self, forKey: .lastSaveAt)
         timedSetsSkipped = try container.decodeIfPresent(Bool.self, forKey: .timedSetsSkipped) ?? false
@@ -92,7 +89,6 @@ struct SessionMeta: Codable, Equatable {
         case deckHash
         case mutationMap
         case sequenceOverrides
-        case nextSequence
         case pending
         case lastSaveAt
         case timedSetsSkipped
