@@ -20,6 +20,8 @@ struct ContentView: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
+                    InsightsView(snapshot: inbox.insights)
+
                     LiftsLibrarySection(
                         state: inbox.liftsLibrary,
                         importAction: { isImportingLifts = true },

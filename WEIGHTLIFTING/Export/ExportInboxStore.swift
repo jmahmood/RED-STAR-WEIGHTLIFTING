@@ -65,6 +65,11 @@ final class ExportInboxStore: NSObject, ObservableObject {
     @Published private(set) var history: [ExportedSnapshot] = []
     @Published private(set) var liftsLibrary = LiftsLibraryState()
     @Published private(set) var planLibrary = PlanLibraryState()
+    @Published private(set) var insights = InsightsSnapshot(
+        personalRecords: .loading,
+        nextWorkout: .loading,
+        generatedAt: nil
+    )
 
     private let fileManager: FileManager
     private let inboxURL: URL
@@ -81,6 +86,7 @@ final class ExportInboxStore: NSObject, ObservableObject {
         formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
         return formatter
     }()
+    private let insightsEngine: InsightsEngine
 
     override init() {
         self.fileManager = .default
@@ -94,6 +100,7 @@ final class ExportInboxStore: NSObject, ObservableObject {
         self.inboxURL = exportDirectory
         self.globalDirectory = globalDirectory
         self.planDirectory = planDirectory
+        self.insightsEngine = InsightsEngine(globalDirectory: globalDirectory, planDirectory: planDirectory, fileManager: fileManager)
         super.init()
         try? fileManager.createDirectory(at: exportDirectory, withIntermediateDirectories: true)
         try? fileManager.createDirectory(at: globalDirectory, withIntermediateDirectories: true)
@@ -101,10 +108,14 @@ final class ExportInboxStore: NSObject, ObservableObject {
         loadExistingSnapshots()
         loadLocalLibraries()
         configureSession()
+        refreshInsights()
     }
 
     func updateScenePhase(_ phase: ScenePhase) {
         isAppActive = phase == .active
+        if isAppActive {
+            refreshInsights()
+        }
     }
 
     func requestNotificationAuthorization() {
@@ -185,6 +196,7 @@ final class ExportInboxStore: NSObject, ObservableObject {
                 self.liftsLibrary = liftsState
                 self.planLibrary = planState
             }
+            self.refreshInsights()
         }
     }
 
@@ -224,6 +236,7 @@ final class ExportInboxStore: NSObject, ObservableObject {
                         self.liftsLibrary.transferStatus.phase = .idle
                     }
                     IndexService.shared.reload()
+                    self.refreshInsights()
                     continuation.resume()
                 } catch {
                     let wrapped = UserFacingError(message: "Import failed: \(error.localizedDescription)")
@@ -268,6 +281,7 @@ final class ExportInboxStore: NSObject, ObservableObject {
                         self.planLibrary.importError = nil
                         self.planLibrary.transferStatus.phase = .idle
                     }
+                    self.refreshInsights()
                     continuation.resume()
                 } catch {
                     let message = self.makePlanErrorMessage(from: error)
@@ -460,6 +474,16 @@ final class ExportInboxStore: NSObject, ObservableObject {
         content.sound = .default
         let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
         notificationCenter.add(request)
+    }
+
+    private func refreshInsights() {
+        processingQueue.async { [weak self] in
+            guard let self else { return }
+            let snapshot = self.insightsEngine.computeSnapshot()
+            DispatchQueue.main.async {
+                self.insights = snapshot
+            }
+        }
     }
 }
 
