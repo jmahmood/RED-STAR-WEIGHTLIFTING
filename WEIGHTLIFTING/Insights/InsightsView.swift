@@ -186,7 +186,7 @@ private struct InsightCard<Content: View>: View {
     }
 }
 
-private enum InsightsFormatter {
+enum InsightsFormatter {
     static func weight(value: Double, unit: String?) -> String {
         guard let unit else {
             return numberFormatter(decimals: 1, grouping: false).string(from: NSNumber(value: value)) ?? "\(value)"
@@ -231,13 +231,4 @@ private enum InsightsFormatter {
         formatter.locale = Locale.current
         return formatter
     }
-}
-
-private extension DateFormatter {
-    static let shortStyle: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .short
-        formatter.timeStyle = .none
-        return formatter
-    }()
 }
