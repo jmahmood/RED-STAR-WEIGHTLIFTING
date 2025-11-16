@@ -18,14 +18,13 @@ final class AppContainer: ObservableObject {
     let sessionManager: SessionManager
     let exportService: ExportService
     let complicationService: ComplicationService
-    let companionIncomingService: CompanionIncomingService
+    //    let companionIncomingService: CompanionIncomingService
 
     let sessionStore: SessionStore
     let deckStore: DeckStore
 
     init(
         fileManager: FileManager = .default,
-        userDefaults: UserDefaults = .standard
     ) {
         let fileSystem = FileSystem(fileManager: fileManager)
         self.fileSystem = fileSystem
@@ -35,6 +34,8 @@ final class AppContainer: ObservableObject {
         seeder.seedGlobalCsvIfNeeded()
 
         self.walLog = WalLog(fileSystem: fileSystem)
+        
+        // Handles saving CSV workout output
         self.globalCsv = GlobalCsv(fileSystem: fileSystem)
         let indexDataStore = IndexRepository(fileSystem: fileSystem)
         self.indexService = IndexService(dataStore: indexDataStore, fileSystem: fileSystem)
@@ -62,7 +63,7 @@ final class AppContainer: ObservableObject {
             indexService: indexService,
             complicationService: complicationService
         )
-        self.companionIncomingService = incomingService
+        //        self.companionIncomingService = incomingService
         self.exportService = ExportService(
             fileSystem: fileSystem,
             globalCsv: globalCsv,
