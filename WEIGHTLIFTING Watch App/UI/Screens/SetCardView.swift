@@ -109,17 +109,18 @@ struct SetCardView: View {
 
     private var prevRows: some View {
         VStack(alignment: .leading, spacing: 2) {
-            if !prevCompletions.isEmpty {
-                Text("Prev")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
             ForEach(Array(prevCompletions.prefix(2).enumerated()), id: \.offset) { entry in
                 let item = entry.element
                 HStack {
-                    Text(item.date, style: .date)
-                        .font(.caption2)
-                        .foregroundStyle(.secondary)
+                    HStack(spacing: 2) {
+                        if let effort = item.effort {
+                            Text(effort.displayTitle)
+                                .font(.caption2)
+                        }
+                        Text(formattedDate(item.date))
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                    }
                     Spacer()
                     if let w = item.weight {
                         Text(weightDisplay(w))
@@ -129,15 +130,26 @@ struct SetCardView: View {
                         Text("\(reps) reps")
                             .font(.caption2)
                     }
-                    if let effort = item.effort {
-                        Text(effort.displayTitle)
-                            .font(.caption2)
-                            .foregroundStyle(.secondary)
-                    }
                 }
             }
         }
         .opacity(prevCompletions.isEmpty ? 0 : 1)
+    }
+
+    private func formattedDate(_ date: Date) -> String {
+        let weekAgo = Calendar.current.date(byAdding: .day, value: -7, to: Date()) ?? Date()
+
+        if date < weekAgo {
+            // More than a week old: show "MMM d" (e.g., "Nov 11")
+            let formatter = DateFormatter()
+            formatter.dateFormat = "MMM d"
+            return formatter.string(from: date)
+        } else {
+            // Within a week: show day of week (e.g., "Mon", "Tue")
+            let formatter = DateFormatter()
+            formatter.dateFormat = "EEE"
+            return formatter.string(from: date)
+        }
     }
 
     private var weightDisplay: String {

@@ -1,0 +1,5 @@
+project: WEIGHTLIFTING.xcodeproj
+schemes:
+- WEIGHTLIFTING
+- WEIGHTLIFTING ComplicationsExtension
+- WEIGHTLIFTING Watch App

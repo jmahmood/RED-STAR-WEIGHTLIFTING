@@ -14,6 +14,7 @@ struct IndexEntry: Codable, Equatable {
     let weight: Double?
     let unit: String
     let reps: Int?
+    let effort: Int?
 
     var signature: String { "\(date)|\(time)" }
 }
@@ -27,6 +28,7 @@ extension IndexEntry {
         self.weight = Double(row.weight).flatMap { $0 > 0 ? $0 : nil }
         self.unit = row.unit
         self.reps = Int(row.reps).flatMap { $0 > 0 ? $0 : nil }
+        self.effort = row.effort == 0 ? nil : row.effort
     }
 
     static func maybeFrom(_ row: CsvRow) -> IndexEntry? {
@@ -131,7 +133,7 @@ private extension IndexService {
     func makeCompletion(from entry: IndexEntry) -> DeckItem.PrevCompletion? {
         guard let weight = entry.weight else { return nil }
         let timestamp = CsvDateFormatter.date(from: entry.date, timeString: entry.time) ?? Date()
-        return DeckItem.PrevCompletion(date: timestamp, weight: weight, reps: entry.reps, effort: nil) // effort not in IndexEntry
+        return DeckItem.PrevCompletion(date: timestamp, weight: weight, reps: entry.reps, effort: entry.effort.flatMap(DeckItem.Effort.init(rawValue:)))
     }
 
     func schedulePersist() {
@@ -171,10 +173,11 @@ private extension IndexService {
                 guard let exCode = rowDict["ex_code"], !exCode.isEmpty,
                       let weightStr = rowDict["weight"], let weight = Double(weightStr), weight > 0 else { continue }
                 let reps = rowDict["reps"].flatMap { Int($0) }
+                let effort = rowDict["effort_1to5"].flatMap { Int($0) }.flatMap { $0 > 0 ? $0 : nil }
                 let date = rowDict["date"] ?? ""
                 let time = rowDict["time"] ?? ""
                 let unit = rowDict["unit"] ?? "lbs"
-                let entry = IndexEntry(date: date, time: time, weight: weight, unit: unit, reps: reps)
+                let entry = IndexEntry(date: date, time: time, weight: weight, unit: unit, reps: reps, effort: effort)
                 var l2 = map[exCode] ?? []
                 l2.insert(entry, at: 0)
                 if l2.count > 2 { l2.removeLast() }
