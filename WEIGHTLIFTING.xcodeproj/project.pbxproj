@@ -481,7 +481,7 @@
 				CODE_SIGN_ENTITLEMENTS = "WEIGHTLIFTING Watch App/Resources/WEIGHTLIFTING-Watch-App.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 589DL222X4;
+				DEVELOPMENT_TEAM = 48DUA96B9A;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = "WEIGHTLIFTING Watch App/Resources/WatchAppInfo.plist";
@@ -491,7 +491,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.jawaadmahmood.WEIGHTLIFTING.watchkitapp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jawaadmahmood.WEIGHTLIFTING2.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
@@ -514,7 +514,7 @@
 				CODE_SIGN_ENTITLEMENTS = "WEIGHTLIFTING Watch App/Resources/WEIGHTLIFTING-Watch-App.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 589DL222X4;
+				DEVELOPMENT_TEAM = 48DUA96B9A;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = "WEIGHTLIFTING Watch App/Resources/WatchAppInfo.plist";
@@ -524,7 +524,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.jawaadmahmood.WEIGHTLIFTING.watchkitapp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jawaadmahmood.WEIGHTLIFTING2.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
@@ -548,7 +548,7 @@
 				CODE_SIGN_ENTITLEMENTS = WEIGHTLIFTING/WEIGHTLIFTING.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 589DL222X4;
+				DEVELOPMENT_TEAM = 48DUA96B9A;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = WEIGHTLIFTING;
@@ -564,7 +564,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.jawaadmahmood.WEIGHTLIFTING;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jawaadmahmood.WEIGHTLIFTING2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -585,7 +585,7 @@
 				CODE_SIGN_ENTITLEMENTS = WEIGHTLIFTING/WEIGHTLIFTING.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 589DL222X4;
+				DEVELOPMENT_TEAM = 48DUA96B9A;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = WEIGHTLIFTING;
@@ -601,7 +601,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.jawaadmahmood.WEIGHTLIFTING;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jawaadmahmood.WEIGHTLIFTING2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -623,7 +623,7 @@
 				CODE_SIGN_ENTITLEMENTS = "WEIGHTLIFTING Complications/WEIGHTLIFTING-Complications.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 589DL222X4;
+				DEVELOPMENT_TEAM = 48DUA96B9A;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "WEIGHTLIFTING Complications/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "WEIGHTLIFTING Complications";
@@ -635,7 +635,7 @@
 					"@executable_path/../../../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.jawaadmahmood.WEIGHTLIFTING.watchkitapp.WEIGHTLIFTING-Complications";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.jawaadmahmood.WEIGHTLIFTING2.watchkitapp.WEIGHTLIFTING-Complications";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
@@ -657,7 +657,7 @@
 				CODE_SIGN_ENTITLEMENTS = "WEIGHTLIFTING Complications/WEIGHTLIFTING-Complications.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 589DL222X4;
+				DEVELOPMENT_TEAM = 48DUA96B9A;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "WEIGHTLIFTING Complications/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "WEIGHTLIFTING Complications";
@@ -669,7 +669,7 @@
 					"@executable_path/../../../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.jawaadmahmood.WEIGHTLIFTING.watchkitapp.WEIGHTLIFTING-Complications";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.jawaadmahmood.WEIGHTLIFTING2.watchkitapp.WEIGHTLIFTING-Complications";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;

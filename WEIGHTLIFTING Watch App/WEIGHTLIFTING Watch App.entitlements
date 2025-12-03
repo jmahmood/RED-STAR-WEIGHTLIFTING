@@ -4,7 +4,7 @@
 <dict>
 	<key>com.apple.security.application-groups</key>
 	<array>
-		<string>group.com.jawaadmahmood.WEIGHTLIFTING</string>
+		<string>group.com.jawaadmahmood.WEIGHTLIFTING_SHARED</string>
 	</array>
 </dict>
 </plist>

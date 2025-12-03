@@ -24,7 +24,7 @@ final class SharedDefaults {
     // MARK: - Shared Instance
 
     /// The App Group identifier for sharing data between targets
-    private static let appGroupIdentifier = "group.com.jawaadmahmood.WEIGHTLIFTING"
+    private static let appGroupIdentifier = "group.com.jawaadmahmood.WEIGHTLIFTING_SHARED"
 
     /// Shared UserDefaults suite for the App Group
     static let shared: UserDefaults = {
