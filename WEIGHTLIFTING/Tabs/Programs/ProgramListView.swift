@@ -92,18 +92,20 @@ struct ProgramListView: View {
         for url in contents {
             guard url.pathExtension == "json",
                   url.lastPathComponent != "active_plan.json" else { continue }
-            guard let data = try? Data(contentsOf: url),
-                  let plan = try? JSONDecoder().decode(PlanV03.self, from: data) else {
-                continue
-            }
-            mapped.append(
-                ProgramInfo(
-                    name: plan.planName,
-                    fileURL: url,
-                    dayCount: plan.days.count,
-                    unit: plan.unit
+            do {
+                let data = try Data(contentsOf: url)
+                let plan = try JSONDecoder().decode(PlanV03.self, from: data)
+                mapped.append(
+                    ProgramInfo(
+                        name: plan.planName,
+                        fileURL: url,
+                        dayCount: plan.days.count,
+                        unit: plan.unit
+                    )
                 )
-            )
+            } catch {
+                print("ProgramListView: failed to decode \(url.lastPathComponent): \(error)")
+            }
         }
 
         // Deduplicate by program name, preferring first encountered

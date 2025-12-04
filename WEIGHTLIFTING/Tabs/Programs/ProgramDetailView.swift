@@ -9,6 +9,7 @@ struct ProgramDetailView: View {
     @State private var program: PlanV03?
     @State private var isActive: Bool = false
     @State private var programData: Data?
+    @State private var loadError: String?
     @State private var showingConfirmation = false
 
     var body: some View {
@@ -61,8 +62,20 @@ struct ProgramDetailView: View {
                     Text("This will replace your current active program.")
                 }
             } else {
-                ProgressView("Loading...")
+                if let loadError {
+                    VStack(spacing: 8) {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .foregroundStyle(.orange)
+                            .font(.title)
+                        Text(loadError)
+                            .multilineTextAlignment(.center)
+                            .foregroundStyle(.secondary)
+                    }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else {
+                    ProgressView("Loading...")
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                }
             }
         }
         .task {
@@ -99,8 +112,10 @@ struct ProgramDetailView: View {
             let plan = try JSONDecoder().decode(PlanV03.self, from: data)
             program = plan
             programData = data
+            loadError = nil
         } catch {
             print("ProgramDetailView: failed to load \(fileURL.lastPathComponent): \(error)")
+            loadError = "Failed to open \(fileURL.lastPathComponent)"
         }
 
     }

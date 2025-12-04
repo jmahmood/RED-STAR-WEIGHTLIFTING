@@ -290,6 +290,7 @@ final class ExportInboxStore: NSObject, ObservableObject {
                     continuation.resume()
                 } catch {
                     let message = self.makePlanErrorMessage(from: error)
+                    print("ExportInboxStore: failed to import plan \(sourceURL.lastPathComponent): \(message)")
                     let wrapped = UserFacingError(message: message)
                     DispatchQueue.main.async {
                         self.planLibrary.importError = wrapped.message

@@ -14,6 +14,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		4C54F2D22EE10ACB00BD82B7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4CCCDDD02EB1ABBD0013B7A6 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4CCCDDD72EB1ABBD0013B7A6;
+			remoteInfo = WEIGHTLIFTING;
+		};
 		4CCCDDE72EB1ABBE0013B7A6 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4CCCDDD02EB1ABBD0013B7A6 /* Project object */;
@@ -56,6 +63,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		4C54F2CE2EE10ACB00BD82B7 /* WEIGHTLIFTINGTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WEIGHTLIFTINGTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		4C54F2DE2EE112FB00BD82B7 /* WEIGHTLIFTING.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = WEIGHTLIFTING.xctestplan; sourceTree = "<group>"; };
+		4C54F2DF2EE1162F00BD82B7 /* WEIGHTLIFTING2.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = WEIGHTLIFTING2.xctestplan; sourceTree = "<group>"; };
 		4CCCDDD82EB1ABBD0013B7A6 /* WEIGHTLIFTING.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WEIGHTLIFTING.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4CCCDDE52EB1ABBE0013B7A6 /* WEIGHTLIFTING Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "WEIGHTLIFTING Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4CE325B02EBC880A000753AE /* WEIGHTLIFTING ComplicationsExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "WEIGHTLIFTING ComplicationsExtension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -89,6 +99,11 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		4C54F2CF2EE10ACB00BD82B7 /* WEIGHTLIFTINGTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = WEIGHTLIFTINGTests;
+			sourceTree = "<group>";
+		};
 		4CCCDDDA2EB1ABBD0013B7A6 /* WEIGHTLIFTING */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = WEIGHTLIFTING;
@@ -114,6 +129,13 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		4C54F2CB2EE10ACB00BD82B7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4CCCDDD52EB1ABBD0013B7A6 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -143,10 +165,13 @@
 		4CCCDDCF2EB1ABBD0013B7A6 = {
 			isa = PBXGroup;
 			children = (
+				4C54F2DF2EE1162F00BD82B7 /* WEIGHTLIFTING2.xctestplan */,
+				4C54F2DE2EE112FB00BD82B7 /* WEIGHTLIFTING.xctestplan */,
 				4CE325D62EBC8926000753AE /* WEIGHTLIFTING ComplicationsExtension.entitlements */,
 				4CCCDDDA2EB1ABBD0013B7A6 /* WEIGHTLIFTING */,
 				4CCCDDE92EB1ABBE0013B7A6 /* WEIGHTLIFTING Watch App */,
 				4CE325B62EBC880A000753AE /* WEIGHTLIFTING Complications */,
+				4C54F2CF2EE10ACB00BD82B7 /* WEIGHTLIFTINGTests */,
 				4CE325B12EBC880A000753AE /* Frameworks */,
 				4CCCDDD92EB1ABBD0013B7A6 /* Products */,
 			);
@@ -158,6 +183,7 @@
 				4CCCDDD82EB1ABBD0013B7A6 /* WEIGHTLIFTING.app */,
 				4CCCDDE52EB1ABBE0013B7A6 /* WEIGHTLIFTING Watch App.app */,
 				4CE325B02EBC880A000753AE /* WEIGHTLIFTING ComplicationsExtension.appex */,
+				4C54F2CE2EE10ACB00BD82B7 /* WEIGHTLIFTINGTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -174,6 +200,29 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		4C54F2CD2EE10ACB00BD82B7 /* WEIGHTLIFTINGTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4C54F2D42EE10ACB00BD82B7 /* Build configuration list for PBXNativeTarget "WEIGHTLIFTINGTests" */;
+			buildPhases = (
+				4C54F2CA2EE10ACB00BD82B7 /* Sources */,
+				4C54F2CB2EE10ACB00BD82B7 /* Frameworks */,
+				4C54F2CC2EE10ACB00BD82B7 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4C54F2D32EE10ACB00BD82B7 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				4C54F2CF2EE10ACB00BD82B7 /* WEIGHTLIFTINGTests */,
+			);
+			name = WEIGHTLIFTINGTests;
+			packageProductDependencies = (
+			);
+			productName = WEIGHTLIFTINGTests;
+			productReference = 4C54F2CE2EE10ACB00BD82B7 /* WEIGHTLIFTINGTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		4CCCDDD72EB1ABBD0013B7A6 /* WEIGHTLIFTING */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 4CCCDDF62EB1ABBF0013B7A6 /* Build configuration list for PBXNativeTarget "WEIGHTLIFTING" */;
@@ -254,6 +303,10 @@
 				LastSwiftUpdateCheck = 2610;
 				LastUpgradeCheck = 2610;
 				TargetAttributes = {
+					4C54F2CD2EE10ACB00BD82B7 = {
+						CreatedOnToolsVersion = 26.1.1;
+						TestTargetID = 4CCCDDD72EB1ABBD0013B7A6;
+					};
 					4CCCDDD72EB1ABBD0013B7A6 = {
 						CreatedOnToolsVersion = 26.0.1;
 					};
@@ -287,11 +340,19 @@
 				4CCCDDD72EB1ABBD0013B7A6 /* WEIGHTLIFTING */,
 				4CCCDDE42EB1ABBE0013B7A6 /* WEIGHTLIFTING Watch App */,
 				4CE325AF2EBC880A000753AE /* WEIGHTLIFTING ComplicationsExtension */,
+				4C54F2CD2EE10ACB00BD82B7 /* WEIGHTLIFTINGTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		4C54F2CC2EE10ACB00BD82B7 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4CCCDDD62EB1ABBD0013B7A6 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -316,6 +377,13 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		4C54F2CA2EE10ACB00BD82B7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4CCCDDD42EB1ABBD0013B7A6 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -340,6 +408,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		4C54F2D32EE10ACB00BD82B7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4CCCDDD72EB1ABBD0013B7A6 /* WEIGHTLIFTING */;
+			targetProxy = 4C54F2D22EE10ACB00BD82B7 /* PBXContainerItemProxy */;
+		};
 		4CCCDDE82EB1ABBE0013B7A6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 4CCCDDE42EB1ABBE0013B7A6 /* WEIGHTLIFTING Watch App */;
@@ -353,6 +426,53 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		4C54F2D52EE10ACB00BD82B7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 48DUA96B9A;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jawaadmahmood.WEIGHTLIFTINGTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WEIGHTLIFTING.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/WEIGHTLIFTING";
+			};
+			name = Debug;
+		};
+		4C54F2D62EE10ACB00BD82B7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 48DUA96B9A;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jawaadmahmood.WEIGHTLIFTINGTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WEIGHTLIFTING.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/WEIGHTLIFTING";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 		4CCCDDF02EB1ABBF0013B7A6 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -687,6 +807,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		4C54F2D42EE10ACB00BD82B7 /* Build configuration list for PBXNativeTarget "WEIGHTLIFTINGTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4C54F2D52EE10ACB00BD82B7 /* Debug */,
+				4C54F2D62EE10ACB00BD82B7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		4CCCDDD32EB1ABBD0013B7A6 /* Build configuration list for PBXProject "WEIGHTLIFTING" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

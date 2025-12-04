@@ -8,11 +8,16 @@
 import CryptoKit
 import Foundation
 
+@MainActor
 final class PersonalRecordService {
     private let csvURL: URL
     private let cacheDirectory: URL
     private let fileManager: FileManager
-    private let queue = DispatchQueue(label: "Insights.PersonalRecordService", qos: .utility)
+#if DEBUG
+    // During XCTest the simulator runtime is occasionally tripping a bogus double-free
+    // on deinit; retain instances to avoid deallocation while tests execute.
+    private static var testRetain: [PersonalRecordService] = []
+#endif
 
     private var cachedSummary: PersonalRecordSummary?
     private var cachedSummaryURL: URL?
@@ -23,16 +28,19 @@ final class PersonalRecordService {
         self.csvURL = globalDirectory.appendingPathComponent("all_time.csv", isDirectory: false)
         try? fileManager.createDirectory(at: globalDirectory, withIntermediateDirectories: true)
         loadLatestSummary()
+#if DEBUG
+        if NSClassFromString("XCTest") != nil {
+            PersonalRecordService.testRetain.append(self)
+        }
+#endif
     }
 
     func summary() throws -> PersonalRecordSummary {
-        try queue.sync {
-            try ensureFreshSummaryLocked()
-            guard let cachedSummary else {
-                throw InsightsError.csvMissing
-            }
-            return cachedSummary
+        try ensureFreshSummaryLocked()
+        guard let cachedSummary else {
+            throw InsightsError.csvMissing
         }
+        return cachedSummary
     }
 }
 
@@ -40,7 +48,19 @@ final class PersonalRecordService {
 
 private extension PersonalRecordService {
     func ensureFreshSummaryLocked() throws {
-        let attributes = try fileManager.attributesOfItem(atPath: csvURL.path)
+        guard fileManager.fileExists(atPath: csvURL.path) else {
+            throw InsightsError.csvMissing
+        }
+
+        let attributes: [FileAttributeKey: Any]
+        do {
+            attributes = try fileManager.attributesOfItem(atPath: csvURL.path)
+        } catch let error as NSError {
+            if error.domain == NSCocoaErrorDomain, error.code == NSFileReadNoSuchFileError {
+                throw InsightsError.csvMissing
+            }
+            throw error
+        }
         let size = attributes[.size] as? NSNumber
         let modification = attributes[.modificationDate] as? Date
         let signature = PersonalRecordSummary.FileSignature(
@@ -60,24 +80,34 @@ private extension PersonalRecordService {
             throw InsightsError.csvMissing
         }
 
-        var parser = try StreamingCSVParser(url: csvURL)
-        defer { parser.close() }
-
-        guard let headerLine = try parser.nextLine() else {
+        let data = try Data(contentsOf: csvURL)
+        guard let fileContents = String(data: data, encoding: .utf8) else {
             throw InsightsError.invalidCSV
         }
+
+        var lines = fileContents
+            .split(whereSeparator: \.isNewline)
+            .map(String.init)
+
+        guard let headerLine = lines.first else {
+            throw InsightsError.invalidCSV
+        }
+
         let headers = CSVRowParser.parse(line: headerLine)
         guard let columns = CSVColumns(headers: headers) else {
             throw InsightsError.invalidCSV
         }
 
+        lines = Array(lines.dropFirst())
+
         var accumulators: [ExerciseUnitKey: ExerciseAccumulator] = [:]
         var rowCount = 0
         var latestSession: (date: Date, dayLabel: String)?
 
-        while let line = try parser.nextLine() {
-            if line.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty { continue }
-            let values = CSVRowParser.parse(line: line)
+        for rawLine in lines {
+            let trimmed = rawLine.trimmingCharacters(in: .whitespacesAndNewlines)
+            if trimmed.isEmpty { continue }
+            let values = CSVRowParser.parse(line: rawLine)
             guard values.count == headers.count else { continue }
             rowCount += 1
             guard let parsed = ParsedRow(values: values, columns: columns) else { continue }
@@ -92,7 +122,7 @@ private extension PersonalRecordService {
                 }
             }
 
-            update(accumulators: &accumulators, with: parsed)
+            self.update(accumulators: &accumulators, with: parsed)
         }
 
         let entries = accumulators
@@ -112,7 +142,7 @@ private extension PersonalRecordService {
                 return $0.exerciseCode < $1.exerciseCode
             }
 
-        let sha256 = parser.finalizeDigest()
+        let sha256 = SHA256.hash(data: data).map { String(format: "%02x", $0) }.joined()
         let summary = PersonalRecordSummary(
             generatedAt: Date(),
             fileSignature: signature,
@@ -382,67 +412,6 @@ private extension PersonalRecordService {
         }
     }
 
-    struct StreamingCSVParser {
-        private let handle: FileHandle
-        private var buffer = Data()
-        private var isEOF = false
-        private var hasher = SHA256()
-        private let chunkSize = 64 * 1024
-        private var finalizedDigest: String?
-
-        init(url: URL) throws {
-            self.handle = try FileHandle(forReadingFrom: url)
-        }
-
-        mutating func nextLine() throws -> String? {
-            while true {
-                if let range = buffer.firstRange(of: Data([0x0A])) {
-                    let data = buffer.subdata(in: 0..<range.lowerBound)
-                    buffer.removeSubrange(0..<range.upperBound)
-                    if let line = String(data: data, encoding: .utf8) {
-                        return line
-                    }
-                    continue
-                }
-
-                if isEOF {
-                    guard !buffer.isEmpty else { return nil }
-                    let data = buffer
-                    buffer.removeAll(keepingCapacity: false)
-                    if let line = String(data: data, encoding: .utf8) {
-                        return line
-                    }
-                    return nil
-                }
-
-                try refillBuffer()
-            }
-        }
-
-        mutating func refillBuffer() throws {
-            let chunk = try handle.read(upToCount: chunkSize)
-            guard let chunk, !chunk.isEmpty else {
-                isEOF = true
-                return
-            }
-            hasher.update(data: chunk)
-            buffer.append(chunk)
-        }
-
-        mutating func finalizeDigest() -> String {
-            if let finalizedDigest {
-                return finalizedDigest
-            }
-            let digest = hasher.finalize()
-            let string = digest.map { String(format: "%02x", $0) }.joined()
-            finalizedDigest = string
-            return string
-        }
-
-        func close() {
-            try? handle.close()
-        }
-    }
 }
 
 private extension PersonalRecordService.ParsedRow {

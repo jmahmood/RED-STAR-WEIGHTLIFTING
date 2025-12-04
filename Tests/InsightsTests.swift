@@ -5,6 +5,7 @@ struct InsightsTests {
     static func main() throws {
         try testPersonalRecordStreaming()
         try testNextWorkoutBuilder()
+        try testPlanValidationFailure()
         print("InsightsTests passed")
     }
 
@@ -72,6 +73,24 @@ struct InsightsTests {
         }
         guard display.remainingCount == 0 else {
             throw Failure("Unexpected remaining count \(display.remainingCount)")
+        }
+    }
+
+    static func testPlanValidationFailure() throws {
+        let invalidJSON = """
+        { "name": "Broken Plan", "unit": "lb", "dictionary": {} }
+        """
+        guard let data = invalidJSON.data(using: .utf8) else {
+            throw Failure("Unable to build invalid plan data")
+        }
+
+        do {
+            _ = try PlanValidator.validate(data: data)
+            throw Failure("Expected validation to fail for malformed plan")
+        } catch PlanValidationError.decodingFailed {
+            // expected
+        } catch {
+            throw Failure("Unexpected error type: \(error)")
         }
     }
 
