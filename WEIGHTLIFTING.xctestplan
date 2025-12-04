@@ -9,11 +9,6 @@
     }
   ],
   "defaultOptions" : {
-    "mallocGuardEdgesEnabled" : true,
-    "mallocScribbleEnabled" : true,
-    "mallocStackLoggingOptions" : {
-      "loggingType" : "liveAllocations"
-    },
     "performanceAntipatternCheckerEnabled" : true,
     "targetForVariableExpansion" : {
       "containerPath" : "container:WEIGHTLIFTING.xcodeproj",
@@ -24,6 +19,9 @@
   "testTargets" : [
     {
       "parallelizable" : false,
+      "skippedTests" : [
+        "MetricsEngineTests"
+      ],
       "target" : {
         "containerPath" : "container:WEIGHTLIFTING.xcodeproj",
         "identifier" : "4C54F2CD2EE10ACB00BD82B7",

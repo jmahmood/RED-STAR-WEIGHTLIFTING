@@ -87,10 +87,11 @@ final class ExerciseUniverse {
             return []
         }
 
-        var parser = try StreamingCSVParser(url: csvURL)
-        defer { parser.close() }
+        // Load entire file into memory (works well for typical CSV sizes)
+        let contents = try String(contentsOf: csvURL, encoding: .utf8)
+        let lines = contents.split(separator: "\n", omittingEmptySubsequences: false).map(String.init)
 
-        guard let headerLine = try parser.nextLine() else {
+        guard let headerLine = lines.first else {
             return []
         }
         let headers = CSVRowParser.parse(line: headerLine)
@@ -103,7 +104,7 @@ final class ExerciseUniverse {
         var exerciseCodes: Set<String> = []
         var unitMap: [String: WeightUnit] = [:]
 
-        while let line = try parser.nextLine() {
+        for line in lines.dropFirst() {
             if line.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty { continue }
             let values = CSVRowParser.parse(line: line)
             guard values.count > max(exerciseIndex, unitIndex) else { continue }
@@ -238,47 +239,6 @@ private extension ExerciseUniverse {
 
             result.append(buffer)
             return result
-        }
-    }
-
-    struct StreamingCSVParser {
-        private let handle: FileHandle
-        private var buffer = Data()
-        private var isEOF = false
-        private let chunkSize = 64 * 1024
-
-        init(url: URL) throws {
-            self.handle = try FileHandle(forReadingFrom: url)
-        }
-
-        mutating func nextLine() throws -> String? {
-            while true {
-                if let range = buffer.firstRange(of: Data([0x0A])) {
-                    let lineData = buffer.prefix(upTo: range.lowerBound)
-                    buffer.removeSubrange(buffer.startIndex...range.upperBound - 1)
-                    return String(data: lineData, encoding: .utf8)
-                }
-
-                guard !isEOF else {
-                    if buffer.isEmpty {
-                        return nil
-                    }
-                    let lineData = buffer
-                    buffer.removeAll()
-                    return String(data: lineData, encoding: .utf8)
-                }
-
-                let chunk = handle.readData(ofLength: chunkSize)
-                if chunk.isEmpty {
-                    isEOF = true
-                    continue
-                }
-                buffer.append(chunk)
-            }
-        }
-
-        mutating func close() {
-            try? handle.close()
         }
     }
 }

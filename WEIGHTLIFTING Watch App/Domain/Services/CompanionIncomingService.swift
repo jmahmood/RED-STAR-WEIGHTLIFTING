@@ -155,10 +155,21 @@ private extension CompanionIncomingService {
     }
 
     private func validateCSV(at url: URL) throws {
-        let handle = try FileHandle(forReadingFrom: url)
-        defer { try? handle.close() }
-        let sample = try handle.read(upToCount: 8 * 1024) ?? Data()
-        guard let snippet = String(data: sample, encoding: .utf8),
+        // Read first 8KB to validate CSV header
+        // Using Data instead of FileHandle to avoid Swift 6.2 concurrency issues
+        let fileSize = try FileManager.default.attributesOfItem(atPath: url.path)[.size] as? Int ?? 0
+        let readSize = min(fileSize, 8 * 1024)
+
+        let data: Data
+        if readSize == fileSize {
+            data = try Data(contentsOf: url)
+        } else {
+            let handle = try FileHandle(forReadingFrom: url)
+            defer { try? handle.close() }
+            data = try handle.read(upToCount: readSize) ?? Data()
+        }
+
+        guard let snippet = String(data: data, encoding: .utf8),
               let header = snippet.split(whereSeparator: \.isNewline).first else {
             throw IncomingError.invalidCSV
         }

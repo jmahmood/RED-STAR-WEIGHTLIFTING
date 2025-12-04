@@ -55,6 +55,23 @@ struct DataOverviewView: View {
                 }
             }
 
+            // Sync to Watch section
+            Section("Sync to Watch") {
+                Button {
+                    sendCSVToWatch()
+                } label: {
+                    Label("Send CSV to Watch", systemImage: "applewatch.radiowaves.left.and.right")
+                }
+                .disabled(!exportStore.liftsLibrary.isReadyForTransfer || isCSVTransferBusy)
+
+                Button {
+                    sendPlanToWatch()
+                } label: {
+                    Label("Send Program to Watch", systemImage: "applewatch")
+                }
+                .disabled(!exportStore.planLibrary.isReadyForTransfer || isPlanTransferBusy)
+            }
+
             // Diagnostics section
             Section("Diagnostics") {
                 LabeledContent("App Version", value: appVersion)
@@ -152,6 +169,24 @@ struct DataOverviewView: View {
         Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "Unknown"
     }
 
+    private var isCSVTransferBusy: Bool {
+        switch exportStore.liftsLibrary.transferStatus.phase {
+        case .preparing, .queued, .inProgress:
+            return true
+        default:
+            return false
+        }
+    }
+
+    private var isPlanTransferBusy: Bool {
+        switch exportStore.planLibrary.transferStatus.phase {
+        case .preparing, .queued, .inProgress:
+            return true
+        default:
+            return false
+        }
+    }
+
     private func loadCSVInfo() {
         guard let csvURL = try? FileManager.default.url(
             for: .applicationSupportDirectory,
@@ -192,25 +227,26 @@ struct DataOverviewView: View {
     private func importPlan(from url: URL) {
         Task {
             do {
-                let data = try Data(contentsOf: url)
-                let plan = try JSONDecoder().decode(PlanV03.self, from: data)
-
-                // Save to Plans directory
-                guard let planDirectory = try? FileManager.default.url(
-                    for: .applicationSupportDirectory,
-                    in: .userDomainMask,
-                    appropriateFor: nil,
-                    create: true
-                ).appendingPathComponent("WeightWatch/Plans") else {
-                    return
-                }
-
-                try FileManager.default.createDirectory(at: planDirectory, withIntermediateDirectories: true)
-                let destination = planDirectory.appendingPathComponent("\(plan.planName).json")
-                try data.write(to: destination, options: .atomic)
+                try await exportStore.importWorkoutPlan(from: url)
             } catch {
                 print("Failed to import plan: \(error)")
             }
+        }
+    }
+
+    private func sendCSVToWatch() {
+        do {
+            try exportStore.transferLiftsToWatch()
+        } catch {
+            print("Failed to send CSV to watch: \(error)")
+        }
+    }
+
+    private func sendPlanToWatch() {
+        do {
+            try exportStore.transferPlanToWatch()
+        } catch {
+            print("Failed to send plan to watch: \(error)")
         }
     }
 }

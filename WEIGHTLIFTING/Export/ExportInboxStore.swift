@@ -88,6 +88,7 @@ final class ExportInboxStore: NSObject, ObservableObject {
         return formatter
     }()
     private let insightsEngine: InsightsEngine
+    private let ubiquityContainerID = "iCloud.com.jawaadmahmood.WEIGHTLIFTING"
 
     override init() {
         self.fileManager = .default
@@ -210,6 +211,7 @@ final class ExportInboxStore: NSObject, ObservableObject {
         let session = WCSession.default
         session.delegate = self
         self.session = session
+        print("ExportInboxStore: activating WCSession (state: \(session.activationState.rawValue))")
         session.activate()
     }
 
@@ -438,6 +440,7 @@ final class ExportInboxStore: NSObject, ObservableObject {
     }
 
     private func persistFile(_ file: WCSessionFile) -> ExportedSnapshot? {
+        print("ExportInboxStore: didReceive file \(file.fileURL.lastPathComponent), metadata: \(String(describing: file.metadata))")
         let schemaCandidate = (file.metadata?["kind"] as? String)?
             .components(separatedBy: "csv.")
             .last ?? "v0.3"
@@ -475,6 +478,55 @@ final class ExportInboxStore: NSObject, ObservableObject {
         if !isAppActive {
             scheduleNotification(for: snapshot)
         }
+
+        // Mirror the newest snapshot into the local library and iCloud (if available)
+        applySnapshotToLibrary(snapshot)
+    }
+
+    private func applySnapshotToLibrary(_ snapshot: ExportedSnapshot) {
+        print("ExportInboxStore: applying snapshot to library \(snapshot.fileName)")
+        processingQueue.async { [weak self] in
+            guard let self else { return }
+            do {
+                let destination = self.globalDirectory.appendingPathComponent("all_time.csv")
+                print("ExportInboxStore: copying snapshot to \(destination.path)")
+                try self.copyReplacingItem(from: snapshot.fileURL, to: destination)
+                let stats = try CsvQuickStats.compute(url: destination, schema: snapshot.schema)
+                print("ExportInboxStore: copied snapshot rows=\(stats.rows) size=\(stats.sizeBytes)")
+                let now = Date()
+                DispatchQueue.main.async {
+                    self.liftsLibrary.fileURL = destination
+                    self.liftsLibrary.stats = stats
+                    self.liftsLibrary.lastImportedAt = now
+                    self.liftsLibrary.importError = nil
+                }
+                self.refreshInsights()
+                self.saveToICloudIfAvailable(from: destination)
+            } catch {
+                print("ExportInboxStore: failed to apply snapshot to library (\(error))")
+            }
+        }
+    }
+
+    private func saveToICloudIfAvailable(from source: URL) {
+        guard let ubiquityRoot = fileManager.url(forUbiquityContainerIdentifier: ubiquityContainerID) else {
+            print("ExportInboxStore: iCloud container unavailable (\(ubiquityContainerID))")
+            return
+        }
+        let documents = ubiquityRoot.appendingPathComponent("Documents", isDirectory: true)
+        let destination = documents.appendingPathComponent("WeightWatch/all_time.csv", isDirectory: false)
+
+        do {
+            try fileManager.createDirectory(at: destination.deletingLastPathComponent(), withIntermediateDirectories: true)
+            // Always copy to avoid moving/removing the local source file.
+            if fileManager.fileExists(atPath: destination.path) {
+                try fileManager.removeItem(at: destination)
+            }
+            print("ExportInboxStore: copying iCloud file to \(destination.path)")
+            try fileManager.copyItem(at: source, to: destination)
+        } catch {
+            print("ExportInboxStore: failed to save snapshot to iCloud (\(error))")
+        }
     }
 
     private func scheduleNotification(for snapshot: ExportedSnapshot) {
@@ -505,6 +557,8 @@ extension ExportInboxStore: WCSessionDelegate {
     ) {
         if let error {
             print("ExportInboxStore: activation failed with \(error)")
+        } else {
+            print("ExportInboxStore: activation complete (state: \(activationState.rawValue))")
         }
     }
 
@@ -515,11 +569,11 @@ extension ExportInboxStore: WCSessionDelegate {
     }
 
     func session(_ session: WCSession, didReceive file: WCSessionFile) {
-        DispatchQueue.global(qos: .utility).async { [weak self] in
-            guard let self, let snapshot = self.persistFile(file) else { return }
-            DispatchQueue.main.async {
-                self.handleSnapshot(snapshot)
-            }
+        // Persist synchronously inside the delegate; system cleans up the temp file
+        // as soon as this method returns.
+        guard let snapshot = persistFile(file) else { return }
+        DispatchQueue.main.async { [weak self] in
+            self?.handleSnapshot(snapshot)
         }
     }
 

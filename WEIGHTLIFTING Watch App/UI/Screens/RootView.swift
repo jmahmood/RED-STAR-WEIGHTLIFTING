@@ -206,6 +206,18 @@ struct SessionView: View {
             .onReceive(container.exportService.eventsPublisher) { event in
                 handleExportEvent(event)
             }
+            .safeAreaInset(edge: .bottom) {
+                Button {
+                    container.exportService.exportSnapshotToPhone()
+                } label: {
+                    Label("Send to iPhone", systemImage: "arrow.up.right.square")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(.accentColor)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
+            }
         } else {
             TabView(selection: $currentIndex) {
                 ForEach(Array(deck.enumerated()), id: \.element.id) { entry in
@@ -341,6 +353,18 @@ struct SessionView: View {
             }
             .onReceive(container.exportService.eventsPublisher) { event in
                 handleExportEvent(event)
+            }
+            .safeAreaInset(edge: .bottom) {
+                Button {
+                    container.exportService.exportSnapshotToPhone()
+                } label: {
+                    Label("Send to iPhone", systemImage: "arrow.up.right.square")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(.accentColor)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
             }
         }
 

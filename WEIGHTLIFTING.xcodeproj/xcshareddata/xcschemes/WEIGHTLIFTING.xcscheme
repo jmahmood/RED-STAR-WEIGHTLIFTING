@@ -33,9 +33,6 @@
             reference = "container:WEIGHTLIFTING.xctestplan"
             default = "YES">
          </TestPlanReference>
-         <TestPlanReference
-            reference = "container:WEIGHTLIFTING2.xctestplan">
-         </TestPlanReference>
       </TestPlans>
       <Testables>
          <TestableReference

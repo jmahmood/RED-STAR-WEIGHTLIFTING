@@ -98,24 +98,46 @@ final class ExportService: NSObject {
 
     func exportSnapshotToPhone() {
         queue.async {
+            #if DEBUG
+            print("ExportService: exportSnapshotToPhone called")
+            #endif
             do {
                 let record = try self.createSnapshot()
+                #if DEBUG
+                print("ExportService: Snapshot created: \(record.summary.fileName), rows: \(record.summary.rows)")
+                #endif
                 guard let session = self.session else {
+                    #if DEBUG
+                    print("ExportService: Session is nil - WCSession not supported")
+                    #endif
                     self.discardSnapshot(record)
                     self.emit(.failed(record.summary, .sessionUnsupported))
                     return
                 }
 
+//                #if DEBUG
+//                print("ExportService: Session state: \(session.activationState.rawValue), isPaired: \(session.isPaired), isCompanionAppInstalled: \(session.isCompanionAppInstalled)")
+//                #endif
+
                 guard session.isCompanionAppInstalled else {
+                    #if DEBUG
+                    print("ExportService: Companion app not installed")
+                    #endif
                     self.discardSnapshot(record)
                     self.emit(.failed(record.summary, .notPaired))
                     return
                 }
 
                 self.pendingSnapshots.append(record)
+                #if DEBUG
+                print("ExportService: Snapshot added to pending queue, emitting queued event")
+                #endif
                 self.emit(.queued(record.summary))
                 self.flushPendingTransfers()
             } catch {
+                #if DEBUG
+                print("ExportService: Snapshot creation failed: \(error)")
+                #endif
                 self.emit(.failed(nil, .snapshotCreation(error)))
             }
         }
@@ -174,10 +196,23 @@ final class ExportService: NSObject {
     }
 
     private func flushPendingTransfers() {
-        guard let session = session else { return }
-        guard session.activationState == .activated else { return }
+        guard let session = session else {
+            #if DEBUG
+            print("ExportService: flushPendingTransfers - session is nil")
+            #endif
+            return
+        }
+        guard session.activationState == .activated else {
+            #if DEBUG
+            print("ExportService: flushPendingTransfers - session not activated (state: \(session.activationState.rawValue))")
+            #endif
+            return
+        }
 
         guard session.isCompanionAppInstalled else {
+            #if DEBUG
+            print("ExportService: flushPendingTransfers - companion app not installed, discarding \(pendingSnapshots.count) snapshots")
+            #endif
             for record in pendingSnapshots {
                 discardSnapshot(record)
                 emit(.failed(record.summary, .notPaired))
@@ -186,22 +221,37 @@ final class ExportService: NSObject {
             return
         }
 
+        #if DEBUG
+        print("ExportService: flushPendingTransfers - processing \(pendingSnapshots.count) pending snapshots")
+        #endif
+
         let metadataFormatter = ISO8601DateFormatter()
 
         for record in pendingSnapshots {
             let filePath = record.summary.url.path
-            guard activeSnapshots[filePath] == nil else { continue }
+            guard activeSnapshots[filePath] == nil else {
+                #if DEBUG
+                print("ExportService: Skipping \(filePath) - already in activeSnapshots")
+                #endif
+                continue
+            }
             let metadata: [String: Any] = [
                 "kind": "csv.\(schemaVersion)",
                 "rows": record.summary.rows,
                 "filename": record.summary.fileName,
                 "queued_at": metadataFormatter.string(from: Date())
             ]
+            #if DEBUG
+            print("ExportService: Transferring file: \(record.summary.fileName) with metadata: \(metadata)")
+            #endif
             _ = session.transferFile(record.summary.url, metadata: metadata)
             activeSnapshots[filePath] = record
         }
 
         pendingSnapshots.removeAll()
+        #if DEBUG
+        print("ExportService: flushPendingTransfers complete, \(activeSnapshots.count) active transfers")
+        #endif
     }
 
     private func emit(_ event: ExportEvent) {
@@ -232,17 +282,26 @@ extension ExportService: WCSessionDelegate {
         activationDidCompleteWith activationState: WCSessionActivationState,
         error: Error?
     ) {
+        #if DEBUG
+        print("ExportService: WCSession activation completed - state: \(activationState.rawValue), error: \(String(describing: error))")
+        #endif
         queue.async {
             if let error {
                 self.emit(.failed(nil, .activationFailed(error)))
             }
             if activationState == .activated {
+                #if DEBUG
+                print("ExportService: Session activated, flushing pending transfers")
+                #endif
                 self.flushPendingTransfers()
             }
         }
     }
 
     func sessionReachabilityDidChange(_ session: WCSession) {
+        #if DEBUG
+        print("ExportService: Session reachability changed - isReachable: \(session.isReachable)")
+        #endif
         queue.async {
             self.flushPendingTransfers()
         }
@@ -253,10 +312,16 @@ extension ExportService: WCSessionDelegate {
         didFinish fileTransfer: WCSessionFileTransfer,
         error: Error?
     ) {
+        #if DEBUG
+        print("ExportService: File transfer finished - file: \(fileTransfer.file.fileURL.lastPathComponent), error: \(String(describing: error))")
+        #endif
         queue.async {
             let key = fileTransfer.file.fileURL.path
             let record = self.activeSnapshots.removeValue(forKey: key)
             if let error {
+                #if DEBUG
+                print("ExportService: Transfer failed with error: \(error)")
+                #endif
                 if let record {
                     self.pendingSnapshots.append(record)
                     self.emit(.failed(record.summary, .transfer(error)))
@@ -265,6 +330,9 @@ extension ExportService: WCSessionDelegate {
                     self.emit(.failed(nil, .transfer(error)))
                 }
             } else if let record {
+                #if DEBUG
+                print("ExportService: Transfer succeeded for \(record.summary.fileName)")
+                #endif
                 self.emit(.delivered(record.summary))
                 self.pruneSnapshotsIfNeeded()
             }
@@ -272,6 +340,9 @@ extension ExportService: WCSessionDelegate {
     }
 
     func session(_ session: WCSession, didReceive file: WCSessionFile) {
+        #if DEBUG
+        print("ExportService: Received file from companion: \(file.fileURL.lastPathComponent)")
+        #endif
         incomingHandler?(file)
     }
 }

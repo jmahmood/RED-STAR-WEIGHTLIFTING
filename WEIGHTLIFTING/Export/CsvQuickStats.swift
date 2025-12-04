@@ -20,24 +20,42 @@ struct CsvQuickStats: Codable {
     }
 
     static func compute(url: URL, schema: String) throws -> CsvQuickStats {
-        let handle = try FileHandle(forReadingFrom: url)
-        defer { try? handle.close() }
+        // Read file in chunks to compute hash and count lines
+        // Using Data instead of FileHandle to avoid Swift 6.2 concurrency issues
+        let fileSize = try FileManager.default.attributesOfItem(atPath: url.path)[.size] as? Int ?? 0
 
         var hasher = SHA256()
         var newlineCount = 0
         var lastByte: UInt8 = 0
         var sawBytes = false
 
-        while true {
-            let optionalChunk = try handle.read(upToCount: 64 * 1024)
-            guard let chunk = optionalChunk, !chunk.isEmpty else { break }
-            sawBytes = true
-            hasher.update(data: chunk)
-            newlineCount += chunk.reduce(into: 0) { count, byte in
-                if byte == 0x0A { count += 1 }
+        // For small files, read all at once
+        if fileSize < 10 * 1024 * 1024 { // 10MB
+            let data = try Data(contentsOf: url)
+            if !data.isEmpty {
+                sawBytes = true
+                hasher.update(data: data)
+                newlineCount = data.reduce(into: 0) { count, byte in
+                    if byte == 0x0A { count += 1 }
+                }
+                lastByte = data.last ?? 0
             }
-            if let finalByte = chunk.last {
-                lastByte = finalByte
+        } else {
+            // For larger files, read in chunks
+            let handle = try FileHandle(forReadingFrom: url)
+            defer { try? handle.close() }
+
+            while true {
+                let optionalChunk = try handle.read(upToCount: 64 * 1024)
+                guard let chunk = optionalChunk, !chunk.isEmpty else { break }
+                sawBytes = true
+                hasher.update(data: chunk)
+                newlineCount += chunk.reduce(into: 0) { count, byte in
+                    if byte == 0x0A { count += 1 }
+                }
+                if let finalByte = chunk.last {
+                    lastByte = finalByte
+                }
             }
         }
 
