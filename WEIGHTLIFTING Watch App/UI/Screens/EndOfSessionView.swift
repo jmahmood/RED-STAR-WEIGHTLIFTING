@@ -13,6 +13,7 @@ struct EndOfSessionView: View {
     let completedSetIDs: Set<UUID>
     let onStartNewSession: () -> Void
     let onAddAdhoc: () -> Void
+    let onExportToPhone: () -> Void
 
     var body: some View {
         ScrollView {
@@ -55,6 +56,15 @@ struct EndOfSessionView: View {
                     onAddAdhoc()
                 }
                 .buttonStyle(.bordered)
+
+                Button {
+                    onExportToPhone()
+                } label: {
+                    Label("Send to iPhone", systemImage: "arrow.up.right.square")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(.accentColor)
             }
             .padding()
         }

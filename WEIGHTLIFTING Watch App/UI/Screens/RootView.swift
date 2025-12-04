@@ -101,11 +101,42 @@ struct SessionView: View {
                 },
                  onAddAdhoc: {
                      adhocSheet = AdhocSheetState()
+                 },
+                 onExportToPhone: {
+                     container.exportService.exportSnapshotToPhone()
                  }
              )
              .navigationTitle("")
              .navigationBarTitleDisplayMode(.inline)
              .toolbar(.hidden, for: .navigationBar)
+            .overlay(alignment: .top) {
+                VStack(spacing: 4) {
+                    if showUndoToast, let deadline = undoDeadline {
+                        ToastUndoChip(
+                            title: "Saved",
+                            actionTitle: "Undo",
+                            deadline: deadline,
+                            action: {
+                                if undoLastSavedSet() {
+                                    container.sessionManager.undoLast()
+                                }
+                                hideUndoToast()
+                            }
+                        )
+                        .transition(.move(edge: .top).combined(with: .opacity))
+                    }
+                    if let exportMessage = exportToastMessage {
+                        ToastBanner(message: exportMessage)
+                            .transition(.move(edge: .top).combined(with: .opacity))
+                     }
+                     if let message = switchToastMessage {
+                         ToastBanner(message: message)
+                             .transition(.move(edge: .top).combined(with: .opacity))
+                     }
+                }
+                .padding(.horizontal, 8)
+                .padding(.top, 0)
+            }
             .sheet(isPresented: $sessionVM.isWorkoutSheetVisible) {
                 WorkoutSwitchSheet(vm: sessionVM)
             }
@@ -165,34 +196,6 @@ struct SessionView: View {
                     )
                 }
             }
-            .overlay(alignment: .top) {
-                VStack(spacing: 4) {
-                    if showUndoToast, let deadline = undoDeadline {
-                        ToastUndoChip(
-                            title: "Saved",
-                            actionTitle: "Undo",
-                            deadline: deadline,
-                            action: {
-                                if undoLastSavedSet() {
-                                    container.sessionManager.undoLast()
-                                }
-                                hideUndoToast()
-                            }
-                        )
-                        .transition(.move(edge: .top).combined(with: .opacity))
-                    }
-                    if let exportMessage = exportToastMessage {
-                        ToastBanner(message: exportMessage)
-                            .transition(.move(edge: .top).combined(with: .opacity))
-                     }
-                     if let message = switchToastMessage {
-                         ToastBanner(message: message)
-                             .transition(.move(edge: .top).combined(with: .opacity))
-                     }
-                }
-                .padding(.horizontal, 8)
-                .padding(.top, 0)
-            }
             .animation(.easeInOut(duration: 0.2), value: showUndoToast)
             .animation(.easeInOut(duration: 0.2), value: switchToastMessage != nil)
             .animation(.easeInOut(duration: 0.2), value: exportToastMessage != nil)
@@ -205,18 +208,6 @@ struct SessionView: View {
             }
             .onReceive(container.exportService.eventsPublisher) { event in
                 handleExportEvent(event)
-            }
-            .safeAreaInset(edge: .bottom) {
-                Button {
-                    container.exportService.exportSnapshotToPhone()
-                } label: {
-                    Label("Send to iPhone", systemImage: "arrow.up.right.square")
-                        .frame(maxWidth: .infinity)
-                }
-                .buttonStyle(.borderedProminent)
-                .tint(.accentColor)
-                .padding(.horizontal, 12)
-                .padding(.vertical, 8)
             }
         } else {
             TabView(selection: $currentIndex) {
@@ -244,6 +235,17 @@ struct SessionView: View {
                             SessionHeaderView(vm: sessionVM)
                                 .padding(.horizontal, 12)
                                 .padding(.bottom, 20)
+
+                            Button {
+                                container.exportService.exportSnapshotToPhone()
+                            } label: {
+                                Label("Send to iPhone", systemImage: "arrow.up.right.square")
+                                    .frame(maxWidth: .infinity)
+                            }
+                            .buttonStyle(.borderedProminent)
+                            .tint(.accentColor)
+                            .padding(.horizontal, 12)
+                            .padding(.bottom, 20)
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
                     }
@@ -254,6 +256,34 @@ struct SessionView: View {
             .navigationTitle("")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar(.hidden, for: .navigationBar)
+            .overlay(alignment: .top) {
+                VStack(spacing: 4) {
+                    if showUndoToast, let deadline = undoDeadline {
+                        ToastUndoChip(
+                            title: "Saved",
+                            actionTitle: "Undo",
+                            deadline: deadline,
+                            action: {
+                                if undoLastSavedSet() {
+                                    container.sessionManager.undoLast()
+                                }
+                                hideUndoToast()
+                            }
+                        )
+                        .transition(.move(edge: .top).combined(with: .opacity))
+                    }
+                    if let exportMessage = exportToastMessage {
+                        ToastBanner(message: exportMessage)
+                            .transition(.move(edge: .top).combined(with: .opacity))
+                    }
+                    if let message = switchToastMessage {
+                        ToastBanner(message: message)
+                            .transition(.move(edge: .top).combined(with: .opacity))
+                    }
+                }
+                .padding(.horizontal, 8)
+                .padding(.top, 0)
+            }
             .sheet(isPresented: $sessionVM.isWorkoutSheetVisible) {
                 WorkoutSwitchSheet(vm: sessionVM)
             }
@@ -313,37 +343,9 @@ struct SessionView: View {
                     )
                 }
             }
-            .overlay(alignment: .top) {
-                VStack(spacing: 4) {
-                    if showUndoToast, let deadline = undoDeadline {
-                        ToastUndoChip(
-                            title: "Saved",
-                            actionTitle: "Undo",
-                            deadline: deadline,
-                            action: {
-                                if undoLastSavedSet() {
-                                    container.sessionManager.undoLast()
-                                }
-                                hideUndoToast()
-                            }
-                        )
-                        .transition(.move(edge: .top).combined(with: .opacity))
-                    }
-                    if let exportMessage = exportToastMessage {
-                        ToastBanner(message: exportMessage)
-                            .transition(.move(edge: .top).combined(with: .opacity))
-                    }
-                    if let message = switchToastMessage {
-                        ToastBanner(message: message)
-                            .transition(.move(edge: .top).combined(with: .opacity))
-                    }
-                }
-                .padding(.horizontal, 8)
-                .padding(.top, 0)
-            }
-             .animation(.easeInOut(duration: 0.2), value: showUndoToast)
-             .animation(.easeInOut(duration: 0.2), value: switchToastMessage != nil)
-             .animation(.easeInOut(duration: 0.2), value: exportToastMessage != nil)
+            .animation(.easeInOut(duration: 0.2), value: showUndoToast)
+            .animation(.easeInOut(duration: 0.2), value: switchToastMessage != nil)
+            .animation(.easeInOut(duration: 0.2), value: exportToastMessage != nil)
             .onAppear {
                 configureViewModel(with: currentContext)
             }
@@ -353,18 +355,6 @@ struct SessionView: View {
             }
             .onReceive(container.exportService.eventsPublisher) { event in
                 handleExportEvent(event)
-            }
-            .safeAreaInset(edge: .bottom) {
-                Button {
-                    container.exportService.exportSnapshotToPhone()
-                } label: {
-                    Label("Send to iPhone", systemImage: "arrow.up.right.square")
-                        .frame(maxWidth: .infinity)
-                }
-                .buttonStyle(.borderedProminent)
-                .tint(.accentColor)
-                .padding(.horizontal, 12)
-                .padding(.vertical, 8)
             }
         }
 
