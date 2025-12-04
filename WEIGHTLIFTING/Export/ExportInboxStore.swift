@@ -68,6 +68,7 @@ final class ExportInboxStore: NSObject, ObservableObject {
     @Published private(set) var insights = InsightsSnapshot(
         personalRecords: .loading,
         nextWorkout: .loading,
+        latestDayLabel: nil,
         generatedAt: nil
     )
 
@@ -136,6 +137,7 @@ final class ExportInboxStore: NSObject, ObservableObject {
                 )
                 .filter { $0.pathExtension.lowercased() == "csv" }
             } catch {
+                print("ExportInboxStore: failed to load existing snapshots: \(error)")
                 return
             }
 
@@ -182,13 +184,16 @@ final class ExportInboxStore: NSObject, ObservableObject {
             var planState = PlanLibraryState()
             let planURL = self.planDirectory.appendingPathComponent("active_plan.json")
             if self.fileManager.fileExists(atPath: planURL.path) {
-                if let data = try? Data(contentsOf: planURL),
-                   let result = try? PlanValidator.validate(data: data) {
+                do {
+                    let data = try Data(contentsOf: planURL)
+                    let result = try PlanValidator.validate(data: data)
                     planState.fileURL = planURL
                     planState.summary = result.summary
                     if let modificationDate = try? planURL.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate {
                         planState.lastImportedAt = modificationDate
                     }
+                } catch {
+                    print("ExportInboxStore: failed to load active plan: \(error)")
                 }
             }
 
@@ -361,6 +366,10 @@ final class ExportInboxStore: NSObject, ObservableObject {
         DispatchQueue.main.async {
             self.planLibrary.transferStatus.phase = .queued(Date())
         }
+    }
+
+    func refreshInsightsFromUI() {
+        refreshInsights()
     }
 
     private func prepareSessionForTransfer() throws -> WCSession {
@@ -543,5 +552,30 @@ extension ExportInboxStore: WCSessionDelegate {
                 }
             }
         }
+    }
+}
+
+// MARK: - Convenience Properties for Views
+
+extension ExportInboxStore {
+    var nextWorkout: NextWorkoutDisplay? {
+        if case .ready(let workout) = insights.nextWorkout {
+            return workout
+        }
+        return nil
+    }
+
+    var activePlan: PlanV03? {
+        let planURL = planDirectory.appendingPathComponent("active_plan.json")
+        guard fileManager.fileExists(atPath: planURL.path),
+              let data = try? Data(contentsOf: planURL),
+              let validation = try? PlanValidator.validate(data: data) else {
+            return nil
+        }
+        return validation.plan
+    }
+
+    var latestDayLabel: String? {
+        insights.latestDayLabel
     }
 }

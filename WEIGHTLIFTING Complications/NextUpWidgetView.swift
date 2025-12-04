@@ -193,10 +193,3 @@ struct CornerView: View {
     NextUpEntry.placeholder()
     NextUpEntry.empty()
 }
-
-#Preview("Corner", as: .accessoryCorner) {
-    NextUpWidget()
-} timeline: {
-    NextUpEntry.placeholder()
-    NextUpEntry.empty()
-}

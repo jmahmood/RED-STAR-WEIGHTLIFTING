@@ -31,6 +31,7 @@ final class InsightsEngine {
         return InsightsSnapshot(
             personalRecords: prState.state,
             nextWorkout: nextWorkoutState,
+            latestDayLabel: prState.latestDayLabel,
             generatedAt: prState.generatedAt
         )
     }

@@ -7,6 +7,7 @@
 
 import Foundation
 
+#if os(watchOS)
 struct PlanV03: Decodable {
     enum Segment: Decodable {
         case straight(StraightSegment)
@@ -442,3 +443,4 @@ extension PlanV03 {
         )
     }
 }
+#endif

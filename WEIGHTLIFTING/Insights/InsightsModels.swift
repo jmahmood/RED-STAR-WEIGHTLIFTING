@@ -23,6 +23,7 @@ enum CardState<Value: Equatable>: Equatable {
 struct InsightsSnapshot: Equatable {
     var personalRecords: CardState<[PersonalRecordDisplay]>
     var nextWorkout: CardState<NextWorkoutDisplay>
+    var latestDayLabel: String?
     var generatedAt: Date?
 }
 

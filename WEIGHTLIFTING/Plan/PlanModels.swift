@@ -100,6 +100,7 @@ struct PlanV03: Decodable {
 
         private enum CodingKeys: String, CodingKey {
             case exerciseCode = "ex"
+            case exerciseCodeAlt = "exercise_code"
             case altGroup
             case sets
             case reps
@@ -134,7 +135,9 @@ struct PlanV03: Decodable {
 
         init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
-            exerciseCode = try container.decode(String.self, forKey: .exerciseCode)
+            exerciseCode = (try? container.decodeIfPresent(String.self, forKey: .exerciseCode))
+                ?? (try? container.decodeIfPresent(String.self, forKey: .exerciseCodeAlt))
+                ?? ""
             altGroup = try container.decodeIfPresent(String.self, forKey: .altGroup)
             sets = try container.decodeIfPresent(Int.self, forKey: .sets) ?? 1
             reps = try container.decodeIfPresent(RepetitionRange.self, forKey: .reps)
@@ -154,37 +157,37 @@ struct PlanV03: Decodable {
             let restSec: Int?
             let intensifier: Intensifier?
 
-            private enum CodingKeys: String, CodingKey {
-                case label
-                case sets
-                case reps
-                case restSec
-                case intensifier
-            }
-
-            init(
-                label: String?,
-                sets: Int,
-                reps: RepetitionRange?,
-                restSec: Int?,
-                intensifier: Intensifier?
-            ) {
-                self.label = label
-                self.sets = sets
-                self.reps = reps
-                self.restSec = restSec
-                self.intensifier = intensifier
-            }
-
-            init(from decoder: Decoder) throws {
-                let container = try decoder.container(keyedBy: CodingKeys.self)
-                label = try container.decodeIfPresent(String.self, forKey: .label)
-                sets = try container.decodeIfPresent(Int.self, forKey: .sets) ?? 1
-                reps = try container.decodeIfPresent(RepetitionRange.self, forKey: .reps)
-                restSec = try container.decodeIfPresent(Int.self, forKey: .restSec)
-                intensifier = try container.decodeIfPresent(Intensifier.self, forKey: .intensifier)
-            }
+        private enum CodingKeys: String, CodingKey {
+            case label
+            case sets
+            case reps
+            case restSec
+            case intensifier
         }
+
+        init(
+            label: String?,
+            sets: Int,
+            reps: RepetitionRange?,
+            restSec: Int?,
+            intensifier: Intensifier?
+        ) {
+            self.label = label
+            self.sets = sets
+            self.reps = reps
+            self.restSec = restSec
+            self.intensifier = intensifier
+        }
+
+        init(from decoder: Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            label = try container.decodeIfPresent(String.self, forKey: .label)
+            sets = try container.decodeIfPresent(Int.self, forKey: .sets) ?? 1
+            reps = try container.decodeIfPresent(RepetitionRange.self, forKey: .reps)
+            restSec = try container.decodeIfPresent(Int.self, forKey: .restSec)
+            intensifier = try container.decodeIfPresent(Intensifier.self, forKey: .intensifier)
+        }
+    }
 
         let exerciseCode: String
         let altGroup: String?
@@ -194,6 +197,7 @@ struct PlanV03: Decodable {
 
         private enum CodingKeys: String, CodingKey {
             case exerciseCode = "ex"
+            case exerciseCodeAlt = "exercise_code"
             case altGroup
             case entries = "sets"
             case restSec
@@ -216,7 +220,9 @@ struct PlanV03: Decodable {
 
         init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
-            exerciseCode = try container.decode(String.self, forKey: .exerciseCode)
+            exerciseCode = (try? container.decodeIfPresent(String.self, forKey: .exerciseCode))
+                ?? (try? container.decodeIfPresent(String.self, forKey: .exerciseCodeAlt))
+                ?? ""
             altGroup = try container.decodeIfPresent(String.self, forKey: .altGroup)
             entries = try container.decodeIfPresent([Entry].self, forKey: .entries) ?? []
             restSec = try container.decodeIfPresent(Int.self, forKey: .restSec)
@@ -233,14 +239,15 @@ struct PlanV03: Decodable {
             let restSec: Int?
             let intensifier: Intensifier?
 
-            private enum CodingKeys: String, CodingKey {
-                case exerciseCode = "ex"
-                case altGroup
-                case sets
-                case reps
-                case restSec
-                case intensifier
-            }
+        private enum CodingKeys: String, CodingKey {
+            case exerciseCode = "ex"
+            case exerciseCodeAlt = "exercise_code"
+            case altGroup
+            case sets
+            case reps
+            case restSec
+            case intensifier
+        }
 
             init(
                 exerciseCode: String,
@@ -249,23 +256,25 @@ struct PlanV03: Decodable {
                 reps: RepetitionRange?,
                 restSec: Int?,
                 intensifier: Intensifier?
-            ) {
-                self.exerciseCode = exerciseCode
-                self.altGroup = altGroup
-                self.sets = sets
-                self.reps = reps
-                self.restSec = restSec
-                self.intensifier = intensifier
-            }
+        ) {
+            self.exerciseCode = exerciseCode
+            self.altGroup = altGroup
+            self.sets = sets
+            self.reps = reps
+            self.restSec = restSec
+            self.intensifier = intensifier
+        }
 
-            init(from decoder: Decoder) throws {
-                let container = try decoder.container(keyedBy: CodingKeys.self)
-                exerciseCode = try container.decode(String.self, forKey: .exerciseCode)
-                altGroup = try container.decodeIfPresent(String.self, forKey: .altGroup)
-                sets = try container.decodeIfPresent(Int.self, forKey: .sets) ?? 1
-                reps = try container.decodeIfPresent(RepetitionRange.self, forKey: .reps)
-                restSec = try container.decodeIfPresent(Int.self, forKey: .restSec)
-                intensifier = try container.decodeIfPresent(Intensifier.self, forKey: .intensifier)
+        init(from decoder: Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            exerciseCode = (try? container.decodeIfPresent(String.self, forKey: .exerciseCode))
+                ?? (try? container.decodeIfPresent(String.self, forKey: .exerciseCodeAlt))
+                ?? ""
+            altGroup = try container.decodeIfPresent(String.self, forKey: .altGroup)
+            sets = try container.decodeIfPresent(Int.self, forKey: .sets) ?? 1
+            reps = try container.decodeIfPresent(RepetitionRange.self, forKey: .reps)
+            restSec = try container.decodeIfPresent(Int.self, forKey: .restSec)
+            intensifier = try container.decodeIfPresent(Intensifier.self, forKey: .intensifier)
             }
         }
 
@@ -412,6 +421,11 @@ struct PlanV03: Decodable {
         case dictionary
         case groups
         case schedule
+        // Legacy / alt keys
+        case planName = "plan_name"
+        case exerciseNames = "exercise_names"
+        case altGroups = "alt_groups"
+        case days
     }
 
     init(
@@ -432,12 +446,24 @@ struct PlanV03: Decodable {
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        planName = try container.decode(String.self, forKey: .name)
+        planName = (try? container.decodeIfPresent(String.self, forKey: .name))
+            ?? (try? container.decodeIfPresent(String.self, forKey: .planName))
+            ?? "Program"
+
         let unitString = (try container.decodeIfPresent(String.self, forKey: .unit)) ?? "lb"
         unit = WeightUnit(planString: unitString)
-        exerciseNames = try container.decodeIfPresent([String: String].self, forKey: .dictionary) ?? [:]
-        altGroups = try container.decodeIfPresent([String: [String]].self, forKey: .groups) ?? [:]
-        let decodedDays = try container.decode([Day].self, forKey: .schedule)
+
+        exerciseNames = (try? container.decodeIfPresent([String: String].self, forKey: .dictionary))
+            ?? (try? container.decodeIfPresent([String: String].self, forKey: .exerciseNames))
+            ?? [:]
+
+        altGroups = (try? container.decodeIfPresent([String: [String]].self, forKey: .groups))
+            ?? (try? container.decodeIfPresent([String: [String]].self, forKey: .altGroups))
+            ?? [:]
+
+        let decodedDays = (try? container.decodeIfPresent([Day].self, forKey: .schedule))
+            ?? (try? container.decodeIfPresent([Day].self, forKey: .days))
+            ?? []
         days = decodedDays
         scheduleOrder = decodedDays.map { $0.label }
     }

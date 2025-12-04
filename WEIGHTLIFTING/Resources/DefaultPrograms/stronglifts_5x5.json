@@ -1,0 +1,64 @@
+{
+  "name": "Stronglifts 5x5",
+  "author": "Default Program",
+  "unit": "lb",
+  "dictionary": {
+    "BENCH.BB.FLAT": "Barbell Bench Press",
+    "PRESS.BB.STAND": "Overhead Press",
+    "ROW.BB.BEND": "Barbell Row",
+    "SQUAT.BB.HIGH": "Barbell Squat",
+    "DEADLIFT.BB.CONV": "Deadlift"
+  },
+  "groups": {},
+  "phase": { "index": 1, "weeks": [1, 2, 3, 4] },
+  "progression": {
+    "mode": "double_progression",
+    "reps_first": true,
+    "load_increment_kg": 2.5,
+    "cap_rpe": 9.0
+  },
+  "warmup": {
+    "pattern": "percent_of_top",
+    "stages": [
+      { "pct_1rm": 0.3, "reps": 8 },
+      { "pct_1rm": 0.5, "reps": 5 },
+      { "pct_1rm": 0.7, "reps": 3 }
+    ],
+    "round_to": 2.5,
+    "merge_after_rounding": true
+  },
+  "schedule": [
+    {
+      "day": 1,
+      "label": "Workout A",
+      "segments": [
+        { "type": "straight", "ex": "SQUAT.BB.HIGH", "sets": 5, "reps": { "min": 5, "max": 5 }, "rest_sec": 180 },
+        { "type": "straight", "ex": "BENCH.BB.FLAT", "sets": 5, "reps": { "min": 5, "max": 5 }, "rest_sec": 180 },
+        { "type": "straight", "ex": "ROW.BB.BEND", "sets": 5, "reps": { "min": 5, "max": 5 }, "rest_sec": 180 }
+      ]
+    },
+    {
+      "day": 2,
+      "label": "Workout B",
+      "segments": [
+        { "type": "straight", "ex": "SQUAT.BB.HIGH", "sets": 5, "reps": { "min": 5, "max": 5 }, "rest_sec": 180 },
+        { "type": "straight", "ex": "PRESS.BB.STAND", "sets": 5, "reps": { "min": 5, "max": 5 }, "rest_sec": 180 },
+        { "type": "straight", "ex": "DEADLIFT.BB.CONV", "sets": 1, "reps": { "min": 5, "max": 5 }, "rest_sec": 180 }
+      ]
+    },
+    {
+      "day": 3,
+      "label": "Workout A (Repeat)",
+      "segments": [
+        { "type": "straight", "ex": "SQUAT.BB.HIGH", "sets": 5, "reps": { "min": 5, "max": 5 }, "rest_sec": 180 },
+        { "type": "straight", "ex": "BENCH.BB.FLAT", "sets": 5, "reps": { "min": 5, "max": 5 }, "rest_sec": 180 },
+        { "type": "straight", "ex": "ROW.BB.BEND", "sets": 5, "reps": { "min": 5, "max": 5 }, "rest_sec": 180 }
+      ]
+    }
+  ],
+  "schedule_order": [
+    "Workout A",
+    "Workout B",
+    "Workout A (Repeat)"
+  ]
+}

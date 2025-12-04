@@ -24,8 +24,7 @@ struct NextUpWidget: Widget {
         .supportedFamilies([
             .accessoryCircular,
             .accessoryRectangular,
-            .accessoryInline,
-            .accessoryCorner
+            .accessoryInline
         ])
     }
 }

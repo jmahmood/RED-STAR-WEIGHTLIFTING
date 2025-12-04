@@ -14,8 +14,7 @@ struct WEIGHTLIFTINGApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
-                .environmentObject(exportInbox)
+            TabContainerView(exportStore: exportInbox)
                 .onAppear {
                     exportInbox.updateScenePhase(scenePhase)
                 }
