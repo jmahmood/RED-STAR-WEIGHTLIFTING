@@ -8,6 +8,7 @@ struct DataOverviewView: View {
     @State private var showingPlanPicker = false
     @State private var csvRowCount: Int = 0
     @State private var csvFileSize: String = ""
+    @State private var shareItem: ShareItem?
 
     var body: some View {
         List {
@@ -31,6 +32,18 @@ struct DataOverviewView: View {
                         .background(planTransferColor.opacity(0.2))
                         .foregroundColor(planTransferColor)
                         .cornerRadius(8)
+                }
+
+                LabeledContent("Last Watch Sync") {
+                    if let lastSync = exportStore.lastWatchSyncDate {
+                        Text(lastSync.formatted(.relative(presentation: .named)))
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    } else {
+                        Text("Never")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
                 }
             }
 
@@ -72,6 +85,16 @@ struct DataOverviewView: View {
                 .disabled(!exportStore.planLibrary.isReadyForTransfer || isPlanTransferBusy)
             }
 
+            // Export section
+            Section("Export") {
+                Button {
+                    exportCSV()
+                } label: {
+                    Label("Export Workout CSV", systemImage: "square.and.arrow.up")
+                }
+                .disabled(exportStore.liftsLibrary.fileURL == nil)
+            }
+
             // Diagnostics section
             Section("Diagnostics") {
                 LabeledContent("App Version", value: appVersion)
@@ -98,6 +121,9 @@ struct DataOverviewView: View {
         }
         .task {
             loadCSVInfo()
+        }
+        .sheet(item: $shareItem) { item in
+            ActivityView(items: [item.url])
         }
     }
 
@@ -249,4 +275,14 @@ struct DataOverviewView: View {
             print("Failed to send plan to watch: \(error)")
         }
     }
+
+    private func exportCSV() {
+        guard let csvURL = exportStore.liftsLibrary.fileURL else { return }
+        shareItem = ShareItem(url: csvURL)
+    }
+}
+
+private struct ShareItem: Identifiable {
+    let url: URL
+    var id: URL { url }
 }

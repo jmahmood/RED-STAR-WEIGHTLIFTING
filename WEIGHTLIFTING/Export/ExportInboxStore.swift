@@ -71,6 +71,7 @@ final class ExportInboxStore: NSObject, ObservableObject {
         latestDayLabel: nil,
         generatedAt: nil
     )
+    @Published private(set) var lastWatchSyncDate: Date?
 
     private let fileManager: FileManager
     private let inboxURL: URL
@@ -573,6 +574,7 @@ extension ExportInboxStore: WCSessionDelegate {
         // as soon as this method returns.
         guard let snapshot = persistFile(file) else { return }
         DispatchQueue.main.async { [weak self] in
+            self?.lastWatchSyncDate = Date()
             self?.handleSnapshot(snapshot)
         }
     }

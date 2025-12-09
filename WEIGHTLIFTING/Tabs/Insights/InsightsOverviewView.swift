@@ -10,6 +10,7 @@ struct InsightsOverviewView: View {
     @State private var exerciseUniverse: ExerciseUniverse?
     @State private var isLoading = false
     @State private var searchText = ""
+    @State private var lastWorkout: WorkoutSession?
 
     var body: some View {
         ScrollView {
@@ -112,6 +113,35 @@ struct InsightsOverviewView: View {
             .padding()
             .background(Color(.secondarySystemGroupedBackground))
             .cornerRadius(12)
+
+            // Last workout details
+            if let lastWorkout = lastWorkout {
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack {
+                        Text("Last Workout")
+                            .font(.headline)
+                        Spacer()
+                        Text(lastWorkout.date, style: .date)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+
+                    ForEach(Array(lastWorkout.setsByExercise.keys.sorted()), id: \.self) { exerciseCode in
+                        if let sets = lastWorkout.setsByExercise[exerciseCode] {
+                            let workingSets = sets.filter { !$0.isWarmup }
+                            if !workingSets.isEmpty {
+                                LastWorkoutExerciseRow(
+                                    exerciseName: displayName(for: exerciseCode),
+                                    sets: workingSets
+                                )
+                            }
+                        }
+                    }
+                }
+                .padding()
+                .background(Color(.secondarySystemGroupedBackground))
+                .cornerRadius(12)
+            }
         }
     }
 
@@ -233,6 +263,10 @@ struct InsightsOverviewView: View {
 
         do {
             metrics = try engine.computeMetrics(for: selectedRange)
+
+            // Load the last workout
+            let allSessions = try adapter.loadAllSessions()
+            lastWorkout = allSessions.first
         } catch {
             print("Failed to load metrics: \(error)")
         }
@@ -409,5 +443,46 @@ struct ExerciseChip: View {
             .padding(.vertical, 6)
             .background(Color(.secondarySystemGroupedBackground))
             .cornerRadius(16)
+    }
+}
+
+// MARK: - Last Workout Exercise Row
+
+struct LastWorkoutExerciseRow: View {
+    let exerciseName: String
+    let sets: [SetRecord]
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(exerciseName)
+                .font(.body)
+                .fontWeight(.medium)
+
+            HStack(spacing: 4) {
+                ForEach(sets.indices, id: \.self) { index in
+                    let set = sets[index]
+                    if let weight = set.weight {
+                        Text("\(formatWeight(weight))\(set.unit.displaySymbol) × \(set.reps)")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+
+                        if index < sets.count - 1 {
+                            Text("•")
+                                .font(.caption2)
+                                .foregroundStyle(.tertiary)
+                        }
+                    }
+                }
+            }
+        }
+        .padding(.vertical, 4)
+    }
+
+    private func formatWeight(_ weight: Double) -> String {
+        if weight.truncatingRemainder(dividingBy: 1) == 0 {
+            return "\(Int(weight))"
+        } else {
+            return String(format: "%.1f", weight)
+        }
     }
 }
