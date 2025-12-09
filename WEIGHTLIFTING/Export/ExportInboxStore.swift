@@ -72,6 +72,9 @@ final class ExportInboxStore: NSObject, ObservableObject {
         generatedAt: nil
     )
     @Published private(set) var lastWatchSyncDate: Date?
+    @Published private(set) var iCloudAvailable: Bool = false
+    @Published private(set) var lastICloudSyncDate: Date?
+    @Published private(set) var lastICloudError: String?
 
     private let fileManager: FileManager
     private let inboxURL: URL
@@ -112,6 +115,7 @@ final class ExportInboxStore: NSObject, ObservableObject {
         loadLocalLibraries()
         configureSession()
         refreshInsights()
+        initializeICloud()
     }
 
     func updateScenePhase(_ phase: ScenePhase) {
@@ -216,6 +220,40 @@ final class ExportInboxStore: NSObject, ObservableObject {
         session.activate()
     }
 
+    private func initializeICloud() {
+        processingQueue.async { [weak self] in
+            guard let self else { return }
+
+            if let ubiquityRoot = self.fileManager.url(forUbiquityContainerIdentifier: self.ubiquityContainerID) {
+                print("ExportInboxStore: iCloud container initialized at \(ubiquityRoot.path)")
+                let documents = ubiquityRoot.appendingPathComponent("Documents", isDirectory: true)
+                let destination = documents.appendingPathComponent("WeightWatch", isDirectory: false)
+
+                do {
+                    try self.fileManager.createDirectory(at: destination, withIntermediateDirectories: true)
+                    DispatchQueue.main.async {
+                        self.iCloudAvailable = true
+                        self.lastICloudError = nil
+                    }
+                    print("ExportInboxStore: iCloud is available and ready")
+                } catch {
+                    print("ExportInboxStore: failed to create iCloud directory: \(error)")
+                    DispatchQueue.main.async {
+                        self.iCloudAvailable = false
+                        self.lastICloudError = "Failed to initialize: \(error.localizedDescription)"
+                    }
+                }
+            } else {
+                print("ExportInboxStore: iCloud container unavailable (\(self.ubiquityContainerID))")
+                print("ExportInboxStore: User may not be signed into iCloud or container not configured")
+                DispatchQueue.main.async {
+                    self.iCloudAvailable = false
+                    self.lastICloudError = "iCloud unavailable. Please sign in to iCloud in Settings."
+                }
+            }
+        }
+    }
+
     func importLiftsCSV(from sourceURL: URL) async throws {
         let accessed = sourceURL.startAccessingSecurityScopedResource()
         defer {
@@ -245,6 +283,8 @@ final class ExportInboxStore: NSObject, ObservableObject {
                     }
                     IndexService.shared.reload()
                     self.refreshInsights()
+                    // Also save to iCloud for manual imports
+                    self.saveToICloudIfAvailable(from: destination)
                     continuation.resume()
                 } catch {
                     let wrapped = UserFacingError(message: "Import failed: \(error.localizedDescription)")
@@ -512,6 +552,11 @@ final class ExportInboxStore: NSObject, ObservableObject {
     private func saveToICloudIfAvailable(from source: URL) {
         guard let ubiquityRoot = fileManager.url(forUbiquityContainerIdentifier: ubiquityContainerID) else {
             print("ExportInboxStore: iCloud container unavailable (\(ubiquityContainerID))")
+            print("ExportInboxStore: Ensure user is signed into iCloud and container is configured")
+            DispatchQueue.main.async {
+                self.iCloudAvailable = false
+                self.lastICloudError = "iCloud unavailable. Please sign in to iCloud in Settings."
+            }
             return
         }
         let documents = ubiquityRoot.appendingPathComponent("Documents", isDirectory: true)
@@ -523,10 +568,20 @@ final class ExportInboxStore: NSObject, ObservableObject {
             if fileManager.fileExists(atPath: destination.path) {
                 try fileManager.removeItem(at: destination)
             }
-            print("ExportInboxStore: copying iCloud file to \(destination.path)")
+            print("ExportInboxStore: copying CSV to iCloud at \(destination.path)")
             try fileManager.copyItem(at: source, to: destination)
+            let now = Date()
+            DispatchQueue.main.async {
+                self.iCloudAvailable = true
+                self.lastICloudSyncDate = now
+                self.lastICloudError = nil
+            }
+            print("ExportInboxStore: successfully saved CSV to iCloud")
         } catch {
-            print("ExportInboxStore: failed to save snapshot to iCloud (\(error))")
+            print("ExportInboxStore: failed to save snapshot to iCloud: \(error.localizedDescription)")
+            DispatchQueue.main.async {
+                self.lastICloudError = "Failed to save: \(error.localizedDescription)"
+            }
         }
     }
 
