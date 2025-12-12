@@ -47,11 +47,28 @@ struct SessionDetailView: View {
                 }
                 .listStyle(.insetGrouped)
             } else {
-                ContentUnavailableView(
-                    "Session Not Found",
-                    systemImage: "exclamationmark.triangle",
-                    description: Text("Unable to load session data.")
-                )
+                if #available(iOS 17.0, *) {
+                    ContentUnavailableView(
+                        "Session Not Found",
+                        systemImage: "exclamationmark.triangle",
+                        description: Text("Unable to load session data.")
+                    )
+                } else {
+                    VStack(spacing: 12) {
+                        Image(systemName: "exclamationmark.triangle")
+                            .font(.system(size: 44))
+                            .foregroundStyle(.secondary)
+                        Text("Session Not Found")
+                            .font(.title3)
+                            .fontWeight(.semibold)
+                        Text("Unable to load session data.")
+                            .font(.body)
+                            .foregroundStyle(.secondary)
+                    }
+                    .multilineTextAlignment(.center)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .padding()
+                }
             }
         }
         .navigationTitle("Session")
