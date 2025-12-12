@@ -1,5 +1,5 @@
 # RED ✪ STAR Weightlifting
-Strength is measured, not imagined.
+*Strength is measured, not imagined.*
 
 ---
 
@@ -34,12 +34,14 @@ RED ✪ STAR Weightlifting is designed around a single rule:
 ## Screenshots
 
 ### Primary Instrument
-![Watch: Selecting Exercise](./screenshots/select_exercise.png)
-![Watch: Logging Set](./screenshots/log_workout.png)
+![Watch: Selecting Exercise](./screenshots/switch_exercise.png)
+![Watch: Selecting Workout](./screenshots/switch_workout.png)
+![Watch: Logging Set](./screenshots/input_1.png)
+![Watch: Logging Set](./screenshots/input_2.png)
 
 ### Dock
 ![Phone: Main Screen](./screenshots/phone_main.png)
-![Phone: Selecting Workout Plan](./screenshots/phone_select_workout.png)
+![Phone: Selecting Workout Plan](./screenshots/phone_select_workout_plan.png)
 ![Phone: Syncing Data](./screenshots/phone_sync_data.png)
 ![Phone: Edit Workout](./screenshots/phone_edit_workout.png)
 
