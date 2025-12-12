@@ -34,16 +34,22 @@ RED ✪ STAR Weightlifting is designed around a single rule:
 ## Screenshots
 
 ### Primary Instrument
-![Watch: Selecting Exercise](./screenshots/switch_exercise.png)
-![Watch: Selecting Workout](./screenshots/switch_workout.png)
-![Watch: Logging Set](./screenshots/input_1.png)
-![Watch: Logging Set](./screenshots/input_2.png)
+<p>
+  <img src="./screenshots/switch_exercise.png" alt="Watch: Selecting Exercise" width="200">
+  <img src="./screenshots/switch_workout.png" alt="Watch: Selecting Workout" width="200">
+  <img src="./screenshots/input_1.png" alt="Watch: Logging Set" width="200">
+  <img src="./screenshots/input_2.png" alt="Watch: Logging Set" width="200">
+</p>
 
 ### Dock
-![Phone: Main Screen](./screenshots/phone_main.png)
-![Phone: Selecting Workout Plan](./screenshots/phone_select_workout_plan.png)
-![Phone: Syncing Data](./screenshots/phone_sync_data.png)
-![Phone: Edit Workout](./screenshots/phone_edit_workout.png)
+<p>
+  <img src="./screenshots/phone_main.png" alt="Phone: Main Screen" width="250">
+  <img src="./screenshots/phone_select_workout_plan.png" alt="Phone: Selecting Workout Plan" width="250">
+</p>
+<p>
+  <img src="./screenshots/phone_sync_data.png" alt="Phone: Syncing Data" width="250">
+  <img src="./screenshots/phone_edit_workout.png" alt="Phone: Edit Workout" width="250">
+</p>
 
 ---
 
