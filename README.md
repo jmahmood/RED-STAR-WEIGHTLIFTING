@@ -1,19 +1,16 @@
-# Red Star Weightlifting
+# RED ✪ STAR Weightlifting
 Strength is measured, not imagined.
 
 ---
 
-![Package](./package.png)
-*Issued for distribution on Apple Watch and iPhone systems. Packaging may differ by region.*
-
----
-
 ## Purpose
-Red Star Weightlifting is a privacy‑respecting, non‑commercial training log for weightlifters.
+RED ✪ STAR Weightlifting is a privacy‑respecting, non‑commercial training log for weightlifters.
 It is built to be utilitarian, fast, and durable: no ads, no analytics, and no external data calls
 other than user‑initiated links. Your data stays on your devices, and export is a first‑class feature.
 
-The iPhone companion exists to view, analyze, and export what the watch records. There is no lock‑in.
+The Apple Watch application is the primary instrument.
+The iPhone companion functions as a dock: for review, analysis, backup, and export of what the watch records.
+All essential training actions are possible from the watch alone.
 
 ---
 
@@ -21,23 +18,39 @@ The iPhone companion exists to view, analyze, and export what the watch records.
 In this world, computing is scarce and power is rationed.  
 Machines are judged not by spectacle, but by how little they waste.
 
-Red Star Weightlifting is a small tool in that tradition:
+RED ✪ STAR Weightlifting is a small tool in that tradition:
 
 - Minimal UI. No distractions. Avoid vanity that drains the battery.
 - Data is append‑only and human‑readable, because history must be durable.
-- Every action has a CLI equivalent in spirit, for those without access to a handset.
+- Every action has a CLI equivalent. A Linux CLI implementation exists for all core operations.
 - To carry an iPhone implies responsibility; to carry a watch implies readiness.
 
 > **MINISTRY OF STRENGTH — STAMP OF APPROVAL**  
 > *“Serve the set. Record the truth. Waste nothing.”*
 
+*We’re leveraging vibes, not preaching. The story exists to explain our engineering goals: brutalist efficiency, respect for the lifter, and zero compromise on privacy. The framing is fictional and explanatory, not affiliated with any real political organization.*
+
+---
+
+## Execution Model
+
+RED ✪ STAR Weightlifting is designed around a single constraint:
+
+**The workout must be executable with only a watch.**
+
+- The Apple Watch records all training data and maintains the authoritative log.
+- The iPhone does not issue commands to the watch during a session.
+- The phone exists to inspect, aggregate, export, and archive data already recorded.
+
+If the phone is absent, powered down, or disconnected, training continues uninterrupted.
+
 ---
 
 ## Features
 - **Record lifts on wrist**: fast Apple Watch logging with plan‑driven workouts.
-- **Review progress**: sessions, exercise history, and PR insights on iPhone.
-- **Plan sessions**: import/maintain a workout plan (JSON-based schema v0.4); the watch rotates days automatically.
-- **Export without friction**: one‑tap CSV export to phone, and file‑based backups.
+- **Dock & review on phone** sessions, exercise history, and PR insights on iPhone.
+- **Plan sessions**: import/maintain a PLANSPEC workout plan (JSON-based schema, v0.4); the watch rotates days automatically.
+- **Export without friction**: one‑tap Logbook CSV export to phone, and file‑based backups.
 - **Offline‑first**: no network dependencies for core functionality.
 - **Widgets & complications**: “Next Up” watch complication and iOS widgets.
 
@@ -45,8 +58,8 @@ Red Star Weightlifting is a small tool in that tradition:
 
 ## Data & Privacy
 - **No external telemetry**. No ads. No trackers.
-- **Open, Documented JSON-Based Workout Plan Format**
-- **Single append‑only CSV** is the source of truth.
+- **Open, Documented PLANSPEC JSON-Based Workout Plan Format** PLANSPEC refers to the documented JSON workout-plan specification used by the application (currently v0.4).
+- **Single append‑only Logbook CSV** is the source of truth.
 - **Write‑ahead log (WAL)** ensures durability on every save.
 - **Exports are yours**: the app is designed around easy extraction and reuse of your data.
 
@@ -54,13 +67,15 @@ Red Star Weightlifting is a small tool in that tradition:
 
 ## Getting Started (Developers)
 
-You may avoid the *Apple Tax* and compromise by building the application for yourself.
+You may avoid the *Apple Tax* and any compromise by building the application for yourself.
 
 1. Open `WEIGHTLIFTING.xcodeproj` in Xcode.
 2. Build and run:
    - `WEIGHTLIFTING Watch App` (watchOS target)
    - `WEIGHTLIFTING` (iOS companion target)
 3. Optional: add complications/widgets.
+
+You will need to modify the Bundle Identifier and related signing details to run the app locally (sorry).
 
 We cannot offer any support for connecting to the Apple Watch, nor for targeting older versions of the iPhone and Apple Watch due to challenges with Xcode.  We are currently targeting iOS 16 and watchOS 11.6.
 
@@ -95,7 +110,7 @@ If you prefer not to assign copyright, please open an issue instead.  Profanity 
 ---
 
 ## Non‑Goals
-Red Star Weightlifting aims to be a sharp tool, not a social platform.
+RED ✪ STAR Weightlifting aims to be a sharp tool, not a social platform.
 We intentionally avoid:
 - Accounts, feeds, followers, or any cloud‑first features.
 - Monetization, ads, or behavioral analytics.
@@ -104,9 +119,34 @@ We intentionally avoid:
 ---
 
 ## Credits
-Red Star Weightlifting is authored and maintained by Jawaad Mahmood with a lot of help from Codex and Claude.
+RED ✪ STAR Weightlifting is authored and maintained by Jawaad Mahmood with assistance from Codex and Claude.
 
 ---
 
-We’re leveraging vibes, not preaching. The story exists to explain our engineering goals:
-brutalist efficiency, respect for the lifter, and zero compromise on privacy. The fictional framing is aesthetic and explanatory; it is not associated with any real political organization or ideology.
+![Package](./package.png)
+*Issued for distribution on Apple Watch and iPhone systems. Packaging may differ by region.*
+
+--
+
+## Glossary
+
+**Apple Watch (Primary Instrument)**
+The authoritative execution environment for training. All workouts can be run, logged, and completed using the watch alone.  The Apple Watch is self-sufficient after the workout has been loaded.
+
+**iPhone (Dock)**
+A secondary environment used for inspection, aggregation, backup, export, and analysis of data recorded by the watch. Not required for executing workouts.
+
+**Logbook CSV**
+The single append-only CSV file that serves as the source of truth for all recorded training data.
+
+**WAL (Write-Ahead Log)**
+A durability mechanism that ensures each recorded action is safely persisted before being committed to the Logbook CSV.
+
+**PLANSPEC**
+The documented JSON-based workout plan specification used by the application (currently v0.4). Defines exercises, structure, progression, and execution rules.
+
+**Plan Rotation**
+The automatic advancement of training days on the watch based on completed sessions, without manual scheduling.
+
+**CLI (Command-Line Interface)**
+A Linux-based command-line implementation that mirrors all core application operations for plan management and log manipulation.

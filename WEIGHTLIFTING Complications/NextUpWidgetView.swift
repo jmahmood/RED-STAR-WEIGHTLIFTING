@@ -45,7 +45,7 @@ struct CircularView: View {
     let entry: NextUpEntry
 
     var body: some View {
-        if let exerciseName = entry.exerciseName {
+        if entry.exerciseName != nil {
             VStack(spacing: 2) {
                 Image(systemName: "figure.strengthtraining.traditional")
                     .font(.system(size: 20))
@@ -147,7 +147,7 @@ struct CornerView: View {
     let entry: NextUpEntry
 
     var body: some View {
-        if let exerciseName = entry.exerciseName {
+        if entry.exerciseName != nil {
             VStack(spacing: 0) {
                 Image(systemName: "figure.strengthtraining.traditional")
                     .font(.system(size: 16))

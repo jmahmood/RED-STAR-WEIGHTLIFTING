@@ -312,7 +312,7 @@ public final class PlanStore {
     }
 
     public func listSnapshots(planID: String) throws -> [SnapshotMetadata] {
-        return try sync {
+        return sync {
             let dir = snapshotsDirectory(planID: planID)
             guard let contents = try? fileManager.contentsOfDirectory(
                 at: dir,

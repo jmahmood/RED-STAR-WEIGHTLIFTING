@@ -219,16 +219,6 @@ final class ExportInboxStore: NSObject, ObservableObject {
         processingQueue.async { [weak self] in
             guard let self else { return }
 
-            #if targetEnvironment(simulator)
-            // On simulator, iCloud is often unavailable and not needed for testing
-            print("ExportInboxStore: Simulator detected - iCloud sync disabled")
-            DispatchQueue.main.async {
-                self.iCloudAvailable = false
-                self.lastICloudError = "iCloud sync disabled on simulator"
-            }
-            return
-            #endif
-
             if let ubiquityRoot = self.fileManager.url(forUbiquityContainerIdentifier: self.ubiquityContainerID) {
                 print("ExportInboxStore: iCloud container initialized at \(ubiquityRoot.path)")
                 let documents = ubiquityRoot.appendingPathComponent("Documents", isDirectory: true)
@@ -409,18 +399,6 @@ final class ExportInboxStore: NSObject, ObservableObject {
         DispatchQueue.main.async {
             self.planLibrary.transferStatus.phase = .preparing
         }
-
-        #if targetEnvironment(simulator)
-        // On simulator, file transfers don't work reliably - use applicationContext as fallback
-        print("ExportInboxStore: Simulator detected - using applicationContext fallback for plan transfer")
-        try transferPlanViaApplicationContext(session: session, fileURL: fileURL, summary: summary)
-        DispatchQueue.main.async {
-            self.planLibrary.transferStatus.phase = .completed(Date())
-            self.planLibrary.transferStatus.lastSuccessAt = Date()
-        }
-        print("ExportInboxStore: Plan sent via applicationContext")
-        return
-        #endif
 
         var metadata: [String: Any] = [
             "kind": TransferKind.planV03.rawValue,
@@ -640,12 +618,6 @@ final class ExportInboxStore: NSObject, ObservableObject {
     }
 
     private func saveToICloudIfAvailable(from source: URL) {
-        #if targetEnvironment(simulator)
-        // Skip iCloud sync on simulator - not needed for testing
-        print("ExportInboxStore: Skipping iCloud sync on simulator")
-        return
-        #endif
-
         guard let ubiquityRoot = fileManager.url(forUbiquityContainerIdentifier: ubiquityContainerID) else {
             print("ExportInboxStore: iCloud container unavailable (\(ubiquityContainerID))")
             print("ExportInboxStore: Ensure user is signed into iCloud and container is configured")

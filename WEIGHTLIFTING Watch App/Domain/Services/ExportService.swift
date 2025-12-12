@@ -347,7 +347,7 @@ extension ExportService: WCSessionDelegate {
                 #endif
 
                 // Create a mock WCSessionFile-like structure and call the handler
-                let metadata: [String: Any] = [
+                let _: [String: Any] = [
                     "kind": applicationContext["kind"] as? String ?? "ios.plan_v03.v1",
                     "plan_name": applicationContext["plan_name"] ?? "",
                     "unit": applicationContext["unit"] ?? "kg",
