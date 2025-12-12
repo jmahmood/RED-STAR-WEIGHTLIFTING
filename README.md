@@ -33,7 +33,7 @@ RED ✪ STAR Weightlifting is designed around a single rule:
 
 ## Screenshots
 
-### Primary Instrument
+### Watch
 <p>
   <img src="./screenshots/switch_exercise.png" alt="Watch: Selecting Exercise" width="200">
   <img src="./screenshots/switch_workout.png" alt="Watch: Selecting Workout" width="200">
@@ -42,7 +42,7 @@ RED ✪ STAR Weightlifting is designed around a single rule:
 </p>
 
 <details>
-<summary><b>Dock</b></summary>
+<summary><b>Phone</b></summary>
 <br>
 <p>
   <img src="./screenshots/phone_main.png" alt="Phone: Main Screen" width="250">
