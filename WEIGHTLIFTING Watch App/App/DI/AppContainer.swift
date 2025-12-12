@@ -1,0 +1,77 @@
+//
+//  AppContainer.swift
+//  WEIGHTLIFTING Watch App
+//
+//  Created by Auto on 2025-10-28.
+//
+
+import Combine
+import Foundation
+
+final class AppContainer: ObservableObject {
+    let fileSystem: FileSystem
+    let walLog: WalLog
+    let globalCsv: GlobalCsv
+    let indexService: IndexService
+    let planRepository: PlanRepository
+    let deckBuilder: DeckBuilder
+    let sessionManager: SessionManager
+    let exportService: ExportService
+    let complicationService: ComplicationService
+    //    let companionIncomingService: CompanionIncomingService
+
+    let sessionStore: SessionStore
+    let deckStore: DeckStore
+
+    init(
+        fileManager: FileManager = .default,
+    ) {
+        let fileSystem = FileSystem(fileManager: fileManager)
+        self.fileSystem = fileSystem
+
+        let seeder = ResourceSeeder(bundle: .main, fileSystem: fileSystem)
+        seeder.seedPlanIfNeeded()
+        seeder.seedGlobalCsvIfNeeded()
+
+        self.walLog = WalLog(fileSystem: fileSystem)
+        
+        // Handles saving CSV workout output
+        self.globalCsv = GlobalCsv(fileSystem: fileSystem)
+        let indexDataStore = IndexRepository(fileSystem: fileSystem)
+        self.indexService = IndexService(dataStore: indexDataStore, fileSystem: fileSystem)
+        indexService.ensureValidAgainstCSV()
+        self.planRepository = PlanRepository(fileSystem: fileSystem, bundle: .main)
+        self.deckBuilder = DeckBuilder()
+
+        let walReplay = WalReplay(fileSystem: fileSystem, globalCsv: globalCsv, indexRepository: indexService)
+        walReplay.replayPendingSessions()
+
+        self.complicationService = ComplicationService()
+
+        self.sessionManager = SessionManager(
+            fileSystem: fileSystem,
+            planRepository: planRepository,
+            deckBuilder: deckBuilder,
+            walLog: walLog,
+            globalCsv: globalCsv,
+            indexRepository: indexService,
+            complicationService: complicationService
+        )
+        let incomingService = CompanionIncomingService(
+            fileSystem: fileSystem,
+            sessionManager: sessionManager,
+            indexService: indexService,
+            complicationService: complicationService
+        )
+        //        self.companionIncomingService = incomingService
+        self.exportService = ExportService(
+            fileSystem: fileSystem,
+            globalCsv: globalCsv,
+            incomingHandler: incomingService.handle(file:)
+        )
+
+        let sessionStore = SessionStore(sessionManager: sessionManager)
+        self.sessionStore = sessionStore
+        self.deckStore = DeckStore(sessionManager: sessionManager, deckBuilder: deckBuilder)
+    }
+}

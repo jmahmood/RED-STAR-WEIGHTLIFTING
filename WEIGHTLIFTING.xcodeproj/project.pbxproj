@@ -1,0 +1,1050 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		4CCB34A22EEB8C9B00E7E086 /* WEIGHTLIFTING Share Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 4CCB34982EEB8C9B00E7E086 /* WEIGHTLIFTING Share Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		4CCB34A82EEB8CA500E7E086 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CCB34932EEB8C6700E7E086 /* libsqlite3.tbd */; };
+		4CCCDDE62EB1ABBE0013B7A6 /* WEIGHTLIFTING Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 4CCCDDE52EB1ABBE0013B7A6 /* WEIGHTLIFTING Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		4CE325B32EBC880A000753AE /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CE325B22EBC880A000753AE /* WidgetKit.framework */; };
+		4CE325B52EBC880A000753AE /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CE325B42EBC880A000753AE /* SwiftUI.framework */; };
+		4CE325C42EBC880C000753AE /* WEIGHTLIFTING ComplicationsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 4CE325B02EBC880A000753AE /* WEIGHTLIFTING ComplicationsExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		4C54F2D22EE10ACB00BD82B7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4CCCDDD02EB1ABBD0013B7A6 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4CCCDDD72EB1ABBD0013B7A6;
+			remoteInfo = WEIGHTLIFTING;
+		};
+		4CCB34A02EEB8C9B00E7E086 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4CCCDDD02EB1ABBD0013B7A6 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4CCB34972EEB8C9B00E7E086;
+			remoteInfo = "WEIGHTLIFTING Share Extension";
+		};
+		4CCCDDE72EB1ABBE0013B7A6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4CCCDDD02EB1ABBD0013B7A6 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4CCCDDE42EB1ABBE0013B7A6;
+			remoteInfo = "WEIGHTLIFTING Watch App";
+		};
+		4CE325C22EBC880C000753AE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4CCCDDD02EB1ABBD0013B7A6 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4CE325AF2EBC880A000753AE;
+			remoteInfo = "WEIGHTLIFTING ComplicationsExtension";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		4CCB34A72EEB8C9B00E7E086 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				4CCB34A22EEB8C9B00E7E086 /* WEIGHTLIFTING Share Extension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4CCCDDF52EB1ABBF0013B7A6 /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+				4CCCDDE62EB1ABBE0013B7A6 /* WEIGHTLIFTING Watch App.app in Embed Watch Content */,
+			);
+			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4CE325C92EBC880C000753AE /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				4CE325C42EBC880C000753AE /* WEIGHTLIFTING ComplicationsExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		4C54F2CE2EE10ACB00BD82B7 /* WEIGHTLIFTINGTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WEIGHTLIFTINGTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		4C54F2DE2EE112FB00BD82B7 /* WEIGHTLIFTING.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = WEIGHTLIFTING.xctestplan; sourceTree = "<group>"; };
+		4CCB34932EEB8C6700E7E086 /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.1.sdk/usr/lib/libsqlite3.tbd; sourceTree = DEVELOPER_DIR; };
+		4CCB34982EEB8C9B00E7E086 /* WEIGHTLIFTING Share Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "WEIGHTLIFTING Share Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4CCCDDD82EB1ABBD0013B7A6 /* WEIGHTLIFTING.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WEIGHTLIFTING.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4CCCDDE52EB1ABBE0013B7A6 /* WEIGHTLIFTING Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "WEIGHTLIFTING Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4CE325B02EBC880A000753AE /* WEIGHTLIFTING ComplicationsExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "WEIGHTLIFTING ComplicationsExtension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4CE325B22EBC880A000753AE /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		4CE325B42EBC880A000753AE /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		4CE325D62EBC8926000753AE /* WEIGHTLIFTING ComplicationsExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "WEIGHTLIFTING ComplicationsExtension.entitlements"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		4CCB34A32EEB8C9B00E7E086 /* Exceptions for "WEIGHTLIFTING Share Extension" folder in "WEIGHTLIFTING Share Extension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 4CCB34972EEB8C9B00E7E086 /* WEIGHTLIFTING Share Extension */;
+		};
+		4CCB34AB2EEB8D0C00E7E086 /* Exceptions for "Shared" folder in "WEIGHTLIFTING Share Extension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				StoredLinks/StoredLinkModels.swift,
+				StoredLinks/StoredLinkStore.swift,
+			);
+			target = 4CCB34972EEB8C9B00E7E086 /* WEIGHTLIFTING Share Extension */;
+		};
+		4CE325C52EBC880C000753AE /* Exceptions for "WEIGHTLIFTING Complications" folder in "WEIGHTLIFTING ComplicationsExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 4CE325AF2EBC880A000753AE /* WEIGHTLIFTING ComplicationsExtension */;
+		};
+		4CE325D42EBC8892000753AE /* Exceptions for "WEIGHTLIFTING Watch App" folder in "WEIGHTLIFTING ComplicationsExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Domain/Services/SharedDefaults.swift,
+			);
+			target = 4CE325AF2EBC880A000753AE /* WEIGHTLIFTING ComplicationsExtension */;
+		};
+		4CE325D72EBC8E71000753AE /* Exceptions for "WEIGHTLIFTING Watch App" folder in "WEIGHTLIFTING Watch App" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Resources/WatchAppInfo.plist,
+			);
+			target = 4CCCDDE42EB1ABBE0013B7A6 /* WEIGHTLIFTING Watch App */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		4C54F2CF2EE10ACB00BD82B7 /* WEIGHTLIFTINGTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = WEIGHTLIFTINGTests;
+			sourceTree = "<group>";
+		};
+		4CCB34992EEB8C9B00E7E086 /* WEIGHTLIFTING Share Extension */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				4CCB34A32EEB8C9B00E7E086 /* Exceptions for "WEIGHTLIFTING Share Extension" folder in "WEIGHTLIFTING Share Extension" target */,
+			);
+			path = "WEIGHTLIFTING Share Extension";
+			sourceTree = "<group>";
+		};
+		4CCCDDDA2EB1ABBD0013B7A6 /* WEIGHTLIFTING */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = WEIGHTLIFTING;
+			sourceTree = "<group>";
+		};
+		4CCCDDE92EB1ABBE0013B7A6 /* WEIGHTLIFTING Watch App */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				4CE325D72EBC8E71000753AE /* Exceptions for "WEIGHTLIFTING Watch App" folder in "WEIGHTLIFTING Watch App" target */,
+				4CE325D42EBC8892000753AE /* Exceptions for "WEIGHTLIFTING Watch App" folder in "WEIGHTLIFTING ComplicationsExtension" target */,
+			);
+			path = "WEIGHTLIFTING Watch App";
+			sourceTree = "<group>";
+		};
+		4CE325B62EBC880A000753AE /* WEIGHTLIFTING Complications */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				4CE325C52EBC880C000753AE /* Exceptions for "WEIGHTLIFTING Complications" folder in "WEIGHTLIFTING ComplicationsExtension" target */,
+			);
+			path = "WEIGHTLIFTING Complications";
+			sourceTree = "<group>";
+		};
+		4CF0ABF12EEE000100000001 /* Shared */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				4CCB34AB2EEB8D0C00E7E086 /* Exceptions for "Shared" folder in "WEIGHTLIFTING Share Extension" target */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		4C54F2CB2EE10ACB00BD82B7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4CCB34952EEB8C9B00E7E086 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4CCB34A82EEB8CA500E7E086 /* libsqlite3.tbd in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4CCCDDD52EB1ABBD0013B7A6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4CCCDDE22EB1ABBE0013B7A6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4CE325AD2EBC880A000753AE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4CE325B52EBC880A000753AE /* SwiftUI.framework in Frameworks */,
+				4CE325B32EBC880A000753AE /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		4CCCDDCF2EB1ABBD0013B7A6 = {
+			isa = PBXGroup;
+			children = (
+				4C54F2DE2EE112FB00BD82B7 /* WEIGHTLIFTING.xctestplan */,
+				4CE325D62EBC8926000753AE /* WEIGHTLIFTING ComplicationsExtension.entitlements */,
+				4CCCDDDA2EB1ABBD0013B7A6 /* WEIGHTLIFTING */,
+				4CCCDDE92EB1ABBE0013B7A6 /* WEIGHTLIFTING Watch App */,
+				4CF0ABF12EEE000100000001 /* Shared */,
+				4CE325B62EBC880A000753AE /* WEIGHTLIFTING Complications */,
+				4C54F2CF2EE10ACB00BD82B7 /* WEIGHTLIFTINGTests */,
+				4CCB34992EEB8C9B00E7E086 /* WEIGHTLIFTING Share Extension */,
+				4CE325B12EBC880A000753AE /* Frameworks */,
+				4CCCDDD92EB1ABBD0013B7A6 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		4CCCDDD92EB1ABBD0013B7A6 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				4CCCDDD82EB1ABBD0013B7A6 /* WEIGHTLIFTING.app */,
+				4CCCDDE52EB1ABBE0013B7A6 /* WEIGHTLIFTING Watch App.app */,
+				4CE325B02EBC880A000753AE /* WEIGHTLIFTING ComplicationsExtension.appex */,
+				4C54F2CE2EE10ACB00BD82B7 /* WEIGHTLIFTINGTests.xctest */,
+				4CCB34982EEB8C9B00E7E086 /* WEIGHTLIFTING Share Extension.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		4CE325B12EBC880A000753AE /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				4CCB34932EEB8C6700E7E086 /* libsqlite3.tbd */,
+				4CE325B22EBC880A000753AE /* WidgetKit.framework */,
+				4CE325B42EBC880A000753AE /* SwiftUI.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		4C54F2CD2EE10ACB00BD82B7 /* WEIGHTLIFTINGTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4C54F2D42EE10ACB00BD82B7 /* Build configuration list for PBXNativeTarget "WEIGHTLIFTINGTests" */;
+			buildPhases = (
+				4C54F2CA2EE10ACB00BD82B7 /* Sources */,
+				4C54F2CB2EE10ACB00BD82B7 /* Frameworks */,
+				4C54F2CC2EE10ACB00BD82B7 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4C54F2D32EE10ACB00BD82B7 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				4C54F2CF2EE10ACB00BD82B7 /* WEIGHTLIFTINGTests */,
+			);
+			name = WEIGHTLIFTINGTests;
+			packageProductDependencies = (
+			);
+			productName = WEIGHTLIFTINGTests;
+			productReference = 4C54F2CE2EE10ACB00BD82B7 /* WEIGHTLIFTINGTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		4CCB34972EEB8C9B00E7E086 /* WEIGHTLIFTING Share Extension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4CCB34A42EEB8C9B00E7E086 /* Build configuration list for PBXNativeTarget "WEIGHTLIFTING Share Extension" */;
+			buildPhases = (
+				4CCB34942EEB8C9B00E7E086 /* Sources */,
+				4CCB34952EEB8C9B00E7E086 /* Frameworks */,
+				4CCB34962EEB8C9B00E7E086 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				4CCB34992EEB8C9B00E7E086 /* WEIGHTLIFTING Share Extension */,
+			);
+			name = "WEIGHTLIFTING Share Extension";
+			packageProductDependencies = (
+			);
+			productName = "WEIGHTLIFTING Share Extension";
+			productReference = 4CCB34982EEB8C9B00E7E086 /* WEIGHTLIFTING Share Extension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		4CCCDDD72EB1ABBD0013B7A6 /* WEIGHTLIFTING */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4CCCDDF62EB1ABBF0013B7A6 /* Build configuration list for PBXNativeTarget "WEIGHTLIFTING" */;
+			buildPhases = (
+				4CCCDDD42EB1ABBD0013B7A6 /* Sources */,
+				4CCCDDD52EB1ABBD0013B7A6 /* Frameworks */,
+				4CCCDDD62EB1ABBD0013B7A6 /* Resources */,
+				4CCCDDF52EB1ABBF0013B7A6 /* Embed Watch Content */,
+				4CCB34A72EEB8C9B00E7E086 /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4CCCDDE82EB1ABBE0013B7A6 /* PBXTargetDependency */,
+				4CCB34A12EEB8C9B00E7E086 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				4CCCDDDA2EB1ABBD0013B7A6 /* WEIGHTLIFTING */,
+				4CF0ABF12EEE000100000001 /* Shared */,
+			);
+			name = WEIGHTLIFTING;
+			packageProductDependencies = (
+			);
+			productName = WEIGHTLIFTING;
+			productReference = 4CCCDDD82EB1ABBD0013B7A6 /* WEIGHTLIFTING.app */;
+			productType = "com.apple.product-type.application";
+		};
+		4CCCDDE42EB1ABBE0013B7A6 /* WEIGHTLIFTING Watch App */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4CCCDDF22EB1ABBF0013B7A6 /* Build configuration list for PBXNativeTarget "WEIGHTLIFTING Watch App" */;
+			buildPhases = (
+				4CCCDDE12EB1ABBE0013B7A6 /* Sources */,
+				4CCCDDE22EB1ABBE0013B7A6 /* Frameworks */,
+				4CCCDDE32EB1ABBE0013B7A6 /* Resources */,
+				4CE325C92EBC880C000753AE /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4CE325C32EBC880C000753AE /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				4CCCDDE92EB1ABBE0013B7A6 /* WEIGHTLIFTING Watch App */,
+				4CF0ABF12EEE000100000001 /* Shared */,
+			);
+			name = "WEIGHTLIFTING Watch App";
+			packageProductDependencies = (
+			);
+			productName = "WEIGHTLIFTING Watch App";
+			productReference = 4CCCDDE52EB1ABBE0013B7A6 /* WEIGHTLIFTING Watch App.app */;
+			productType = "com.apple.product-type.application";
+		};
+		4CE325AF2EBC880A000753AE /* WEIGHTLIFTING ComplicationsExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4CE325C62EBC880C000753AE /* Build configuration list for PBXNativeTarget "WEIGHTLIFTING ComplicationsExtension" */;
+			buildPhases = (
+				4CE325AC2EBC880A000753AE /* Sources */,
+				4CE325AD2EBC880A000753AE /* Frameworks */,
+				4CE325AE2EBC880A000753AE /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				4CE325B62EBC880A000753AE /* WEIGHTLIFTING Complications */,
+			);
+			name = "WEIGHTLIFTING ComplicationsExtension";
+			packageProductDependencies = (
+			);
+			productName = "WEIGHTLIFTING ComplicationsExtension";
+			productReference = 4CE325B02EBC880A000753AE /* WEIGHTLIFTING ComplicationsExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		4CCCDDD02EB1ABBD0013B7A6 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2610;
+				LastUpgradeCheck = 2610;
+				TargetAttributes = {
+					4C54F2CD2EE10ACB00BD82B7 = {
+						CreatedOnToolsVersion = 26.1.1;
+						TestTargetID = 4CCCDDD72EB1ABBD0013B7A6;
+					};
+					4CCB34972EEB8C9B00E7E086 = {
+						CreatedOnToolsVersion = 26.1.1;
+					};
+					4CCCDDD72EB1ABBD0013B7A6 = {
+						CreatedOnToolsVersion = 26.0.1;
+					};
+					4CCCDDE42EB1ABBE0013B7A6 = {
+						CreatedOnToolsVersion = 26.0.1;
+						SystemCapabilities = {
+							com.apple.Complication = {
+								enabled = 1;
+							};
+						};
+					};
+					4CE325AF2EBC880A000753AE = {
+						CreatedOnToolsVersion = 26.1;
+					};
+				};
+			};
+			buildConfigurationList = 4CCCDDD32EB1ABBD0013B7A6 /* Build configuration list for PBXProject "WEIGHTLIFTING" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 4CCCDDCF2EB1ABBD0013B7A6;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 4CCCDDD92EB1ABBD0013B7A6 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				4CCCDDD72EB1ABBD0013B7A6 /* WEIGHTLIFTING */,
+				4CCCDDE42EB1ABBE0013B7A6 /* WEIGHTLIFTING Watch App */,
+				4CE325AF2EBC880A000753AE /* WEIGHTLIFTING ComplicationsExtension */,
+				4C54F2CD2EE10ACB00BD82B7 /* WEIGHTLIFTINGTests */,
+				4CCB34972EEB8C9B00E7E086 /* WEIGHTLIFTING Share Extension */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		4C54F2CC2EE10ACB00BD82B7 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4CCB34962EEB8C9B00E7E086 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4CCCDDD62EB1ABBD0013B7A6 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4CCCDDE32EB1ABBE0013B7A6 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4CE325AE2EBC880A000753AE /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		4C54F2CA2EE10ACB00BD82B7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4CCB34942EEB8C9B00E7E086 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4CCCDDD42EB1ABBD0013B7A6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4CCCDDE12EB1ABBE0013B7A6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4CE325AC2EBC880A000753AE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		4C54F2D32EE10ACB00BD82B7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4CCCDDD72EB1ABBD0013B7A6 /* WEIGHTLIFTING */;
+			targetProxy = 4C54F2D22EE10ACB00BD82B7 /* PBXContainerItemProxy */;
+		};
+		4CCB34A12EEB8C9B00E7E086 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4CCB34972EEB8C9B00E7E086 /* WEIGHTLIFTING Share Extension */;
+			targetProxy = 4CCB34A02EEB8C9B00E7E086 /* PBXContainerItemProxy */;
+		};
+		4CCCDDE82EB1ABBE0013B7A6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4CCCDDE42EB1ABBE0013B7A6 /* WEIGHTLIFTING Watch App */;
+			targetProxy = 4CCCDDE72EB1ABBE0013B7A6 /* PBXContainerItemProxy */;
+		};
+		4CE325C32EBC880C000753AE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4CE325AF2EBC880A000753AE /* WEIGHTLIFTING ComplicationsExtension */;
+			targetProxy = 4CE325C22EBC880C000753AE /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		4C54F2D52EE10ACB00BD82B7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 48DUA96B9A;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jawaadmahmood.WEIGHTLIFTINGTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WEIGHTLIFTING.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/WEIGHTLIFTING";
+			};
+			name = Debug;
+		};
+		4C54F2D62EE10ACB00BD82B7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 48DUA96B9A;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jawaadmahmood.WEIGHTLIFTINGTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WEIGHTLIFTING.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/WEIGHTLIFTING";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		4CCB34A52EEB8C9B00E7E086 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "WEIGHTLIFTING Share Extension/WEIGHTLIFTING Share Extension.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 48DUA96B9A;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "WEIGHTLIFTING Share Extension/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "WEIGHTLIFTING Share Extension";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.jawaadmahmood.WEIGHTLIFTING2.WEIGHTLIFTING-Share-Extension";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		4CCB34A62EEB8C9B00E7E086 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "WEIGHTLIFTING Share Extension/WEIGHTLIFTING Share Extension.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 48DUA96B9A;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "WEIGHTLIFTING Share Extension/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "WEIGHTLIFTING Share Extension";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.jawaadmahmood.WEIGHTLIFTING2.WEIGHTLIFTING-Share-Extension";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		4CCCDDF02EB1ABBF0013B7A6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 589DL222X4;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		4CCCDDF12EB1ABBF0013B7A6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 589DL222X4;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		4CCCDDF32EB1ABBF0013B7A6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "WEIGHTLIFTING Watch App/Resources/WEIGHTLIFTING-Watch-App.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 48DUA96B9A;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "WEIGHTLIFTING Watch App/Resources/WatchAppInfo.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = WEIGHTLIFTING;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jawaadmahmood.WEIGHTLIFTING2.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 11.6;
+			};
+			name = Debug;
+		};
+		4CCCDDF42EB1ABBF0013B7A6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "WEIGHTLIFTING Watch App/Resources/WEIGHTLIFTING-Watch-App.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 48DUA96B9A;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "WEIGHTLIFTING Watch App/Resources/WatchAppInfo.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = WEIGHTLIFTING;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jawaadmahmood.WEIGHTLIFTING2.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				VALIDATE_PRODUCT = YES;
+				WATCHOS_DEPLOYMENT_TARGET = 11.6;
+			};
+			name = Release;
+		};
+		4CCCDDF72EB1ABBF0013B7A6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = WEIGHTLIFTING/WEIGHTLIFTING.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 48DUA96B9A;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = WEIGHTLIFTING;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIStatusBarStyle = "";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = v0.4;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jawaadmahmood.WEIGHTLIFTING2;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		4CCCDDF82EB1ABBF0013B7A6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = WEIGHTLIFTING/WEIGHTLIFTING.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 48DUA96B9A;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = WEIGHTLIFTING;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIStatusBarStyle = "";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = v0.4;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jawaadmahmood.WEIGHTLIFTING2;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		4CE325C72EBC880C000753AE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = "WEIGHTLIFTING Complications/WEIGHTLIFTING-Complications.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 48DUA96B9A;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "WEIGHTLIFTING Complications/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "WEIGHTLIFTING Complications";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.jawaadmahmood.WEIGHTLIFTING2.watchkitapp.WEIGHTLIFTING-Complications";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 11.6;
+			};
+			name = Debug;
+		};
+		4CE325C82EBC880C000753AE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = "WEIGHTLIFTING Complications/WEIGHTLIFTING-Complications.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 48DUA96B9A;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "WEIGHTLIFTING Complications/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "WEIGHTLIFTING Complications";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.jawaadmahmood.WEIGHTLIFTING2.watchkitapp.WEIGHTLIFTING-Complications";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				VALIDATE_PRODUCT = YES;
+				WATCHOS_DEPLOYMENT_TARGET = 11.6;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		4C54F2D42EE10ACB00BD82B7 /* Build configuration list for PBXNativeTarget "WEIGHTLIFTINGTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4C54F2D52EE10ACB00BD82B7 /* Debug */,
+				4C54F2D62EE10ACB00BD82B7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4CCB34A42EEB8C9B00E7E086 /* Build configuration list for PBXNativeTarget "WEIGHTLIFTING Share Extension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4CCB34A52EEB8C9B00E7E086 /* Debug */,
+				4CCB34A62EEB8C9B00E7E086 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4CCCDDD32EB1ABBD0013B7A6 /* Build configuration list for PBXProject "WEIGHTLIFTING" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4CCCDDF02EB1ABBF0013B7A6 /* Debug */,
+				4CCCDDF12EB1ABBF0013B7A6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4CCCDDF22EB1ABBF0013B7A6 /* Build configuration list for PBXNativeTarget "WEIGHTLIFTING Watch App" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4CCCDDF32EB1ABBF0013B7A6 /* Debug */,
+				4CCCDDF42EB1ABBF0013B7A6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4CCCDDF62EB1ABBF0013B7A6 /* Build configuration list for PBXNativeTarget "WEIGHTLIFTING" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4CCCDDF72EB1ABBF0013B7A6 /* Debug */,
+				4CCCDDF82EB1ABBF0013B7A6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4CE325C62EBC880C000753AE /* Build configuration list for PBXNativeTarget "WEIGHTLIFTING ComplicationsExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4CE325C72EBC880C000753AE /* Debug */,
+				4CE325C82EBC880C000753AE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 4CCCDDD02EB1ABBD0013B7A6 /* Project object */;
+}

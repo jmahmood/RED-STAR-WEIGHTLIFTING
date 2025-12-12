@@ -1,0 +1,62 @@
+template_id,category,display_name,source_name,video_url,day_label,sequence,ex_code,sets,reps_min,reps_max
+push_basic,Push,Basic Push Day,,,,1,BENCH.BB.FLAT,5,5,5
+push_basic,Push,Basic Push Day,,,,2,PRESS.BB.STAND,3,8,12
+push_basic,Push,Basic Push Day,,,,3,PRESS.DB.INCLINE,3,8,12
+push_basic,Push,Basic Push Day,,,,4,FLY.CABLE,3,12,15
+push_basic,Push,Basic Push Day,,,,5,EXTENSION.CABLE.ROPE,3,12,15
+push_basic,Push,Basic Push Day,,,,6,EXTENSION.DB.OVERHEAD,3,12,15
+pull_basic,Pull,Basic Pull Day,,,,1,DEADLIFT.BB.CONV,5,5,5
+pull_basic,Pull,Basic Pull Day,,,,2,PULLUP.BW,3,8,12
+pull_basic,Pull,Basic Pull Day,,,,3,ROW.CABLE.SEATED,3,8,12
+pull_basic,Pull,Basic Pull Day,,,,4,ROW.BB.BEND,3,8,12
+pull_basic,Pull,Basic Pull Day,,,,5,CURL.BB,3,12,15
+pull_basic,Pull,Basic Pull Day,,,,6,CURL.DB.HAMMER,3,12,15
+legs_basic,Legs,Basic Leg Day,,,,1,SQUAT.BB.HIGH,5,5,5
+legs_basic,Legs,Basic Leg Day,,,,2,PRESS.LEG,3,8,12
+legs_basic,Legs,Basic Leg Day,,,,3,LUNGE.DB,3,8,12
+legs_basic,Legs,Basic Leg Day,,,,4,CURL.LEG.LYING,3,8,12
+legs_basic,Legs,Basic Leg Day,,,,5,EXTENSION.LEG,3,12,15
+legs_basic,Legs,Basic Leg Day,,,,6,RAISE.CALF.STANDING,5,12,15
+upper_strength,Upper Body,Upper Body Strength,,,,1,BENCH.BB.FLAT,5,5,5
+upper_strength,Upper Body,Upper Body Strength,,,,2,ROW.BB.BEND,5,5,5
+upper_strength,Upper Body,Upper Body Strength,,,,3,PRESS.BB.STAND,3,8,12
+upper_strength,Upper Body,Upper Body Strength,,,,4,PULLUP.BW,3,8,12
+upper_strength,Upper Body,Upper Body Strength,,,,5,CURL.BB,3,10,12
+lower_strength,Lower Body,Lower Body Strength,,,,1,SQUAT.BB.HIGH,5,5,5
+lower_strength,Lower Body,Lower Body Strength,,,,2,DEADLIFT.BB.CONV,3,5,5
+lower_strength,Lower Body,Lower Body Strength,,,,3,PRESS.LEG,3,8,12
+lower_strength,Lower Body,Lower Body Strength,,,,4,CURL.LEG.LYING,3,8,12
+lower_strength,Lower Body,Lower Body Strength,,,,5,RAISE.CALF.STANDING,4,12,15
+fullbody_basic,Full Body,Basic Full Body,,,,1,SQUAT.BB.HIGH,3,8,12
+fullbody_basic,Full Body,Basic Full Body,,,,2,BENCH.BB.FLAT,3,8,12
+fullbody_basic,Full Body,Basic Full Body,,,,3,ROW.BB.BEND,3,8,12
+fullbody_basic,Full Body,Basic Full Body,,,,4,PRESS.BB.STAND,3,8,12
+fullbody_basic,Full Body,Basic Full Body,,,,5,DEADLIFT.BB.CONV,1,5,5
+chest_focused,Push,Chest Focus Day,,,,1,BENCH.BB.FLAT,5,5,5
+chest_focused,Push,Chest Focus Day,,,,2,PRESS.DB.INCLINE,4,8,10
+chest_focused,Push,Chest Focus Day,,,,3,FLY.CABLE,3,12,15
+chest_focused,Push,Chest Focus Day,,,,4,EXTENSION.CABLE.ROPE,3,12,15
+back_focused,Pull,Back Focus Day,,,,1,DEADLIFT.BB.CONV,5,5,5
+back_focused,Pull,Back Focus Day,,,,2,ROW.BB.BEND,4,8,10
+back_focused,Pull,Back Focus Day,,,,3,PULLUP.BW,3,8,12
+back_focused,Pull,Back Focus Day,,,,4,ROW.CABLE.SEATED,3,12,15
+back_focused,Pull,Back Focus Day,,,,5,CURL.BB,3,10,12
+legs_quad_focus,Legs,Quad Focus Leg Day,,,,1,SQUAT.BB.HIGH,5,5,5
+legs_quad_focus,Legs,Quad Focus Leg Day,,,,2,PRESS.LEG,4,8,12
+legs_quad_focus,Legs,Quad Focus Leg Day,,,,3,LUNGE.DB,3,10,12
+legs_quad_focus,Legs,Quad Focus Leg Day,,,,4,EXTENSION.LEG,4,12,15
+legs_quad_focus,Legs,Quad Focus Leg Day,,,,5,RAISE.CALF.STANDING,5,15,20
+arms_jeff_nippard_45min,Arms,45 Minute Arm Day (Jeff Nippard),Jeff Nippard,https://www.youtube.com/shorts/LV9OeFhQpRI,,1,CURL.CABLE.BAYESIAN,2,8,12
+arms_jeff_nippard_45min,Arms,45 Minute Arm Day (Jeff Nippard),Jeff Nippard,https://www.youtube.com/shorts/LV9OeFhQpRI,,2,PRESS.BB.JM,2,8,12
+arms_jeff_nippard_45min,Arms,45 Minute Arm Day (Jeff Nippard),Jeff Nippard,https://www.youtube.com/shorts/LV9OeFhQpRI,,3,CURL.BB.PREACHER,1,8,12
+arms_jeff_nippard_45min,Arms,45 Minute Arm Day (Jeff Nippard),Jeff Nippard,https://www.youtube.com/shorts/LV9OeFhQpRI,,4,RAISE.MACHINE.LATERAL,2,12,15
+arms_jeff_nippard_45min,Arms,45 Minute Arm Day (Jeff Nippard),Jeff Nippard,https://www.youtube.com/shorts/LV9OeFhQpRI,,5,EXTENSION.CABLE.KICKBACK,2,12,15
+arms_jeff_nippard_45min,Arms,45 Minute Arm Day (Jeff Nippard),Jeff Nippard,https://www.youtube.com/shorts/LV9OeFhQpRI,,6,CURL.DB.INVERSE.ZOTTMAN,1,8,12
+arms_natural_hypertrophy_good,Arms,Good Arm Day (Natural Hypertrophy),Natural Hypertrophy,https://www.youtube.com/watch?v=RSkzA1l5jlk,,1,BENCH.BB.CLOSEGRIP,3,6,10
+arms_natural_hypertrophy_good,Arms,Good Arm Day (Natural Hypertrophy),Natural Hypertrophy,https://www.youtube.com/watch?v=RSkzA1l5jlk,,2,CHINUP.BW.WEIGHTED,3,3,5
+arms_natural_hypertrophy_good,Arms,Good Arm Day (Natural Hypertrophy),Natural Hypertrophy,https://www.youtube.com/watch?v=RSkzA1l5jlk,,3,CURL.DB,3,6,10
+arms_natural_hypertrophy_good,Arms,Good Arm Day (Natural Hypertrophy),Natural Hypertrophy,https://www.youtube.com/watch?v=RSkzA1l5jlk,,4,EXTENSION.BB.SKULLCRUSHER,3,8,12
+arms_natural_hypertrophy_good,Arms,Good Arm Day (Natural Hypertrophy),Natural Hypertrophy,https://www.youtube.com/watch?v=RSkzA1l5jlk,,5,RAISE.CALF.STANDING,3,10,15
+arms_natural_hypertrophy_good,Arms,Good Arm Day (Natural Hypertrophy),Natural Hypertrophy,https://www.youtube.com/watch?v=RSkzA1l5jlk,,6,RAISE.DB.LATERAL,4,8,12
+arms_natural_hypertrophy_good,Arms,Good Arm Day (Natural Hypertrophy),Natural Hypertrophy,https://www.youtube.com/watch?v=RSkzA1l5jlk,,7,CURL.DB.WRIST,4,10,15
+arms_natural_hypertrophy_good,Arms,Good Arm Day (Natural Hypertrophy),Natural Hypertrophy,https://www.youtube.com/watch?v=RSkzA1l5jlk,,8,RAISE.BW.KNEE,4,10,20
