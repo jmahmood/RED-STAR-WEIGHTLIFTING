@@ -41,7 +41,9 @@ RED ✪ STAR Weightlifting is designed around a single rule:
   <img src="./screenshots/input_2.png" alt="Watch: Logging Set" width="200">
 </p>
 
-### Dock
+<details>
+<summary><b>Dock</b></summary>
+<br>
 <p>
   <img src="./screenshots/phone_main.png" alt="Phone: Main Screen" width="250">
   <img src="./screenshots/phone_select_workout_plan.png" alt="Phone: Selecting Workout Plan" width="250">
@@ -50,6 +52,7 @@ RED ✪ STAR Weightlifting is designed around a single rule:
   <img src="./screenshots/phone_sync_data.png" alt="Phone: Syncing Data" width="250">
   <img src="./screenshots/phone_edit_workout.png" alt="Phone: Edit Workout" width="250">
 </p>
+</details>
 
 ---
 
