@@ -4,70 +4,91 @@ Strength is measured, not imagined.
 ---
 
 ## Purpose
-RED ✪ STAR Weightlifting is a privacy‑respecting, non‑commercial training log for weightlifters.
-It is built to be utilitarian, fast, and durable: no ads, no analytics, and no external data calls
-other than user‑initiated links. Your data stays on your devices, and export is a first‑class feature.
 
-The Apple Watch application is the primary instrument.
-The iPhone companion functions as a dock: for review, analysis, backup, and export of what the watch records.
-All essential training actions are possible from the watch alone.
+RED ✪ STAR Weightlifting is a minimalist, privacy-first, non-commercial anti-feed training log for beginner and intermediate lifters.
+No ads, no analytics, no cloud, no external calls, except user-initiated links.
+Your data is under your control. Export is a first-class citizen.
 
----
-
-## In‑Universe Briefing
-In this world, computing is scarce and power is rationed.  
-Machines are judged not by spectacle, but by how little they waste.
-
-RED ✪ STAR Weightlifting is a small tool in that tradition:
-
-- Minimal UI. No distractions. Avoid vanity that drains the battery.
-- Data is append‑only and human‑readable, because history must be durable.
-- Every action has a CLI equivalent. A Linux CLI implementation exists for all core operations.
-- To carry an iPhone implies responsibility; to carry a watch implies readiness.
-
-> **MINISTRY OF STRENGTH — STAMP OF APPROVAL**  
-> *“Serve the set. Record the truth. Waste nothing.”*
-
-*We’re leveraging vibes, not preaching. The story exists to explain our engineering goals: brutalist efficiency, respect for the lifter, and zero compromise on privacy. The framing is fictional and explanatory, not affiliated with any real political organization.*
+Primary instrument: Apple Watch  
+iPhone role: dock for planning, review, backup, and export
 
 ---
 
-## Execution Model
+## Requirements
 
-RED ✪ STAR Weightlifting is designed around a single constraint:
+- Apple Watch Series 4 or later (watchOS 11.6+)
+- iOS 16+ (Tested on iPhone 12)
+
+RED ✪ STAR Weightlifting can be installed through the Apple App Store.
+
+---
+
+## Philosophy
+
+RED ✪ STAR Weightlifting is designed around a single rule:
 
 **The workout must be executable with only a watch.**
 
-- The Apple Watch records all training data and maintains the authoritative log.
-- The iPhone does not issue commands to the watch during a session.
-- The phone exists to inspect, aggregate, export, and archive data already recorded.
+---
 
-If the phone is absent, powered down, or disconnected, training continues uninterrupted.
+## Screenshots
+
+### Primary Instrument
+![Watch: Selecting Exercise](./screenshots/select_exercise.png)
+![Watch: Logging Set](./screenshots/log_workout.png)
+
+### Dock
+![Phone: Main Screen](./screenshots/phone_main.png)
+![Phone: Selecting Workout Plan](./screenshots/phone_select_workout.png)
+![Phone: Syncing Data](./screenshots/phone_sync_data.png)
+![Phone: Edit Workout](./screenshots/phone_edit_workout.png)
 
 ---
 
 ## Features
-- **Record lifts on wrist**: fast Apple Watch logging with plan‑driven workouts.
-- **Dock & review on phone** sessions, exercise history, and PR insights on iPhone.
-- **Plan sessions**: import/maintain a PLANSPEC workout plan (JSON-based schema, v0.4); the watch rotates days automatically.
-- **Export without friction**: one‑tap Logbook CSV export to phone, and file‑based backups.
-- **Offline‑first**: no network dependencies for core functionality.
-- **Widgets & complications**: “Next Up” watch complication and iOS widgets.
+
+- **Log** lifts instantly on your wrist (plan-driven or freestyle)
+- **Review** sessions, history, and PRs on iPhone
+- Import PLANSPEC JSON plans (subset of v0.4); watch auto-rotates days
+- One-tap CSV **export** + full file backups
+- 100% **offline-first**
+- “Next Up” complication
 
 ---
 
 ## Data & Privacy
+
 - **No external telemetry**. No ads. No trackers.
-- **Open, Documented PLANSPEC JSON-Based Workout Plan Format** PLANSPEC refers to the documented JSON workout-plan specification used by the application (currently v0.4).
-- **Single append‑only Logbook CSV** is the source of truth.
-- **Write‑ahead log (WAL)** ensures durability on every save.
+- **Open, Documented PLANSPEC JSON-Based Workout Plan Format** We implement and support a subset of the open PLANSPEC specification (currently v0.4).
+- **Single append-only Logbook CSV** is the source of truth.
+- **Write-ahead log (WAL)** ensures durability on every save.
 - **Exports are yours**: the app is designed around easy extraction and reuse of your data.
+- **iCloud enabled for user-initiated file export and storage.**
+   - If iCloud is disabled or undesirable, you can still choose to export directly to the phone's file folder, or to another app
+   - Core logging and training functionality do not depend on iCloud.
+
+---
+
+## In-Universe Briefing
+
+In this world, computing is scarce and power is rationed.  
+Machines are judged not by spectacle, but by how little they waste.
+
+RED ✪ STAR Weightlifting follows that tradition: brutalist efficiency, zero telemetry, append-only durable data.
+
+> *“Serve the set. Record the truth. Waste nothing.”*
+
+*The story exists to explain our engineering goals: efficiency, respect for the lifter, and zero compromise on privacy. The framing is fictional, our only affiliation is with the user, not any organization.*
+
+---
+
+![Package](./package.png)
 
 ---
 
 ## Getting Started (Developers)
 
-You may avoid the *Apple Tax* and any compromise by building the application for yourself.
+Build it yourself and avoid the App Store entirely:
 
 1. Open `WEIGHTLIFTING.xcodeproj` in Xcode.
 2. Build and run:
@@ -82,51 +103,40 @@ We cannot offer any support for connecting to the Apple Watch, nor for targeting
 ---
 
 ## Licensing
-This project is **dual‑licensed**:
 
-1. **Commercial license** for distribution through the Apple App Store.  
-2. **GNU General Public License v3.0 (GPL‑3.0)** for open‑source use.
+Dual-licensed:
+- GPL-3.0 for open-source use
+- Proprietary license for App Store distribution
 
-We do not intend on distributing this under Commercial license other than through the Apple App Store.  If well-supported application stores are available without the need for this compromise, we reserve to drop our commercial license in the future.
-
-If you require different licensing for societally beneficial usage, please reach out to Jawaad Mahmood by email.
+All contributions must assign copyright to Jawaad Mahmood to preserve future licensing flexibility.
+(If you’re uncomfortable with that, kindly open an issue instead of a PR.)
 
 ---
 
 ## Contributing
-Contributions are welcome and subject to the rules laid out in the `CONTRIBUTING.md` file.  
 
-To keep the dual‑license model viable, **all contributions must assign copyright**
-to the project author (Jawaad Mahmood). This allows future licensing changes if needed; please keep this in mind before making any PRs.
-
-By submitting a pull request you agree that:
-
-- You wrote the contribution yourself (or have the right to contribute it).
-- You assign its copyright to Jawaad Mahmood.
-- Your contribution may be redistributed under either license above.
-
-If you prefer not to assign copyright, please open an issue instead.  Profanity and impoliteness will be thoroughly ignored and deleted with no attention being placed.
+See [CONTRIBUTING.md](./CONTRIBUTING.md). Rude or low-effort issues/PRs will be closed without response.
 
 ---
 
-## Non‑Goals
+## Non-Goals
+
 RED ✪ STAR Weightlifting aims to be a sharp tool, not a social platform.
+
 We intentionally avoid:
-- Accounts, feeds, followers, or any cloud‑first features.
-- Monetization, ads, or behavioral analytics.
+- Accounts, feeds, followers, or any cloud-first features.
+- Monetization, ads, crash reporting, or behavioral analytics.
 - Heavy visualizations that trade battery for aesthetics.
+
+RED ✪ STAR Weightlifting does not support the full PLANSPEC specification.  I have purposely chosen to avoid more esoteric items (choice fields for example) and am focusing on items that I have used as an intermediate trainee.  I may implement them if I can find a good UI paradigm to implement them.
 
 ---
 
 ## Credits
-RED ✪ STAR Weightlifting is authored and maintained by Jawaad Mahmood with assistance from Codex and Claude.
+
+RED ✪ STAR Weightlifting is authored and maintained by Jawaad Mahmood with AI Assistance.
 
 ---
-
-![Package](./package.png)
-*Issued for distribution on Apple Watch and iPhone systems. Packaging may differ by region.*
-
---
 
 ## Glossary
 
@@ -143,10 +153,10 @@ The single append-only CSV file that serves as the source of truth for all recor
 A durability mechanism that ensures each recorded action is safely persisted before being committed to the Logbook CSV.
 
 **PLANSPEC**
-The documented JSON-based workout plan specification used by the application (currently v0.4). Defines exercises, structure, progression, and execution rules.
+The documented JSON-based workout plan specification used by the application (currently v0.4). Defines exercises, structure, progression, and execution rules.  The specifications are available in the PLANSPEC repository.  I have produced an [editor for Mac and Linux](https://github.com/jmahmood/WEIGHTTRAINING-EDITOR) that you can use to generate your own workout plans.
 
 **Plan Rotation**
 The automatic advancement of training days on the watch based on completed sessions, without manual scheduling.
 
 **CLI (Command-Line Interface)**
-A Linux-based command-line implementation that mirrors all core application operations for plan management and log manipulation.
+[A Linux-based command-line implementation](https://github.com/jmahmood/basic_weightlifting) that mirrors all core application operations for plan management and log manipulation.
